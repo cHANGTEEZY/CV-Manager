@@ -175,7 +175,7 @@ export function AppSidebar() {
               <DropdownMenu>
                 <DropdownMenuTrigger>
                   <Button
-                    className="flex py-3 items-center cursor-pointer"
+                    className="flex py-3 items-center cursor-pointer "
                     variant={"ghost"}
                   >
                     <User className="size-6 text-purple-600 dark:text-purple-200" />

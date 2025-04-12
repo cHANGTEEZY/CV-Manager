@@ -9,38 +9,61 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LockIcon, MailIcon } from "lucide-react";
 import Seperator from "./Seperator";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import { AuthService } from "@/services/auth";
 
 const signinSchema = z.object({
-  usernameOrEmail: z.string().min(1, {
-    message: "Username is required",
+  email: z.string().email({
+    message: "Please enter a valid email address",
   }),
-
   password: z.string().min(1, {
     message: "Password is required",
   }),
 });
 
-type singinSchemaProps = z.infer<typeof signinSchema>;
+type SigninSchemaProps = z.infer<typeof signinSchema>;
 
 const Signin = () => {
+  const navigate = useNavigate();
+  const [error, setError] = useState<string | null>(null);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+
   const {
     register,
     handleSubmit,
-    formState: { errors, isLoading },
-  } = useForm<singinSchemaProps>({
+    formState: { errors },
+  } = useForm<SigninSchemaProps>({
     resolver: zodResolver(signinSchema),
   });
 
-  const handleLogin = (data: singinSchemaProps) => {
-    console.log(data);
+  const handleLogin = async (data: SigninSchemaProps) => {
+    try {
+      setError(null);
+      setIsLoggingIn(true);
+      await AuthService.signInWithEmail(data.email, data.password);
+      navigate("/");
+    } catch (err: any) {
+      setError(err.message || "Failed to sign in");
+    } finally {
+      setIsLoggingIn(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      setError(null);
+      await AuthService.signInWithGoogle();
+    } catch (err: any) {
+      setError(err.message || "Failed to sign in with Google");
+    }
   };
 
   return (
-    <section className="flex items-center justify-center w-screen h-screen ">
+    <section className="flex items-center justify-center w-screen h-screen">
       <Card className="w-full max-w-md m-3 shadow-lg">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-semibold text-center">
@@ -51,24 +74,29 @@ const Signin = () => {
           </p>
         </CardHeader>
         <CardContent>
+          {error && (
+            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+              {error}
+            </div>
+          )}
           <form className="space-y-4" onSubmit={handleSubmit(handleLogin)}>
             <div className="space-y-2">
-              <label htmlFor="usernameOrEmail" className="text-sm font-medium">
-                Username or Email
+              <label htmlFor="email" className="text-sm font-medium">
+                Email
               </label>
               <div className="relative">
                 <MailIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  {...register("usernameOrEmail")}
-                  id="usernameOrEmail"
-                  type="text"
-                  placeholder="johndoe or johndoe@gmail.com"
+                  {...register("email")}
+                  id="email"
+                  type="email"
+                  placeholder="johndoe@gmail.com"
                   className="pl-10"
                 />
               </div>
-              {errors && errors.usernameOrEmail && (
-                <span className={`text-red-600 text-sm`}>
-                  {errors.usernameOrEmail.message}
+              {errors && errors.email && (
+                <span className="text-red-600 text-sm">
+                  {errors.email.message}
                 </span>
               )}
             </div>
@@ -97,8 +125,8 @@ const Signin = () => {
                 </span>
               )}
             </div>
-            <Button type="submit" className="w-full">
-              Sign in
+            <Button type="submit" className="w-full" disabled={isLoggingIn}>
+              {isLoggingIn ? "Signing in..." : "Sign in"}
             </Button>
           </form>
         </CardContent>
@@ -106,7 +134,11 @@ const Signin = () => {
         <Seperator />
 
         <CardFooter>
-          <Button variant="outline" className="w-full">
+          <Button
+            variant="outline"
+            className="w-full"
+            onClick={handleGoogleSignIn}
+          >
             <svg
               className="mr-2 h-4 w-4"
               aria-hidden="true"

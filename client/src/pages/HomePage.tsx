@@ -1,7 +1,11 @@
+import { useAuth } from "@/contexts/AuthContext";
+
 const HomePage = () => {
+  const { user } = useAuth();
+
   return (
     <section className="">
-      <h1>Hello</h1>
+      <h1>{user?.id}</h1>
     </section>
   );
 };

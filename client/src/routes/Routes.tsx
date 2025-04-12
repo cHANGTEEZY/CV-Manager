@@ -1,11 +1,16 @@
 import Signin from "@/components/auth/Signin";
 import Signup from "@/components/auth/Signup";
+import AuthCallback from "@/components/auth/AuthCallback";
 import ErrorPage from "@/components/Error/ErrorPage";
 import AuthenticationLayout from "@/layouts/AuthenticationLayout";
 import RootLayout from "@/layouts/RootLayout";
 import HomePage from "@/pages/HomePage";
 import SettingPage from "@/pages/SettingPage";
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
+
+const isAuthenticated = false;
+
+const ProtectedRoute = ({ childred }) => {};
 
 export const router = createBrowserRouter([
   //* main routes
@@ -36,6 +41,10 @@ export const router = createBrowserRouter([
       {
         path: "signup",
         element: <Signup />,
+      },
+      {
+        path: "callback",
+        element: <AuthCallback />,
       },
     ],
   },

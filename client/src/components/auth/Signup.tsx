@@ -8,18 +8,23 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LockIcon, MailIcon, User } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Seperator from "./Seperator";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import { AuthService } from "@/services/auth";
 
 const signUpSchema = z
   .object({
-    username: z.string().min(5, {
-      message: "Username must be minimum length of 5 character",
-    }),
-    email: z.string().email({ message: "Enter a valid email" }),
+    username: z
+      .string()
+      .min(5, {
+        message: "Username must be minimum length of 5 characters",
+      })
+      .toLowerCase(),
+    email: z.string().email({ message: "Enter a valid email" }).toLowerCase(),
     password: z
       .string()
       .min(5, { message: "Password must be between 5-20 characters long" })
@@ -29,27 +34,53 @@ const signUpSchema = z
     }),
   })
   .refine((data) => data.confirmPassword === data.password, {
-    message: "Password do not match",
+    message: "Passwords do not match",
     path: ["confirmPassword"],
   });
 
-type signUpSchmeaProps = z.infer<typeof signUpSchema>;
+type SignUpSchemaProps = z.infer<typeof signUpSchema>;
 
 const Signup = () => {
+  const navigate = useNavigate();
+  const [error, setError] = useState<string | null>(null);
+  const [isRegistering, setIsRegistering] = useState(false);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<signUpSchmeaProps>({
+  } = useForm<SignUpSchemaProps>({
     resolver: zodResolver(signUpSchema),
   });
 
-  const handleSubmitData = (data: signUpSchmeaProps) => {
-    console.log(data);
+  const handleSubmitData = async (data: SignUpSchemaProps) => {
+    try {
+      setError(null);
+      setIsRegistering(true);
+      await AuthService.signUpWithEmail(
+        data.email,
+        data.password,
+        data.username
+      );
+      navigate("/auth/signin");
+    } catch (err: any) {
+      setError(err.message || "Failed to sign up");
+    } finally {
+      setIsRegistering(false);
+    }
+  };
+
+  const handleGoogleSignUp = async () => {
+    try {
+      setError(null);
+      await AuthService.signInWithGoogle();
+    } catch (err: any) {
+      setError(err.message || "Failed to sign up with Google");
+    }
   };
 
   return (
-    <section className="flex items-center justify-center w-screen h-screen ">
+    <section className="flex items-center justify-center w-screen h-screen">
       <Card className="w-full max-w-md m-3 shadow-lg">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-semibold text-center">
@@ -60,9 +91,19 @@ const Signup = () => {
           </p>
         </CardHeader>
         <CardContent>
+          {error && (
+            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+              {error}
+            </div>
+          )}
           <form className="space-y-4" onSubmit={handleSubmit(handleSubmitData)}>
             <div className="space-y-2">
-              <label htmlFor="username" className="text-sm font-medium">
+              <label
+                htmlFor="username"
+                className={`text-sm font-medium ${
+                  errors && errors.username ? "text-red-500" : ""
+                }`}
+              >
                 Username
               </label>
               <div className="relative">
@@ -71,19 +112,29 @@ const Signup = () => {
                   {...register("username")}
                   id="username"
                   type="text"
-                  placeholder="johndoe or johndoe@gmail.com"
-                  className="pl-10"
+                  placeholder="johndoe"
+                  className={`pl-10 ${
+                    errors && errors.username
+                      ? "focus-visible:border-red-500 focus-visible:ring-red-500/50 focus-visible:ring-[3px]"
+                      : ""
+                  }`}
                 />
               </div>
+
               {errors && errors.username && (
-                <span className={`${errors ? "text-red-600" : ""} text-sm `}>
+                <span className={`${errors ? "text-red-600" : ""} text-sm`}>
                   {errors.username.message}
                 </span>
               )}
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium">
+              <label
+                htmlFor="email"
+                className={`text-sm font-medium ${
+                  errors && errors.email ? "text-red-500" : ""
+                }`}
+              >
                 Email
               </label>
               <div className="relative">
@@ -92,19 +143,28 @@ const Signup = () => {
                   {...register("email")}
                   id="email"
                   type="email"
-                  placeholder="johndoe or johndoe@gmail.com"
-                  className="pl-10"
+                  placeholder="johndoe@gmail.com"
+                  className={`pl-10 ${
+                    errors && errors.email
+                      ? "focus-visible:border-red-500 focus-visible:ring-red-500/50 focus-visible:ring-[3px]"
+                      : ""
+                  }`}
                 />
               </div>
               {errors && errors.email && (
-                <span className={`${errors ? "text-red-600" : ""} text-sm `}>
+                <span className={`${errors ? "text-red-600" : ""} text-sm`}>
                   {errors.email.message}
                 </span>
               )}
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="password" className="text-sm font-medium">
+              <label
+                htmlFor="password"
+                className={`text-sm font-medium ${
+                  errors && errors.password ? "text-red-500" : ""
+                }`}
+              >
                 Password
               </label>
               <div className="relative">
@@ -114,18 +174,27 @@ const Signup = () => {
                   id="password"
                   type="password"
                   placeholder="********"
-                  className="pl-10"
+                  className={`pl-10 ${
+                    errors && errors.password
+                      ? "focus-visible:border-red-500 focus-visible:ring-red-500/50 focus-visible:ring-[3px]"
+                      : ""
+                  }`}
                 />
               </div>
               {errors && errors.password && (
-                <span className={`${errors ? "text-red-600" : ""} text-sm `}>
+                <span className={`${errors ? "text-red-600" : ""} text-sm`}>
                   {errors.password.message}
                 </span>
               )}
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="confirmPassword" className="text-sm font-medium">
+              <label
+                htmlFor="confirmPassword"
+                className={`text-sm font-medium ${
+                  errors && errors.confirmPassword ? "text-red-500" : ""
+                }`}
+              >
                 Confirm Password
               </label>
               <div className="relative">
@@ -135,17 +204,25 @@ const Signup = () => {
                   id="confirmPassword"
                   type="password"
                   placeholder="********"
-                  className="pl-10"
+                  className={`pl-10 ${
+                    errors && errors.confirmPassword
+                      ? "focus-visible:border-red-500 focus-visible:ring-red-500/50 focus-visible:ring-[3px]"
+                      : ""
+                  }`}
                 />
               </div>
               {errors && errors.confirmPassword && (
-                <span className={`${errors ? "text-red-600" : ""} text-sm `}>
+                <span className={`${errors ? "text-red-600" : ""} text-sm`}>
                   {errors.confirmPassword.message}
                 </span>
               )}
             </div>
-            <Button type="submit" className="w-full cursor-pointer">
-              Sign up
+            <Button
+              type="submit"
+              className="w-full cursor-pointer"
+              disabled={isRegistering}
+            >
+              {isRegistering ? "Creating..." : "Sign up"}
             </Button>
           </form>
         </CardContent>
@@ -153,7 +230,11 @@ const Signup = () => {
         <Seperator />
 
         <CardFooter>
-          <Button variant="outline" className="w-full cursor-pointer">
+          <Button
+            variant="outline"
+            className="w-full cursor-pointer"
+            onClick={handleGoogleSignUp}
+          >
             <svg
               className="mr-2 h-4 w-4"
               aria-hidden="true"
@@ -174,7 +255,7 @@ const Signup = () => {
         </CardFooter>
 
         <div className="p-4 text-center text-sm">
-          Don't have an account?{" "}
+          Already have an account?{" "}
           <Link to="/auth/signin" className="text-primary hover:underline">
             Sign in
           </Link>
