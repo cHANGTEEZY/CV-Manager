@@ -1,16 +1,7 @@
-import {
-  Calendar,
-  Home,
-  Settings,
-  User,
-  Users,
-  FileText,
-  Briefcase,
-  GraduationCap,
-} from "lucide-react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/utils/supabaseClient";
 import { toast } from "sonner";
+import { FileText } from "lucide-react";
 
 import {
   Sidebar,
@@ -40,56 +31,7 @@ import {
 import { Button } from "../ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-
-const navItems = [
-  {
-    title: "Home",
-    icon: Home,
-    path: "/",
-  },
-  {
-    title: "Resumes",
-    icon: FileText,
-    path: "/resumes",
-    badge: "3",
-    subitems: [
-      { title: "All Resumes", path: "/resumes" },
-      { title: "Templates", path: "/resumes/templates" },
-      { title: "Builder", path: "/resumes/builder" },
-    ],
-  },
-  {
-    title: "Job Applications",
-    icon: Briefcase,
-    path: "/applications",
-    badge: "5",
-  },
-  {
-    title: "Education",
-    icon: GraduationCap,
-    path: "/education",
-    subitems: [
-      { title: "Degrees", path: "/education/degrees" },
-      { title: "Certifications", path: "/education/certifications" },
-      { title: "Courses", path: "/education/courses" },
-    ],
-  },
-  {
-    title: "Network",
-    icon: Users,
-    path: "/network",
-  },
-  {
-    title: "Calendar",
-    icon: Calendar,
-    path: "/calendar-events",
-  },
-  {
-    title: "Settings",
-    icon: Settings,
-    path: "/settings",
-  },
-];
+import { navItems } from "@/constants/NavItems";
 
 export function AppSidebar() {
   const signout = async () => {
