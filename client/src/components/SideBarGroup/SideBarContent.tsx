@@ -40,7 +40,6 @@ export function AppSidebar() {
   };
 
   const { user } = useAuth();
-  console.log(user);
 
   return (
     <Sidebar collapsible="icon">

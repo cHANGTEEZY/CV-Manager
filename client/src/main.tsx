@@ -6,14 +6,15 @@ import { router } from "./routes/Routes";
 import { ThemeProvider } from "./components/theme-provider";
 import { AuthProvider } from "./contexts/AuthContext";
 import { Toaster } from "./components/ui/sonner";
+import "./assets/styles/global.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <AuthProvider>
         <RouterProvider router={router} />
-        <Toaster />
+        <Toaster position="top-right" />
       </AuthProvider>
     </ThemeProvider>
-  </StrictMode>,
+  </StrictMode>
 );
