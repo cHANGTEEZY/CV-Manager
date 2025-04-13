@@ -38,10 +38,12 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
+import { useAuth } from "@/contexts/AuthContext";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 const navItems = [
   {
-    title: "Dashboard",
+    title: "Home",
     icon: Home,
     path: "/",
   },
@@ -94,6 +96,9 @@ export function AppSidebar() {
     await supabase.auth.signOut({ scope: "local" });
     toast.success("Signed out successfully!");
   };
+
+  const { user } = useAuth();
+  console.log(user);
 
   return (
     <Sidebar collapsible="icon">
@@ -150,28 +155,6 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-
-        <SidebarGroup>
-          <SidebarGroupLabel>Recent Activity</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton>
-                  <span className="text-sm text-muted-foreground">
-                    Updated resume - 2 days ago
-                  </span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton>
-                  <span className="text-sm text-muted-foreground">
-                    Applied to Google - 3 days ago
-                  </span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
       </SidebarContent>
 
       <SidebarFooter className="mb-3">
@@ -181,19 +164,30 @@ export function AppSidebar() {
               <DropdownMenu>
                 <DropdownMenuTrigger>
                   <Button
-                    className="flex py-3 items-center cursor-pointer "
+                    className="flex py-3 items-center cursor-pointer w-full "
                     variant={"ghost"}
                   >
-                    <User className="size-6 text-purple-600 dark:text-purple-200" />
-                    admin@gmail.com
+                    <Avatar>
+                      <AvatarImage src={user?.user_metadata?.avatar_url} />
+                      <AvatarFallback>CN</AvatarFallback>
+                    </Avatar>
+                    <p>{user?.user_metadata?.full_name}</p>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuLabel>My Account</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>Profile</DropdownMenuItem>
                   <DropdownMenuItem>
-                    <Button variant={"ghost"} onClick={signout}>
+                    <Button variant={"ghost"} className="w-full cursor-pointer">
+                      <Link to={"/profile"}>Profile</Link>
+                    </Button>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="bg-destructive">
+                    <Button
+                      variant={"ghost"}
+                      onClick={signout}
+                      className="text-center w-full bg-destructive cursor-pointer"
+                    >
                       Logout
                     </Button>
                   </DropdownMenuItem>

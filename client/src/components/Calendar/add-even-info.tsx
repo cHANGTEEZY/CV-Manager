@@ -30,9 +30,9 @@ const AddEventInfo = () => {
       .optional(),
   });
 
-  type EventSchema = z.infer<typeof AddEventInfo>;
+  type EventSchema = z.infer<typeof schema>;
 
-  const { register } = useForm<EventSchema>({
+  const { register, handleSubmit } = useForm<EventSchema>({
     defaultValues: {
       name: "",
       date: "",
@@ -54,16 +54,41 @@ const AddEventInfo = () => {
         <DrawerHeader>
           <DrawerTitle>Add Event</DrawerTitle>
           <DrawerDescription>
-            <form>
-              <Input
-                {...register("name")}
-                placeholder="Event Name"
-                type="text"
-              />
-              <Input placeholder="Event Date" type="date" />
-              <Input placeholder="Event Time" type="time" />
-              <Input placeholder="Event Description" type="text" />
-              <Button className="w-full">Save</Button>
+            <form
+              onSubmit={handleSubmit(submitEvent)}
+              className="space-y-2 mt-3"
+            >
+              <div>
+                <Input
+                  {...register("name")}
+                  placeholder="Event Name"
+                  type="text"
+                />
+              </div>
+              <div>
+                <Input
+                  {...register("date")}
+                  placeholder="Event Date"
+                  type="date"
+                />
+              </div>
+              <div>
+                <Input
+                  {...register("time")}
+                  placeholder="Event Time"
+                  type="time"
+                />
+              </div>
+              <div>
+                <Input
+                  {...register("description")}
+                  placeholder="Event Description"
+                  type="text"
+                />
+              </div>
+              <Button className="w-full" type="submit">
+                Save
+              </Button>
             </form>
           </DrawerDescription>
         </DrawerHeader>
