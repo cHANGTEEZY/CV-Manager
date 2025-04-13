@@ -15,6 +15,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { AuthService } from "@/services/auth";
+import { toast } from "sonner";
 
 const signUpSchema = z
   .object({
@@ -60,7 +61,10 @@ const Signup = () => {
       await AuthService.signUpWithEmail(
         data.email,
         data.password,
-        data.username
+        data.username,
+      );
+      toast.success(
+        "Account created successfully. Click the link in your email to verify your account.",
       );
       navigate("/auth/signin");
     } catch (err: any) {

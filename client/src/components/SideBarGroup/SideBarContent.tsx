@@ -9,6 +9,8 @@ import {
   GraduationCap,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { supabase } from "@/utils/supabaseClient";
+import { toast } from "sonner";
 
 import {
   Sidebar,
@@ -78,7 +80,7 @@ const navItems = [
   {
     title: "Calendar",
     icon: Calendar,
-    path: "/calendar",
+    path: "/calendar-events",
   },
   {
     title: "Settings",
@@ -88,6 +90,11 @@ const navItems = [
 ];
 
 export function AppSidebar() {
+  const signout = async () => {
+    await supabase.auth.signOut({ scope: "local" });
+    toast.success("Signed out successfully!");
+  };
+
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
@@ -100,7 +107,6 @@ export function AppSidebar() {
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
                   <span className="font-semibold">CV Manager</span>
-                  <span className="text-xs text-muted-foreground">v1.0.0</span>
                 </div>
               </Link>
             </SidebarMenuButton>
@@ -186,7 +192,11 @@ export function AppSidebar() {
                   <DropdownMenuLabel>My Account</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>Profile</DropdownMenuItem>
-                  <DropdownMenuItem>Logout</DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Button variant={"ghost"} onClick={signout}>
+                      Logout
+                    </Button>
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </SidebarMenuButton>

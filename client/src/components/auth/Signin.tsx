@@ -15,6 +15,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { AuthService } from "@/services/auth";
+import { toast } from "sonner";
 
 const signinSchema = z.object({
   email: z.string().email({
@@ -45,7 +46,7 @@ const Signin = () => {
       setError(null);
       setIsLoggingIn(true);
       await AuthService.signInWithEmail(data.email, data.password);
-      navigate("/");
+      toast.success("Logged in successfully");
     } catch (err: any) {
       setError(err.message || "Failed to sign in");
     } finally {

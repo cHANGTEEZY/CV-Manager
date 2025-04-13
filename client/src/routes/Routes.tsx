@@ -6,11 +6,10 @@ import AuthenticationLayout from "@/layouts/AuthenticationLayout";
 import RootLayout from "@/layouts/RootLayout";
 import HomePage from "@/pages/HomePage";
 import SettingPage from "@/pages/SettingPage";
-import { createBrowserRouter, Navigate } from "react-router-dom";
-
-const isAuthenticated = false;
-
-const ProtectedRoute = ({ childred }) => {};
+import EventPage from "@/pages/EventPage";
+import { createBrowserRouter } from "react-router-dom";
+import PublicRoute from "@/routes/PublicRoute";
+import ProtectedRoute from "@/routes/ProtectedRoute";
 
 export const router = createBrowserRouter([
   //* main routes
@@ -20,15 +19,30 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <HomePage />,
+        element: (
+          <ProtectedRoute>
+            <HomePage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "settings",
-        element: <SettingPage />,
+        element: (
+          <ProtectedRoute>
+            <SettingPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "calendar-events",
+        element: (
+          <ProtectedRoute>
+            <EventPage />
+          </ProtectedRoute>
+        ),
       },
     ],
   },
-
   //* auth routes
   {
     path: "/auth",
@@ -36,11 +50,19 @@ export const router = createBrowserRouter([
     children: [
       {
         path: "signin",
-        element: <Signin />,
+        element: (
+          <PublicRoute>
+            <Signin />
+          </PublicRoute>
+        ),
       },
       {
         path: "signup",
-        element: <Signup />,
+        element: (
+          <PublicRoute>
+            <Signup />
+          </PublicRoute>
+        ),
       },
       {
         path: "callback",
@@ -48,7 +70,6 @@ export const router = createBrowserRouter([
       },
     ],
   },
-
   //* error routes
   {
     path: "*",
