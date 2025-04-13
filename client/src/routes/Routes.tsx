@@ -11,6 +11,7 @@ import { createBrowserRouter } from "react-router-dom";
 import PublicRoute from "@/routes/PublicRoute";
 import ProtectedRoute from "@/routes/ProtectedRoute";
 import ProfilePage from "@/pages/ProfilePage";
+import FileUpload from "@/pages/Application/FileUpload";
 
 export const router = createBrowserRouter([
   //* main routes
@@ -47,6 +48,15 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <ProfilePage />
+          </ProtectedRoute>
+        ),
+      },
+
+      {
+        path: "application-upload",
+        element: (
+          <ProtectedRoute>
+            <FileUpload />
           </ProtectedRoute>
         ),
       },

@@ -13,6 +13,8 @@ import { Input } from "../ui/input";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Calendar } from "../ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
 const AddEventInfo = () => {
   const schema = z.object({
@@ -48,57 +50,67 @@ const AddEventInfo = () => {
   return (
     <Drawer>
       <DrawerTrigger>
-        <Button variant="outline">Add Event Manually</Button>
+        <Button variant="default" className="cursor-pointer">
+          Add Event Manually
+        </Button>
       </DrawerTrigger>
       <DrawerContent>
-        <DrawerHeader>
-          <DrawerTitle>Add Event</DrawerTitle>
-          <DrawerDescription>
-            <form
-              onSubmit={handleSubmit(submitEvent)}
-              className="space-y-2 mt-3"
-            >
-              <div>
+        <form
+          onSubmit={handleSubmit(submitEvent)}
+          className="space-y-2 mt-3 flex justify-center items-center flex-col"
+        >
+          <DrawerHeader>
+            <DrawerTitle className="text-center">Add Event</DrawerTitle>
+            <DrawerDescription className="space-y-2 mt-4">
+              <div className="w-md">
                 <Input
                   {...register("name")}
                   placeholder="Event Name"
                   type="text"
                 />
               </div>
-              <div>
-                <Input
-                  {...register("date")}
-                  placeholder="Event Date"
-                  type="date"
-                />
+
+              <div className="w-md">
+                <Popover>
+                  <PopoverTrigger className="w-full">
+                    <Input
+                      {...register("date")}
+                      placeholder="Event Date"
+                      type="text"
+                    />
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <Calendar />
+                  </PopoverContent>
+                </Popover>
               </div>
-              <div>
+              <div className="w-md">
                 <Input
                   {...register("time")}
-                  placeholder="Event Time"
+                  placeholder="Event time"
                   type="time"
                 />
               </div>
-              <div>
+              <div className="w-md">
                 <Input
                   {...register("description")}
                   placeholder="Event Description"
                   type="text"
                 />
               </div>
-              <Button className="w-full" type="submit">
-                Save
+            </DrawerDescription>
+          </DrawerHeader>
+          <DrawerFooter>
+            <DrawerClose>
+              <Button variant={"outline"} className="w-md">
+                Cancel
               </Button>
-            </form>
-          </DrawerDescription>
-        </DrawerHeader>
-        <DrawerFooter>
-          <DrawerClose>
-            <Button variant={"outline"} className="w-full">
-              Cancel
+            </DrawerClose>
+            <Button className="w-md" type="submit">
+              Save
             </Button>
-          </DrawerClose>
-        </DrawerFooter>
+          </DrawerFooter>
+        </form>
       </DrawerContent>
     </Drawer>
   );

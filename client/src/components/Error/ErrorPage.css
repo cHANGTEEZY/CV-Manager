@@ -123,7 +123,6 @@
   background-color: rgba(167, 139, 250, 0.1);
 }
 
-/* Optional dark mode support */
 @media (prefers-color-scheme: dark) {
   .error-page {
     background-color: #2e1065;
