@@ -1,24 +1,39 @@
-"use client";
-
 import type React from "react";
 
-import { CloudUpload, File, FileCheck, FileX, X } from "lucide-react";
+import { CloudUpload, File, FileCheck, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
+import { isValidFileType } from "@/utils/supportedFileType";
 
-const FileUpload = () => {
+interface FileUploadProps {
+  onFileChange: (file: File) => void;
+}
+
+const FileUpload = ({ onFileChange }: FileUploadProps) => {
   const [file, setFile] = useState<File | null>(null);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
+
+  useEffect(() => {
+    if (file) {
+      onFileChange(file);
+    }
+  }, [file, onFileChange]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
+      const selectedFile = e.target.files[0];
+      if (isValidFileType(selectedFile)) {
+        setFile(selectedFile);
+        toast.success("File uploaded");
+      } else {
+        toast.error(
+          "Invalid file type. Please upload PDF, DOC, or DOCX files only."
+        );
+      }
     }
-    toast.success("File uploaded");
   };
 
   const handleRemove = () => {
@@ -38,19 +53,20 @@ const FileUpload = () => {
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+    const droppedFile = e.dataTransfer.files[0];
+    if (
+      e.dataTransfer.files &&
+      e.dataTransfer.files[0] &&
+      isValidFileType(droppedFile)
+    ) {
       setFile(e.dataTransfer.files[0]);
+      toast.success("File uploaded");
+    } else if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      toast.error(
+        "Invalid file type. Please upload PDF, DOC, or DOCX files only."
+      );
     }
   };
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePos({ x: e.clientX, y: e.clientY });
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
 
   const formatFileSize = (bytes: number) => {
     if (bytes < 1024) return bytes + " bytes";
@@ -59,9 +75,10 @@ const FileUpload = () => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative w-full">
+      <h2 className="text-xl mb-2">Upload file</h2>
       <div
-        className={`relative border-2 ${
+        className={`relative border-2 w-full ${
           isDragging ? "border-primary bg-primary/5" : "border-dotted"
         } p-6 border-dashed h-[300px] w-full max-w-md rounded-2xl flex flex-col items-center justify-center transition-all duration-300 hover:border-primary/70`}
         onDragOver={handleDragOver}
@@ -156,7 +173,7 @@ const FileUpload = () => {
                       <motion.div
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
-                        transition={{ delay: 1, type: "spring" }}
+                        transition={{ delay: 1.2, type: "spring" }}
                       >
                         <FileCheck className="h-5 w-5 text-green-500" />
                       </motion.div>
@@ -169,7 +186,7 @@ const FileUpload = () => {
                 className="mt-4 text-center text-sm text-primary font-medium"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 1.2 }}
+                transition={{ delay: 2 }}
               >
                 File uploaded successfully!
               </motion.div>
@@ -177,36 +194,6 @@ const FileUpload = () => {
           )}
         </AnimatePresence>
       </div>
-
-      <AnimatePresence>
-        {!file ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed pointer-events-none z-50"
-            style={{
-              top: mousePos.y + 15,
-              left: mousePos.x + 15,
-            }}
-          >
-            <FileX className="text-muted-foreground h-5 w-5" />
-          </motion.div>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0 }}
-            className="fixed pointer-events-none z-50"
-            style={{
-              top: mousePos.y + 15,
-              left: mousePos.x + 15,
-            }}
-          >
-            <FileCheck className="text-green-500 h-5 w-5" />
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 };
