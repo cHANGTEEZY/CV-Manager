@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 
 import { Input } from "@/components/ui/input";
@@ -22,12 +21,15 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import FileUpload from "@/components/Application/FileUpload";
 import { applicantFormFields } from "@/constants/ApplicantForm";
+import FormSuccessMessage from "@/components/Application/FormSuccess";
+import { supabase } from "@/utils/supabaseClient";
 
 const formSchema = z.object({
   username: z.string().min(2, "Username must be at least 2 characters"),
   phoneNo: z.string().min(10, "Phone number must be at least 10 digits"),
   email: z.string().email("Please enter a valid email address"),
   references: z.string().optional(),
+  position: z.string().min(1, "Please select a position"),
   technology: z.string().min(1, "Please select a technology"),
   salary: z.string().min(1, "Please enter your salary expectation"),
   level: z.string().min(1, "Please select your experience level"),
@@ -39,7 +41,7 @@ type ApplicationFormData = z.infer<typeof formSchema>;
 export default function ApplicationForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [resumeFile, setResumeFile] = useState<File | null>(null);
+  const [resumeFile, setResumeFile] = useState<File>();
 
   const {
     register,
@@ -48,16 +50,6 @@ export default function ApplicationForm() {
     formState: { errors },
   } = useForm<ApplicationFormData>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      username: "",
-      phoneNo: "",
-      email: "",
-      references: "",
-      technology: "",
-      salary: "",
-      level: "",
-      experience: "",
-    },
   });
 
   const handleFileChange = (file: File) => {
@@ -66,32 +58,47 @@ export default function ApplicationForm() {
 
   const onSubmit = async (data: ApplicationFormData) => {
     if (!resumeFile) {
-      toast.error("Please upload your resume");
+      toast.error("Please upload the applicant's resume");
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-      // Simulate API call
-      console.log("Submitting application:", data);
-      console.log("Resume file:", {
-        name: resumeFile.name,
-        type: resumeFile.type,
-        size: `${(resumeFile.size / 1024).toFixed(2)} KB`,
-      });
+      const file_path = `applications/${Date.now()}_${resumeFile.name}`;
 
-      // Create FormData for submission
-      const formData = new FormData();
-      formData.append("file", resumeFile);
+      const { data: storageData, error: storageError } = await supabase.storage
+        .from("cv-file-storage")
+        .upload(file_path, resumeFile);
 
-      // Add all form fields to FormData
-      Object.entries(data).forEach(([key, value]) => {
-        formData.append(key, value);
-      });
+      if (storageError) {
+        console.error("Storage error:", storageError);
+        toast.error("Error uploading resume file");
+        return;
+      }
 
-      // Simulate network delay
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const applicant_file_path = storageData.path;
+
+      const { error } = await supabase.from("applicant_details").insert([
+        {
+          applicant_name: data.username,
+          applied_position: data.position,
+          applicant_status: "filled",
+          tech_stack: data.technology,
+          applicant_email: data.email,
+          applicant_phone_number: data.phoneNo,
+          applicant_experience: data.experience,
+          applicant_experience_level: data.level,
+          expected_salary: data.salary,
+          references: data.references,
+          applicant_file_path,
+        },
+      ]);
+
+      if (error) {
+        toast.error("Error uploading applicant details: " + error.message);
+        return;
+      }
 
       toast.success("Application submitted successfully!");
       setIsSubmitted(true);
@@ -105,32 +112,10 @@ export default function ApplicationForm() {
 
   if (isSubmitted) {
     return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="max-w-3xl mx-auto p-6"
-      >
-        <Card className="border-green-200 bg-green-50 dark:bg-green-950/20">
-          <CardContent className="pt-6 flex flex-col items-center text-center">
-            <CheckCircle className="h-16 w-16 text-green-500 mb-4" />
-            <h2 className="text-2xl font-bold mb-2">
-              Application Submitted Successfully!
-            </h2>
-            <p className="text-gray-600 dark:text-gray-300 mb-4">
-              Thank you for submitting your application. We will review it and
-              get back to you soon.
-            </p>
-            <Button
-              onClick={() => {
-                setIsSubmitted(false);
-                setResumeFile(null);
-              }}
-            >
-              Submit Another Application
-            </Button>
-          </CardContent>
-        </Card>
-      </motion.div>
+      <FormSuccessMessage
+        setIsSubmitted={setIsSubmitted}
+        setResumeFile={setResumeFile}
+      />
     );
   }
 
@@ -242,7 +227,7 @@ export default function ApplicationForm() {
             </CardContent>
           </Card>
 
-          <div className="flex justify-end">
+          <div className="flex justify-end mt-3">
             <Button
               type="submit"
               size="lg"

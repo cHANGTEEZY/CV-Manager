@@ -12,9 +12,8 @@ export const navItems = [
     path: "/resumes",
     badge: "3",
     subitems: [
-      { title: "All Resumes", path: "/resumes" },
-      { title: "Upload Application", path: "/application-upload" },
-      { title: "Application Status", path: "/application-status" },
+      { title: "Upload Applications", path: "/application-upload" },
+      { title: "Review Applications", path: "/application-review" },
     ],
   },
 
@@ -27,10 +26,7 @@ export const navItems = [
     title: "Events",
     icon: Calendar,
     path: "/calendar-events",
-    subitems: [
-      { title: "All Events", path: "/events/all-events" },
-      { title: "Create Event", path: "/events/create-event" },
-    ],
+    subitems: [{ title: "Create Event", path: "/events/create-event" }],
   },
   {
     title: "Settings",
