@@ -1,4 +1,4 @@
-import { Calendar, Home, Settings, FileText, Mail } from "lucide-react";
+import { Calendar, Home, Settings, FileText, Mail, Eye } from "lucide-react";
 
 export const navItems = [
   {
@@ -21,12 +21,24 @@ export const navItems = [
     title: "Draft",
     icon: Mail,
     path: "/Draft",
+    subitems: [
+      {
+        title: "Create Draft",
+        path: "/draft/create-draft",
+      },
+    ],
   },
   {
     title: "Events",
     icon: Calendar,
     path: "/calendar-events",
     subitems: [{ title: "Create Event", path: "/events/create-event" }],
+  },
+  {
+    title: "Results",
+    icon: Eye,
+    path: "/results",
+    subitems: [{ title: "Update Result", path: "/events/update-result" }],
   },
   {
     title: "Settings",
