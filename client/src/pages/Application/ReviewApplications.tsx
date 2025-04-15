@@ -1,5 +1,11 @@
+import ApplicationTable from "@/components/Application/ApplicationTable";
+
 const ReviewApplications = () => {
-  return <div>Review Applications</div>;
+  return (
+    <section className="ml-5">
+      <ApplicationTable />
+    </section>
+  );
 };
 
 export default ReviewApplications;
