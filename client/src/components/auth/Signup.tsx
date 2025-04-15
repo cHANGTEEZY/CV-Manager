@@ -11,35 +11,11 @@ import { LockIcon, MailIcon, User } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import Seperator from "./Seperator";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { AuthService } from "@/services/auth";
 import { toast } from "sonner";
-
-const signUpSchema = z
-  .object({
-    username: z
-      .string()
-      .min(5, {
-        message: "Username must be minimum length of 5 characters",
-      })
-      .toLowerCase(),
-    email: z.string().email({ message: "Enter a valid email" }).toLowerCase(),
-    password: z
-      .string()
-      .min(5, { message: "Password must be between 5-20 characters long" })
-      .max(20, { message: "Password must be between 5-20 characters long" }),
-    confirmPassword: z.string().min(1, {
-      message: "Confirm password is required",
-    }),
-  })
-  .refine((data) => data.confirmPassword === data.password, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
-
-type SignUpSchemaProps = z.infer<typeof signUpSchema>;
+import { SignUpSchemaProps, signUpSchema } from "@/schemas/authSchema";
 
 const Signup = () => {
   const navigate = useNavigate();

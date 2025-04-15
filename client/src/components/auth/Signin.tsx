@@ -10,26 +10,14 @@ import { Button } from "@/components/ui/button";
 import { LockIcon, MailIcon } from "lucide-react";
 import Seperator from "./Seperator";
 import { Link, useNavigate } from "react-router-dom";
-import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { AuthService } from "@/services/auth";
 import { toast } from "sonner";
-
-const signinSchema = z.object({
-  email: z.string().email({
-    message: "Please enter a valid email address",
-  }),
-  password: z.string().min(1, {
-    message: "Password is required",
-  }),
-});
-
-type SigninSchemaProps = z.infer<typeof signinSchema>;
+import { signinSchema, SigninSchemaProps } from "@/schemas/authSchema";
 
 const Signin = () => {
-  const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 

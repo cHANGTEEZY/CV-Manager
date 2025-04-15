@@ -6,7 +6,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { tableData } from "@/constants/TableData";
 import { ArrowUpDown, Search } from "lucide-react";
 
 import {
@@ -23,19 +22,7 @@ import {
 import { useState, useMemo } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-
-type tableDefinition = {
-  applicant_name: string;
-  applied_position: string;
-  applicant_status: string;
-  tech_stack: string;
-  applicant_email: string;
-  applicant_phone_number: string;
-  applicant_experience: string;
-  applicant_experience_level: string;
-  expected_salary: string;
-  references: string;
-};
+import { tableDefinition } from "@/schemas/tableDefinition";
 
 const columnHelper = createColumnHelper<tableDefinition>();
 
@@ -43,11 +30,11 @@ const globalFilterFn: FilterFn<any> = (row, columnId, filterValue) => {
   const searchTerm = filterValue.toLowerCase();
 
   return Object.values(row.original).some(
-    (value) => value && value.toString().toLowerCase().includes(searchTerm)
+    (value) => value && value.toString().toLowerCase().includes(searchTerm),
   );
 };
 
-const ApplicationTable = () => {
+const ApplicationTable = ({ tableData }) => {
   const [data, setData] = useState(tableData);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
@@ -131,7 +118,19 @@ const ApplicationTable = () => {
         cell: (info) => <p>{info.getValue()}</p>,
       }),
       columnHelper.accessor("applicant_experience_level", {
-        header: "Experience Level",
+        header: ({ column }) => {
+          return (
+            <div
+              className="flex items-center gap-1 cursor-pointer"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              Experience Level
+              <ArrowUpDown className="ml-1 h-4 w-4" />
+            </div>
+          );
+        },
         cell: (info) => <p>{info.getValue()}</p>,
       }),
       columnHelper.accessor("expected_salary", {
@@ -155,7 +154,7 @@ const ApplicationTable = () => {
         cell: (info) => <p>{info.getValue()}</p>,
       }),
     ],
-    []
+    [],
   );
 
   const table = useReactTable({
@@ -197,7 +196,7 @@ const ApplicationTable = () => {
                 >
                   {flexRender(
                     header.column.columnDef.header,
-                    header.getContext()
+                    header.getContext(),
                   )}
                 </TableHead>
               ))}

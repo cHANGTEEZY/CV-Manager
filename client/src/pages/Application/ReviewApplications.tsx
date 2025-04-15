@@ -1,9 +1,17 @@
 import ApplicationTable from "@/components/Application/ApplicationTable";
+import Spinner from "@/components/Loading/Spinner";
+import useTableData from "@/hooks/use-table-data";
 
 const ReviewApplications = () => {
+  const data = useTableData();
+
+  if (!data) {
+    return <Spinner />;
+  }
+
   return (
-    <section className="ml-5">
-      <ApplicationTable />
+    <section className="m-5 overflow-hidden">
+      <ApplicationTable tableData={data} />
     </section>
   );
 };
