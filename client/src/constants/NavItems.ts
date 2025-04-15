@@ -14,6 +14,7 @@ export const navItems = [
     subitems: [
       { title: "Upload Applications", path: "/application-upload" },
       { title: "Review Applications", path: "/application-review" },
+      { title: "Track Applications", path: "/application-tracking" },
     ],
   },
 
@@ -32,7 +33,10 @@ export const navItems = [
     title: "Events",
     icon: Calendar,
     path: "/calendar-events",
-    subitems: [{ title: "Create Event", path: "/events/create-event" }],
+    subitems: [
+      { title: "Interview Scheduling", path: "/events/create-event" },
+      { title: "Assessment Uploader", path: "/events/assessment-uploader" },
+    ],
   },
   {
     title: "Results",

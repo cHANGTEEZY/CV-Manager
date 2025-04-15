@@ -12,6 +12,7 @@ import PublicRoute from "@/routes/PublicRoute";
 import ProtectedRoute from "@/routes/ProtectedRoute";
 import ProfilePage from "@/pages/ProfilePage";
 import ApplicationUpload from "@/pages/Application/ApplicationUpload";
+import TrackApplications from "@/pages/Application/TrackApplications";
 
 export const router = createBrowserRouter([
   //* main routes
@@ -57,6 +58,14 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <ApplicationUpload />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "application-tracking",
+        element: (
+          <ProtectedRoute>
+            <TrackApplications />
           </ProtectedRoute>
         ),
       },
