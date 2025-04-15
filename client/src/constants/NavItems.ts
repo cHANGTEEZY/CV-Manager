@@ -2,7 +2,7 @@ import { Calendar, Home, Settings, FileText, Mail, Eye } from "lucide-react";
 
 export const navItems = [
   {
-    title: "Home",
+    title: "Dashboard",
     icon: Home,
     path: "/",
   },

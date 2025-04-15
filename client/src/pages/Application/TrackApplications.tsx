@@ -14,6 +14,7 @@ interface TasksState {
 interface TaskProps {
   id: string;
   content: string;
+  className?: string;
 }
 
 interface ColumnProps {
@@ -61,7 +62,7 @@ const initialTasks: TasksState = {
   ],
 };
 
-function Task({ classname, id, content }: TaskProps) {
+function Task({ id, content, className = "" }: TaskProps) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id,
     data: { content },
@@ -70,6 +71,7 @@ function Task({ classname, id, content }: TaskProps) {
   const style = transform
     ? {
         transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+        zIndex: 10,
       }
     : undefined;
 
@@ -79,7 +81,7 @@ function Task({ classname, id, content }: TaskProps) {
       style={style}
       {...listeners}
       {...attributes}
-      className={`p-3 mb-2  cursor-pointer ${classname} `}
+      className={`p-3 mb-2 cursor-pointer ${className}`}
     >
       {content}
     </Card>
@@ -94,12 +96,12 @@ function Column({ id, title, tasks }: ColumnProps) {
   return (
     <Card
       ref={setNodeRef}
-      className={`w-full p-5 ${
-        title === "Rejected" ? "border-red-400" : ""
-      }  flex flex-col ${isOver ? " border-blue-300" : ""}`}
+      className={`w-full p-5 mb-4 ${
+        title === "Rejected List" ? "border-red-400" : ""
+      } flex flex-col ${isOver ? "border-blue-300" : ""}`}
     >
-      <CardHeader className="p-0 font-bold text-lg m-0 ">{title}</CardHeader>
-      <CardDescription>
+      <CardHeader className="p-0 font-bold text-lg m-0">{title}</CardHeader>
+      <CardDescription className="mt-2">
         {tasks.map((task) => (
           <Task key={task.id} id={task.id} content={task.content} />
         ))}
@@ -118,7 +120,7 @@ export default function KanbanBoard() {
 
     const taskId = active.id;
     const sourceColumn = Object.keys(tasks).find((columnId) =>
-      tasks[columnId].some((task) => task.id === taskId)
+      tasks[columnId].some((task) => task.id === taskId),
     );
     const destinationColumn = over.id;
 
@@ -136,7 +138,7 @@ export default function KanbanBoard() {
 
       // Remove from source column
       const newSourceColumn = prev[sourceColumn].filter(
-        (task) => task.id !== taskId
+        (task) => task.id !== taskId,
       );
 
       // Add to destination column
@@ -156,41 +158,61 @@ export default function KanbanBoard() {
         <h1 className="text-2xl font-bold mb-6">
           Applicant Progress Management Board
         </h1>
-        <h3>Applicants List</h3>
-        <Column
-          id="Applicant List"
-          title="Applicants"
-          tasks={tasks["Applicant-List"]}
-        />
 
-        <h3>Assessment Management</h3>
-        <Column
-          id="assignment-1"
-          title="Assessment 1"
-          tasks={tasks.Assessment1}
-        />
-        <Column
-          id="assignment-2"
-          title="Assessment 2"
-          tasks={tasks.Assessment2}
-        />
+        <div className="mb-8">
+          <h2 className="text-xl font-semibold mb-4">Applicants List</h2>
+          <Column
+            id="Applicant-List"
+            title="Applicants"
+            tasks={tasks["Applicant-List"]}
+          />
+        </div>
 
-        <h3>Interview Management</h3>
-        <Column
-          id="Final-interview"
-          title="Final Interview"
-          tasks={tasks["Final-interview"]}
-        />
-        <Column
-          id="technical-interview"
-          title="Technical Interview"
-          tasks={tasks["technical-interview"]}
-        />
+        <div className="mb-8">
+          <h2 className="text-xl font-semibold mb-4">Assessment Management</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Column
+              id="Assessment1"
+              title="Assessment 1"
+              tasks={tasks["Assessment1"]}
+            />
+            <Column
+              id="Assessment2"
+              title="Assessment 2"
+              tasks={tasks["Assessment2"]}
+            />
+          </div>
+        </div>
 
-        <Column id="Offer" title="Offer" tasks={tasks.Offer} />
+        <div className="mb-8">
+          <h2 className="text-xl font-semibold mb-4">Interview Management</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Column
+              id="Final-interview"
+              title="Final Interview"
+              tasks={tasks["Final-interview"]}
+            />
+            <Column
+              id="technical-interview"
+              title="Technical Interview"
+              tasks={tasks["technical-interview"]}
+            />
+          </div>
+        </div>
 
-        <h3>Rejection Management</h3>
-        <Column id="Rejected" title="Rejected List" tasks={tasks.Rejected} />
+        <div className="mb-8">
+          <h2 className="text-xl font-semibold mb-4">Offer Management</h2>
+          <Column id="Offer" title="Offer" tasks={tasks["Offer"]} />
+        </div>
+
+        <div className="mb-8">
+          <h2 className="text-xl font-semibold mb-4">Rejection Management</h2>
+          <Column
+            id="Rejected"
+            title="Rejected List"
+            tasks={tasks["Rejected"]}
+          />
+        </div>
       </section>
     </DndContext>
   );
