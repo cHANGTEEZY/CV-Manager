@@ -1,3 +1,4 @@
+import { useState, useMemo } from "react";
 import {
   Table,
   TableBody,
@@ -6,8 +7,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ArrowUpDown, Search } from "lucide-react";
-
 import {
   useReactTable,
   getCoreRowModel,
@@ -19,7 +18,7 @@ import {
   FilterFn,
   getFilteredRowModel,
 } from "@tanstack/react-table";
-import { useState, useMemo } from "react";
+import { ArrowUpDown, Search } from "lucide-react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { tableDefinition } from "@/schemas/tableDefinition";
@@ -230,11 +229,7 @@ const ApplicationTable = ({ tableData }) => {
       </Table>
 
       <div className="flex items-center justify-between">
-        <div className="text-sm text-gray-500">
-          Page {table.getState().pagination.pageIndex + 1} of{" "}
-          {table.getPageCount()}
-        </div>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 sticky left-0">
           <Button
             variant="outline"
             size="sm"
@@ -251,6 +246,11 @@ const ApplicationTable = ({ tableData }) => {
           >
             Next
           </Button>
+        </div>
+
+        <div className="text-sm text-gray-500">
+          Page {table.getState().pagination.pageIndex + 1} of{" "}
+          {table.getPageCount()}
         </div>
       </div>
     </div>

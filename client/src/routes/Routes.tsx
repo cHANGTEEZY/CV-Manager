@@ -11,9 +11,11 @@ import { createBrowserRouter } from "react-router-dom";
 import PublicRoute from "@/routes/PublicRoute";
 import ProtectedRoute from "@/routes/ProtectedRoute";
 import ProfilePage from "@/pages/ProfilePage";
+import Applications from "@/pages/Application/Applications";
 import ApplicationUpload from "@/pages/Application/ApplicationUpload";
 import TrackApplications from "@/pages/Application/TrackApplications";
 import ReviewApplications from "@/pages/Application/ReviewApplications";
+import Email from "@/pages/Email/Email";
 
 export const router = createBrowserRouter([
   //* main routes
@@ -55,6 +57,15 @@ export const router = createBrowserRouter([
       },
 
       {
+        path: "applications",
+        element: (
+          <ProtectedRoute>
+            <Applications />
+          </ProtectedRoute>
+        ),
+      },
+
+      {
         path: "application-upload",
         element: (
           <ProtectedRoute>
@@ -75,6 +86,16 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <ReviewApplications />
+          </ProtectedRoute>
+        ),
+      },
+
+      //email
+      {
+        path: "mail",
+        element: (
+          <ProtectedRoute>
+            <Email />
           </ProtectedRoute>
         ),
       },

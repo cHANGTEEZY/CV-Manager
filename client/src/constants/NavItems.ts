@@ -9,7 +9,7 @@ export const navItems = [
   {
     title: "Applications",
     icon: FileText,
-    path: "/resumes",
+    path: "/applications",
     badge: "3",
     subitems: [
       { title: "Upload Applications", path: "/application-upload" },
@@ -21,11 +21,11 @@ export const navItems = [
   {
     title: "Draft",
     icon: Mail,
-    path: "/Draft",
+    path: "/mail",
     subitems: [
       {
         title: "Create Draft",
-        path: "/draft/create-draft",
+        path: "/mail/create-draft",
       },
     ],
   },

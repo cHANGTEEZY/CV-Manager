@@ -131,7 +131,7 @@ export default function ApplicationForm() {
           animate={{ opacity: 1, y: 0 }}
           className="font-bold text-3xl"
         >
-          Job Application
+          Upload Application
         </motion.h1>
         <motion.p
           initial={{ opacity: 0, y: -5 }}
@@ -205,7 +205,7 @@ export default function ApplicationForm() {
                       <div>
                         <Input
                           {...register(
-                            field.htmlFor as keyof ApplicationFormData
+                            field.htmlFor as keyof ApplicationFormData,
                           )}
                           id={field.id}
                           type={field.type}

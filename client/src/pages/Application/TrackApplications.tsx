@@ -155,7 +155,7 @@ export default function KanbanBoard() {
   return (
     <DndContext onDragEnd={handleDragEnd}>
       <section className="m-6">
-        <h1 className="text-2xl font-bold mb-6">
+        <h1 className="text-3xl font-bold mb-6">
           Applicant Progress Management Board
         </h1>
 
@@ -188,14 +188,14 @@ export default function KanbanBoard() {
           <h2 className="text-xl font-semibold mb-4">Interview Management</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Column
-              id="Final-interview"
-              title="Final Interview"
-              tasks={tasks["Final-interview"]}
-            />
-            <Column
               id="technical-interview"
               title="Technical Interview"
               tasks={tasks["technical-interview"]}
+            />
+            <Column
+              id="Final-interview"
+              title="Final Interview"
+              tasks={tasks["Final-interview"]}
             />
           </div>
         </div>
