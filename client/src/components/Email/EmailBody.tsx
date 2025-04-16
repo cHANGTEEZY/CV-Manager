@@ -1,6 +1,6 @@
-import { Pi, Send, X } from "lucide-react";
+import { Send, X } from "lucide-react";
 import { Avatar, AvatarFallback } from "../ui/avatar";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardDescription, CardFooter, CardHeader } from "../ui/card";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
@@ -17,6 +17,7 @@ import {
   RejectionMail,
   AssignmentMail,
 } from "@/constants/EmailDraft";
+import { Textarea } from "../ui/textarea";
 
 const emailTemplates = {
   SuccessMail,
@@ -47,6 +48,21 @@ const EmailBody = () => {
   const [recepients, setRecepients] = useState(data);
   const [emailType, setEmailType] = useState("SuccessMail");
   const [subject, setSubject] = useState("");
+  const [message, setMessage] = useState({
+    header: "",
+    body: "",
+    footer: "",
+  });
+  const [sendingMessage, setSendingMessage] = useState(false);
+
+  useEffect(() => {
+    const selected = emailTemplates[emailType];
+    setMessage({
+      header: selected.header,
+      body: selected.body,
+      footer: selected.footer,
+    });
+  }, [emailType]);
 
   const handleRemoveApplicant = (email: string) => {
     setRecepients((prev) => prev.filter((r) => r.email !== email));
@@ -60,16 +76,35 @@ const EmailBody = () => {
     setSubject(newValue);
   };
 
-  const mailValueChange = (value: string) => {
-    setEmailType(value);
+  const handleMessageChange = (field: string, value: string) => {
+    setMessage((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
   };
 
-  const selectedTemplate = emailTemplates[emailType];
+  const sendEmail = () => {
+    if (!subject.trim()) {
+      return toast.error("Please add a subject");
+    }
+    if (recepients.length === 0) {
+      return toast.error("No recipients selected");
+    }
+    setSendingMessage(true);
+
+    new Promise((resolve) => setTimeout(resolve, 2000));
+
+    console.log("Sending email to:", recepients);
+    console.log("Subject:", subject);
+    console.log("Message:", message);
+    setSendingMessage(false);
+    toast.success("Emails sent successfully!");
+  };
 
   return (
-    <div className="w-full  mx-auto">
+    <div className="w-full mx-auto">
       <div className="w-[750px] flex justify-end mb-2">
-        <Select onValueChange={mailValueChange} value={emailType}>
+        <Select onValueChange={setEmailType} value={emailType}>
           <SelectTrigger>
             <SelectValue />
           </SelectTrigger>
@@ -102,7 +137,7 @@ const EmailBody = () => {
                   </Avatar>
                   <p className="text-xs">{recepient.email}</p>
                   <button
-                    className="p-0.5 rounded-full hover:bg-muted/80 transition-colors"
+                    className="p-0.5 cursor-pointer rounded-full hover:bg-muted/80 transition-colors"
                     onClick={() => handleRemoveApplicant(recepient.email)}
                   >
                     <X size={12} />
@@ -119,40 +154,47 @@ const EmailBody = () => {
               </button>
             </div>
           </div>
-          <div className="flex flex-col items-center sm:flex-row  sm:items-start gap-2 pb-5 border-b">
-            <p className="text-sm font-medium w-[70px]">Subject:</p>
 
+          <div className="flex flex-col items-center sm:flex-row sm:items-start gap-2 pb-5 border-b">
+            <p className="text-sm font-medium w-[70px]">Subject:</p>
             <Input
               type="text"
               value={subject}
               onChange={handleSubjectChange}
               placeholder="Subject"
-              className="w-full bg-transparent text-sm  focus:outline-none border-b border-transparent focus:border-primary/30 transition-colors"
+              className="w-full bg-transparent text-sm focus:outline-none border-b border-transparent focus:border-primary/30 transition-colors"
             />
-
-            <span className="text-slate-400 text-sm">200/{subject.length}</span>
+            <span className="text-slate-400 text-sm">{subject.length}/200</span>
           </div>
         </CardHeader>
+
         <CardDescription>
           <div className="space-y-4">
-            {selectedTemplate ? (
-              <>
-                <h1 className="font-semibold">{selectedTemplate.header}</h1>
-                <p className="whitespace-pre-line">{selectedTemplate.body}</p>
-                <p className="mt-4 whitespace-pre-line text-sm text-muted-foreground">
-                  {selectedTemplate.footer}
-                </p>
-              </>
-            ) : (
-              <p className="text-sm text-muted-foreground">
-                Please select an email type to preview the message.
-              </p>
-            )}
+            <Input
+              type="text"
+              value={message.header}
+              onChange={(e) => handleMessageChange("header", e.target.value)}
+              className="font-semibold"
+              placeholder="Header"
+            />
+            <Textarea
+              value={message.body}
+              onChange={(e) => handleMessageChange("body", e.target.value)}
+              className="whitespace-pre-line"
+              placeholder="Body"
+            />
+            <Textarea
+              value={message.footer}
+              onChange={(e) => handleMessageChange("footer", e.target.value)}
+              className="mt-4 whitespace-pre-line text-sm text-muted-foreground"
+              placeholder="Footer"
+            />
           </div>
         </CardDescription>
-        <CardFooter className="border-t p-0 flex justify-end">
-          <Button>
-            Send <Send />
+
+        <CardFooter className="border-t p-0 flex justify-end mt-6 pt-6">
+          <Button onClick={sendEmail} disabled={sendingMessage}>
+            {!sendingMessage ? `Send ${(<Send />)}` : "Sending..."}
           </Button>
         </CardFooter>
       </Card>
