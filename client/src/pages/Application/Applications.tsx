@@ -2,13 +2,14 @@ import ApplicationTable from "@/components/Application/ApplicationTable";
 import Spinner from "@/components/Loading/Spinner";
 import useTableData from "@/hooks/use-table-data";
 import { motion } from "framer-motion";
+import { tableData } from "@/constants/TableData";
 
 const Applications = () => {
-  const data = useTableData();
+  // const data = useTableData();
 
-  if (!data) {
-    return <Spinner />;
-  }
+  // if (!data) {
+  //   return <Spinner />;
+  // }
 
   return (
     <section className="m-5 overflow-hidden ">
@@ -26,7 +27,7 @@ const Applications = () => {
           delay: 0.2,
         }}
       >
-        <ApplicationTable tableData={data} />
+        <ApplicationTable tableData={tableData} />
       </motion.div>
     </section>
   );

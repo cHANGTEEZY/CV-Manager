@@ -20,10 +20,7 @@ import {
 } from "@/constants/EmailDraft";
 import { Textarea } from "../ui/textarea";
 import FileUpload from "../Application/FileUpload";
-import { Resend } from "resend";
 import { AnimatePresence, motion } from "framer-motion";
-import EmailTemplate from "@/components/Email/EmailTemplate";
-import Email from "@/pages/Email/Email";
 
 const emailTemplates = {
   SuccessMail,
@@ -97,8 +94,6 @@ const EmailBody = () => {
     setFile(file);
   };
 
-  const resend = new Resend(import.meta.env.VITE_RESEND_API_KEY);
-
   const sendEmail = async () => {
     if (!subject.trim()) {
       return toast.error("Please add a subject");
@@ -112,14 +107,6 @@ const EmailBody = () => {
     }
 
     setSendingMessage(true);
-
-    // await new Promise((resolve) => setTimeout(resolve, 2000));
-    await resend.emails.send({
-      from: "onboarding@resend.dev",
-      to: "jagatgurung30@gmail.com",
-      subject: "hello world",
-      react: EmailTemplate(),
-    });
 
     console.log("Sending email to:", recepients);
     console.log("Subject:", subject);

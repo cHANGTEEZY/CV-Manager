@@ -1,4 +1,6 @@
-import { useState } from "react";
+"use client";
+
+import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -15,97 +17,158 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-
-const eventsData = {
-  "2025-04-13": [
-    {
-      id: 1,
-      title: "Team Meeting",
-      time: "09:00 AM",
-      location: "Conference Room A",
-    },
-    {
-      id: 2,
-      title: "Lunch with Client",
-      time: "12:30 PM",
-      location: "Downtown Cafe",
-    },
-  ],
-  "2025-04-14": [
-    { id: 3, title: "Project Deadline", time: "05:00 PM", location: "Office" },
-  ],
-  "2025-04-15": [
-    {
-      id: 4,
-      title: "Birthday Party",
-      time: "07:00 PM",
-      location: "Rooftop Bar",
-    },
-    {
-      id: 5,
-      title: "Doctor Appointment",
-      time: "10:30 AM",
-      location: "Medical Center",
-    },
-  ],
-};
+import { Separator } from "@/components/ui/separator";
+import { supabase } from "@/utils/supabaseClient";
+import { toast } from "sonner";
 
 type EventProps = {
   id: number;
-  title: string;
-  time: string;
-  location: string;
+  event_name: string;
+  event_date_time: string;
+  event_description: string;
+  applicant_email: string;
+  interviewer_name: string;
+  applicant_details?: {
+    applicant_name: string;
+    applied_position: string;
+  };
 };
 
 export function DateEvents() {
   const [date, setDate] = useState<Date>(new Date());
+  const [events, setEvents] = useState<EventProps[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
   const formattedDate = format(date, "yyyy-MM-dd");
-  const events = eventsData[formattedDate] || [];
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      setIsLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from("events")
+          .select(
+            `
+            id,
+            event_name,
+            event_date_time,
+            event_description,
+            applicant_email,
+            interviewer_name,
+            applicant_details:applicant_email(applicant_name, applied_position)
+          `
+          )
+          .filter("event_date_time", "gte", `${formattedDate}T00:00:00`)
+          .filter("event_date_time", "lte", `${formattedDate}T23:59:59`)
+          .order("event_date_time", { ascending: true });
+
+        if (error) {
+          throw error;
+        }
+
+        setEvents(data || []);
+      } catch (error) {
+        console.error("Error fetching events:", error);
+        toast.error("Failed to load events");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, [formattedDate]);
+
+  const formatEventTime = (dateTimeString: string): string => {
+    const date = new Date(dateTimeString);
+    return format(date, "h:mm a");
+  };
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle>{format(date, "EEEE, MMMM d, yyyy")}</CardTitle>
-            <CardDescription>View and manage your events</CardDescription>
+    <div>
+      <h2 className="text-xl font-semibold mb-4">View Events</h2>
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>{format(date, "EEEE, MMMM d, yyyy")}</CardTitle>
+              <CardDescription>View and manage your events</CardDescription>
+            </div>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className="h-10 w-10 p-0">
+                  <CalendarIcon className="h-4 w-4" />
+                  <span className="sr-only">Open calendar</span>
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="end">
+                <Calendar
+                  mode="single"
+                  selected={date}
+                  onSelect={(newDate: Date) => newDate && setDate(newDate)}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
           </div>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" className="h-10 w-10 p-0">
-                <CalendarIcon className="h-4 w-4" />
-                <span className="sr-only">Open calendar</span>
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="end">
-              <Calendar
-                mode="single"
-                selected={date}
-                onSelect={(newDate: Date) => newDate && setDate(newDate)}
-                initialFocus
-              />
-            </PopoverContent>
-          </Popover>
-        </div>
-      </CardHeader>
-      <CardContent>
-        {events.length > 0 ? (
-          <div className="space-y-4">
-            {events.map((event: EventProps) => (
-              <div key={event.id} className="border rounded-lg p-4">
-                <div className="font-medium">{event.title}</div>
-                <div className="text-sm text-muted-foreground mt-1">
-                  {event.time} • {event.location}
+        </CardHeader>
+        <Separator />
+        <CardContent className="pt-4">
+          {isLoading ? (
+            <div className="text-center py-6 text-muted-foreground">
+              Loading events...
+            </div>
+          ) : events.length > 0 ? (
+            <div className="space-y-4">
+              {events.map((event) => (
+                <div key={event.id} className="border rounded-lg p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="font-medium text-lg">
+                      {event.event_name}
+                    </div>
+                    <div className="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+                      {formatEventTime(event.event_date_time)}
+                    </div>
+                  </div>
+
+                  <div className="mt-2">
+                    <p className="text-sm text-muted-foreground">
+                      {event.event_description}
+                    </p>
+                  </div>
+
+                  <div className="mt-3 pt-3 border-t border-gray-100">
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <p className="text-xs text-muted-foreground">
+                          Candidate
+                        </p>
+                        <p className="text-sm font-medium">
+                          {event.applicant_details?.applicant_name || "N/A"}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {event.applicant_details?.applied_position || ""}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">
+                          Interviewer
+                        </p>
+                        <p className="text-sm font-medium">
+                          {event.interviewer_name}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-6 text-muted-foreground">
-            No events scheduled for this day
-          </div>
-        )}
-      </CardContent>
-    </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-6 text-muted-foreground">
+              No events scheduled for this day
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
   );
 }

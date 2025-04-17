@@ -150,7 +150,7 @@ export default function ApplicationForm() {
           animate={{ opacity: 1, x: 0, transition: { delay: 0.2 } }}
           className="flex justify-center items-start"
         >
-          <FileUpload onFileChange={handleFileChange} />
+          <FileUpload onFileChange={handleFileChange} showButton={false} />
         </motion.div>
 
         <motion.form
@@ -205,7 +205,7 @@ export default function ApplicationForm() {
                       <div>
                         <Input
                           {...register(
-                            field.htmlFor as keyof ApplicationFormData,
+                            field.htmlFor as keyof ApplicationFormData
                           )}
                           id={field.id}
                           type={field.type}

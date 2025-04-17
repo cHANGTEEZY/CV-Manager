@@ -19,17 +19,6 @@ export const navItems = [
   },
 
   {
-    title: "Draft",
-    icon: Mail,
-    path: "/mail",
-    subitems: [
-      {
-        title: "Create Draft",
-        path: "/mail/template",
-      },
-    ],
-  },
-  {
     title: "Events",
     icon: Calendar,
     path: "/calendar-events",
@@ -38,15 +27,16 @@ export const navItems = [
       { title: "Assessment Uploader", path: "/events/assessment-uploader" },
     ],
   },
+
   {
-    title: "Results",
-    icon: Eye,
-    path: "/results",
-    subitems: [{ title: "Update Result", path: "/events/update-result" }],
-  },
-  {
-    title: "Settings",
-    icon: Settings,
-    path: "/settings",
+    title: "Draft",
+    icon: Mail,
+    path: "/mail",
+    // subitems: [
+    //   {
+    //     title: "Create Draft",
+    //     path: "/mail/template",
+    //   },
+    // ],
   },
 ];
