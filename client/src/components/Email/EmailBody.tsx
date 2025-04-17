@@ -19,8 +19,11 @@ import {
   AssignmentMail,
 } from "@/constants/EmailDraft";
 import { Textarea } from "../ui/textarea";
-import EmailControls from "./EmailControls";
 import FileUpload from "../Application/FileUpload";
+import { Resend } from "resend";
+import { AnimatePresence, motion } from "framer-motion";
+import EmailTemplate from "@/components/Email/EmailTemplate";
+import Email from "@/pages/Email/Email";
 
 const emailTemplates = {
   SuccessMail,
@@ -52,6 +55,8 @@ const EmailBody = () => {
   const [emailType, setEmailType] = useState("SuccessMail");
   const [subject, setSubject] = useState("");
   const [toggleFileDrop, setToggleFileDrop] = useState(false);
+  const [file, setFile] = useState();
+  console.log(file);
   console.log(toggleFileDrop);
   const [message, setMessage] = useState({
     header: "",
@@ -88,6 +93,12 @@ const EmailBody = () => {
     }));
   };
 
+  const handleFileChange = (file) => {
+    setFile(file);
+  };
+
+  const resend = new Resend(import.meta.env.VITE_RESEND_API_KEY);
+
   const sendEmail = async () => {
     if (!subject.trim()) {
       return toast.error("Please add a subject");
@@ -95,15 +106,27 @@ const EmailBody = () => {
     if (recepients.length === 0) {
       return toast.error("No recipients selected");
     }
+
+    if (toggleFileDrop && !file) {
+      return toast.error("You have not uploaded file");
+    }
+
     setSendingMessage(true);
 
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    // await new Promise((resolve) => setTimeout(resolve, 2000));
+    await resend.emails.send({
+      from: "onboarding@resend.dev",
+      to: "jagatgurung30@gmail.com",
+      subject: "hello world",
+      react: EmailTemplate(),
+    });
 
     console.log("Sending email to:", recepients);
     console.log("Subject:", subject);
     console.log("Message:", message);
     setSendingMessage(false);
     toast.success("Emails sent successfully!");
+    setSubject("");
   };
 
   return (
@@ -123,7 +146,12 @@ const EmailBody = () => {
         </div>
         <Card className="w-full max-w-[750px] px-5 py-10">
           <CardHeader className="space-y-4 p-0">
-            <div className="flex items-center flex-col sm:flex-row border-b pb-3">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.2 }}
+              className="flex items-center flex-col sm:flex-row border-b pb-3"
+            >
               <div className="flex items-center mb-2 sm:mb-0">
                 <p className="mr-4 text-sm font-medium">To:</p>
               </div>
@@ -159,7 +187,7 @@ const EmailBody = () => {
                   Bcc
                 </button>
               </div>
-            </div>
+            </motion.div>
 
             <div className="flex flex-col items-center sm:flex-row sm:items-start gap-2 pb-5 border-b">
               <p className="text-sm font-medium w-[70px]">Subject:</p>
@@ -176,7 +204,12 @@ const EmailBody = () => {
             </div>
           </CardHeader>
           <CardDescription>
-            <div className="space-y-4">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2 }}
+              className="space-y-4"
+            >
               <Input
                 type="text"
                 value={message.header}
@@ -196,29 +229,85 @@ const EmailBody = () => {
                 className="mt-4 whitespace-pre-line text-sm text-muted-foreground"
                 placeholder="Footer"
               />
-            </div>
+            </motion.div>
           </CardDescription>
 
-          <CardFooter className="border-t p-0 flex justify-between mt-6 pt-6">
-            <Button onClick={() => setToggleFileDrop(!toggleFileDrop)}>
-              <Paperclip />
-            </Button>
-            {toggleFileDrop && <FileUpload onFileChange={fileChange} />}
+          <CardFooter
+            className="border-t p-0 flex justify-between mt-6 pt-6"
+            as={motion.div}
+            layout
+            transition={{
+              layout: { duration: 0.3, ease: "easeInOut" },
+              type: "spring",
+              stiffness: 300,
+              damping: 30,
+            }}
+          >
+            <motion.div
+              layout
+              className="flex items-center"
+              transition={{
+                layout: { duration: 0.2, ease: "easeInOut" },
+                type: "spring",
+                stiffness: 300,
+                damping: 30,
+              }}
+            >
+              <AnimatePresence mode="popLayout">
+                {!toggleFileDrop ? (
+                  <motion.div
+                    key="attach-button"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Button onClick={() => setToggleFileDrop(!toggleFileDrop)}>
+                      <Paperclip />
+                    </Button>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="file-upload"
+                    className="w-full"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <FileUpload
+                      onFileChange={handleFileChange}
+                      showButton={true}
+                      handleClose={() => setToggleFileDrop(!toggleFileDrop)}
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
 
-            <Button onClick={sendEmail} disabled={sendingMessage}>
-              {!sendingMessage ? (
-                <>
-                  Send message <Send />
-                </>
-              ) : (
-                <div>Sending...</div>
-              )}
-            </Button>
+            <motion.div layout>
+              <motion.div
+                whileHover={{
+                  scale: 1.02,
+                }}
+                whileTap={{
+                  scale: 0.98,
+                }}
+              >
+                <Button onClick={sendEmail} disabled={sendingMessage}>
+                  {!sendingMessage ? (
+                    <>
+                      Send message <Send />
+                    </>
+                  ) : (
+                    <div>Sending...</div>
+                  )}
+                </Button>
+              </motion.div>
+            </motion.div>
           </CardFooter>
         </Card>
       </div>
-
-      <EmailControls />
     </section>
   );
 };

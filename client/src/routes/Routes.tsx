@@ -1,3 +1,5 @@
+import { createBrowserRouter } from "react-router-dom";
+
 import Signin from "@/components/auth/Signin";
 import Signup from "@/components/auth/Signup";
 import AuthCallback from "@/components/auth/AuthCallback";
@@ -7,7 +9,6 @@ import RootLayout from "@/layouts/RootLayout";
 import HomePage from "@/pages/HomePage";
 import SettingPage from "@/pages/SettingPage";
 import EventPage from "@/pages/EventPage";
-import { createBrowserRouter } from "react-router-dom";
 import PublicRoute from "@/routes/PublicRoute";
 import ProtectedRoute from "@/routes/ProtectedRoute";
 import ProfilePage from "@/pages/ProfilePage";
@@ -18,7 +19,6 @@ import ReviewApplications from "@/pages/Application/ReviewApplications";
 import Email from "@/pages/Email/Email";
 
 export const router = createBrowserRouter([
-  //* main routes
   {
     path: "/",
     element: <RootLayout />,
@@ -101,7 +101,6 @@ export const router = createBrowserRouter([
       },
     ],
   },
-  //* auth routes
   {
     path: "/auth",
     element: <AuthenticationLayout />,
@@ -128,7 +127,6 @@ export const router = createBrowserRouter([
       },
     ],
   },
-  //* error routes
   {
     path: "*",
     element: <ErrorPage />,

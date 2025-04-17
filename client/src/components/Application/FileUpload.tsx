@@ -10,9 +10,15 @@ import { isValidFileType } from "@/utils/supportedFileType";
 
 interface FileUploadProps {
   onFileChange: (file: File) => void;
+  showButton: boolean;
+  handleClose: (arg: boolean) => void;
 }
 
-const FileUpload = ({ onFileChange }: FileUploadProps) => {
+const FileUpload = ({
+  onFileChange,
+  showButton = false,
+  handleClose,
+}: FileUploadProps) => {
   const [file, setFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -30,7 +36,7 @@ const FileUpload = ({ onFileChange }: FileUploadProps) => {
         toast.success("File uploaded");
       } else {
         toast.error(
-          "Invalid file type. Please upload PDF, DOC, or DOCX files only.",
+          "Invalid file type. Please upload PDF, DOC, or DOCX files only."
         );
       }
     }
@@ -63,7 +69,7 @@ const FileUpload = ({ onFileChange }: FileUploadProps) => {
       toast.success("File uploaded");
     } else if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       toast.error(
-        "Invalid file type. Please upload PDF, DOC, or DOCX files only.",
+        "Invalid file type. Please upload PDF, DOC, or DOCX files only."
       );
     }
   };
@@ -76,7 +82,10 @@ const FileUpload = ({ onFileChange }: FileUploadProps) => {
 
   return (
     <div className="relative w-full">
-      <h2 className="text-xl mb-2">Upload file</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl mb-2">Upload file</h2>
+        {showButton && <Button onClick={handleClose}>Close</Button>}
+      </div>
       <div
         className={`relative border-2 w-full ${
           isDragging ? "border-primary bg-primary/5" : "border-dotted"

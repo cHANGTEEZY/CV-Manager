@@ -25,7 +25,7 @@ export const navItems = [
     subitems: [
       {
         title: "Create Draft",
-        path: "/mail/create-draft",
+        path: "/mail/template",
       },
     ],
   },
