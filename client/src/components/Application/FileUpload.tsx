@@ -36,7 +36,7 @@ const FileUpload = ({
         toast.success("File uploaded");
       } else {
         toast.error(
-          "Invalid file type. Please upload PDF, DOC, or DOCX files only."
+          "Invalid file type. Please upload PDF, DOC, or DOCX files only.",
         );
       }
     }
@@ -69,7 +69,7 @@ const FileUpload = ({
       toast.success("File uploaded");
     } else if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       toast.error(
-        "Invalid file type. Please upload PDF, DOC, or DOCX files only."
+        "Invalid file type. Please upload PDF, DOC, or DOCX files only.",
       );
     }
   };

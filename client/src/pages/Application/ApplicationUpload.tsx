@@ -120,11 +120,7 @@ export default function ApplicationForm() {
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="p-6"
-    >
+    <section className="mx-auto mt-5 max-w-[800px]">
       <div className="space-y-2 mb-6">
         <motion.h1
           initial={{ opacity: 0, y: -10 }}
@@ -153,11 +149,13 @@ export default function ApplicationForm() {
           <FileUpload onFileChange={handleFileChange} showButton={false} />
         </motion.div>
 
+        <Separator className="mt-12" />
+
         <motion.form
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0, transition: { delay: 0.3 } }}
           onSubmit={handleSubmit(onSubmit)}
-          className="space-y-6 max-w-[800px]"
+          className="space-y-6 max-w-[800px] mt-3 mb-10"
         >
           <h2 className="text-xl mt-6">Applicant Details</h2>
           <Card className="m-0">
@@ -205,7 +203,7 @@ export default function ApplicationForm() {
                       <div>
                         <Input
                           {...register(
-                            field.htmlFor as keyof ApplicationFormData
+                            field.htmlFor as keyof ApplicationFormData,
                           )}
                           id={field.id}
                           type={field.type}
@@ -239,6 +237,6 @@ export default function ApplicationForm() {
           </div>
         </motion.form>
       </div>
-    </motion.div>
+    </section>
   );
 }

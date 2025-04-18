@@ -7,7 +7,7 @@ const ProfilePage = () => {
   const { user } = useAuth();
 
   return (
-    <section className="ml-5 mt-5">
+    <section className="mx-auto mt-5 max-w-[800px] ">
       <div>
         <Card className="w-md">
           <CardContent>

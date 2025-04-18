@@ -4,7 +4,7 @@ const HomePage = () => {
   const { user } = useAuth();
 
   return (
-    <section className="">
+    <section className="mx-auto mt-5 max-w-[800px] ">
       <h1>{user?.id}</h1>
     </section>
   );

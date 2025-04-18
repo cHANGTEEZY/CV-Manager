@@ -10,7 +10,7 @@ const EmailDraft = () => {
         duration: 0.32,
       }}
     >
-      <h2 className="text-xl mb-2">Create a Draft</h2>
+      <h2 className="text-2xl mb-2 text-primary">Create a Draft</h2>
       <section>
         <EmailBody />
       </section>

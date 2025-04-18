@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 
 const EventPage = () => {
   return (
-    <section className="w-fit mx-auto py-2 space-y-2">
+    <section className="mx-auto mt-5 max-w-[800px] ">
       <motion.h1
         initial={{ opacity: 0, x: -7 }}
         animate={{ opacity: 1, x: 0 }}
@@ -13,9 +13,11 @@ const EventPage = () => {
       >
         List and Create all your events
       </motion.h1>
-      <DateEvents />
-      <Separator />
-      <CreateEvent />
+      <div>
+        <DateEvents />
+        <Separator />
+        <CreateEvent />
+      </div>
     </section>
   );
 };

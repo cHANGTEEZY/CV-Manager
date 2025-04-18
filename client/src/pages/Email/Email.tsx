@@ -4,7 +4,7 @@ import EmailDraft from "@/components/Email/EmailDraft";
 
 const Email = () => {
   return (
-    <section className="m-5">
+    <section className="mx-auto mt-5 max-w-[800px] my-5">
       <div className="space-y-2 mb-6">
         <motion.h1 className="text-3xl font-bold">Email</motion.h1>
         <p className="text-sm text-slate-600 dark:text-slate-300">

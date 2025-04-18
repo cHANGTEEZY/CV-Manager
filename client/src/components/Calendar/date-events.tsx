@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Check, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -20,6 +20,8 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { supabase } from "@/utils/supabaseClient";
 import { toast } from "sonner";
+import { IconRight } from "react-day-picker";
+import { Link } from "react-router-dom";
 
 type EventProps = {
   id: number;
@@ -56,7 +58,7 @@ export function DateEvents() {
             applicant_email,
             interviewer_name,
             applicant_details:applicant_email(applicant_name, applied_position)
-          `
+          `,
           )
           .filter("event_date_time", "gte", `${formattedDate}T00:00:00`)
           .filter("event_date_time", "lte", `${formattedDate}T23:59:59`)
@@ -84,10 +86,10 @@ export function DateEvents() {
   };
 
   return (
-    <div className="mb-10">
+    <div className="my-10">
       <h2 className="text-xl font-semibold mb-4 text-primary">View Events</h2>
       <div className="w-full m-auto ">
-        <Card className="max-w-md">
+        <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
@@ -121,6 +123,7 @@ export function DateEvents() {
             ) : events.length > 0 ? (
               <div className="space-y-4">
                 {events.map((event) => (
+                  <Link to={`/event/${event.id}/mange-event`}>
                   <div
                     key={event.id}
                     className="border cursor-pointer rounded-lg p-4 transition-all duration-200 ease-in-out hover:border-primary"
@@ -141,7 +144,7 @@ export function DateEvents() {
                     </div>
 
                     <div className="mt-3 pt-3 border-t border-gray-100">
-                      <div className="grid grid-cols-2 gap-2">
+                      <div className="flex justify-between gap-2">
                         <div>
                           <p className="text-xs text-muted-foreground">
                             Candidate
@@ -161,9 +164,17 @@ export function DateEvents() {
                             {event.interviewer_name}
                           </p>
                         </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground">Status</p>
+                          <Button variant={"outline"} className="flex items-center gap-1">
+                            Completed
+                          <Check/>
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   </div>
+                  </Link>
                 ))}
               </div>
             ) : (

@@ -130,7 +130,7 @@ const CreateEvent = () => {
     eventDateTime.setHours(hours, minutes);
 
     const selectedApplicant = applicants.find(
-      (a) => a.applicant_email === data.applicant_email
+      (a) => a.applicant_email === data.applicant_email,
     );
 
     try {
@@ -174,9 +174,9 @@ const CreateEvent = () => {
   };
 
   return (
-    <div className="max-w-md mt-8">
+    <div className="max-w-md mt-10">
       <h3 className="text-xl font-semibold mb-4 text-primary">Create Event</h3>
-      <Card>
+      <Card className="w-full">
         <CardHeader>
           <CardTitle>New Event Details</CardTitle>
         </CardHeader>
@@ -230,7 +230,7 @@ const CreateEvent = () => {
                             variant={"outline"}
                             className={cn(
                               "w-full pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
+                              !field.value && "text-muted-foreground",
                             )}
                           >
                             {field.value ? (
