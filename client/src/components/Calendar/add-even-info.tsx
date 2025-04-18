@@ -174,8 +174,8 @@ const CreateEvent = () => {
   };
 
   return (
-    <div className="max-w-md">
-      <h3 className="text-xl font-semibold mb-4">Create Event</h3>
+    <div className="max-w-md mt-8">
+      <h3 className="text-xl font-semibold mb-4 text-primary">Create Event</h3>
       <Card>
         <CardHeader>
           <CardTitle>New Event Details</CardTitle>
@@ -188,7 +188,9 @@ const CreateEvent = () => {
                 name="event_name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Event Title</FormLabel>
+                    <FormLabel className="text-accent-foreground font-normal text-sm">
+                      Event Title
+                    </FormLabel>
                     <FormControl>
                       <Input placeholder="Enter event title" {...field} />
                     </FormControl>
@@ -202,7 +204,9 @@ const CreateEvent = () => {
                 name="event_description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Event Description</FormLabel>
+                    <FormLabel className="text-accent-foreground font-normal text-sm">
+                      Event Description
+                    </FormLabel>
                     <FormControl>
                       <Input placeholder="Enter event description" {...field} />
                     </FormControl>
@@ -216,7 +220,9 @@ const CreateEvent = () => {
                 name="event_date"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel>Event Date</FormLabel>
+                    <FormLabel className="text-accent-foreground font-normal text-sm">
+                      Event Date
+                    </FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
@@ -261,7 +267,9 @@ const CreateEvent = () => {
                 name="event_time"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Event Time</FormLabel>
+                    <FormLabel className="text-accent-foreground font-normal text-sm">
+                      Event Time
+                    </FormLabel>
                     <FormControl>
                       <Select
                         value={field.value}
@@ -299,7 +307,9 @@ const CreateEvent = () => {
                 name="applicant_email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Candidate</FormLabel>
+                    <FormLabel className="text-accent-foreground font-normal text-sm">
+                      Candidate
+                    </FormLabel>
                     <FormControl>
                       <Select
                         value={field.value}
@@ -343,7 +353,9 @@ const CreateEvent = () => {
                 name="interviewer_name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Interviewer</FormLabel>
+                    <FormLabel className="text-accent-foreground font-normal text-sm">
+                      Interviewer
+                    </FormLabel>
                     <FormControl>
                       <Select
                         value={field.value}

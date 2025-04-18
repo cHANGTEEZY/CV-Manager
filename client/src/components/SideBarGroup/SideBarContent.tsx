@@ -48,7 +48,7 @@ export function AppSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <Link to="/">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-purple-600 text-white">
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-white">
                   <FileText className="size-4" />
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
@@ -69,22 +69,25 @@ export function AppSidebar() {
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <Link to={item.path}>
-                      <item.icon className="size-4" />
+                      <item.icon className="size-4 text-primary" />
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
 
-                  {item.badge && (
-                    <SidebarMenuBadge className="bg-purple-100 text-purple-600 dark:bg-purple-900 dark:text-purple-200">
+                  {/* {item.badge && (
+                    <SidebarMenuBadge className="text-muted bg-ring">
                       {item.badge}
                     </SidebarMenuBadge>
-                  )}
+                  )} */}
 
                   {item.subitems && (
                     <SidebarMenuSub>
                       {item.subitems.map((subitem) => (
                         <SidebarMenuSubItem key={subitem.title}>
-                          <SidebarMenuSubButton asChild>
+                          <SidebarMenuSubButton
+                            asChild
+                            className="text-muted-foreground"
+                          >
                             <Link to={subitem.path}>{subitem.title}</Link>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
