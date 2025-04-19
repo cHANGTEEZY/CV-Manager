@@ -391,10 +391,11 @@ const CreateEvent = () => {
                 variant="outline"
                 type="button"
                 onClick={() => form.reset()}
+                className="cursor-pointer"
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={isLoading}>
+              <Button type="submit cursor-pointer" disabled={isLoading}>
                 Create Event
               </Button>
             </CardFooter>

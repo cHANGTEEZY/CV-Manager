@@ -82,7 +82,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "application-review",
+        path: "/application-review/:id",
         element: (
           <ProtectedRoute>
             <ReviewApplications />

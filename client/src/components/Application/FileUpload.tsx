@@ -83,7 +83,7 @@ const FileUpload = ({
   return (
     <div className="relative w-full">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl mb-2">Upload file</h2>
+        <h2 className="text-xl font-semibold mb-4 text-primary">Upload file</h2>
         {showButton && <Button onClick={handleClose}>Close</Button>}
       </div>
       <div

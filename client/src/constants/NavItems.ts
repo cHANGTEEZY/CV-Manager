@@ -13,7 +13,6 @@ export const navItems = [
     badge: "3",
     subitems: [
       { title: "Upload Applications", path: "/application-upload" },
-      { title: "Review Applications", path: "/application-review" },
       { title: "Track Applications", path: "/application-tracking" },
     ],
   },

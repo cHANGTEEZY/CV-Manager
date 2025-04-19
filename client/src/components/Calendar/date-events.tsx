@@ -121,18 +121,19 @@ export function DateEvents() {
                 Loading events...
               </div>
             ) : events.length > 0 ? (
-              <div className="space-y-4">
+              <div className="space-y-4 ">
                 {events.map((event) => (
-                  <Link to={`/event/${event.id}/mange-event`}>
+                  
                   <div
                     key={event.id}
                     className="border cursor-pointer rounded-lg p-4 transition-all duration-200 ease-in-out hover:border-primary"
                   >
+                    <Link to={`/application-review/${event.id}`}>
                     <div className="flex items-center justify-between">
                       <div className="font-medium text-lg">
                         {event.event_name}
                       </div>
-                      <div className="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+                      <div className="text-sm bg-pink-400/20 px-2 py-1 rounded-full">
                         {formatEventTime(event.event_date_time)}
                       </div>
                     </div>
@@ -143,7 +144,7 @@ export function DateEvents() {
                       </p>
                     </div>
 
-                    <div className="mt-3 pt-3 border-t border-gray-100">
+                    <div className="mt-3 pt-3 border-t border-primary/30">
                       <div className="flex justify-between gap-2">
                         <div>
                           <p className="text-xs text-muted-foreground">
@@ -166,15 +167,16 @@ export function DateEvents() {
                         </div>
                         <div>
                           <p className="text-xs text-muted-foreground">Status</p>
-                          <Button variant={"outline"} className="flex items-center gap-1">
+                          <Button variant={"outline"} className="flex items-center gap-1 bg-grey-500">
                             Completed
-                          <Check/>
+                            <Check color="green"/>
                           </Button>
                         </div>
                       </div>
                     </div>
+                    </Link>
                   </div>
-                  </Link>
+                  
                 ))}
               </div>
             ) : (

@@ -157,7 +157,7 @@ export default function ApplicationForm() {
           onSubmit={handleSubmit(onSubmit)}
           className="space-y-6 max-w-[800px] mt-3 mb-10"
         >
-          <h2 className="text-xl mt-6">Applicant Details</h2>
+          <h2 className="text-xl font-semibold mb-4  mt-5 text-primary">Applicant Details</h2>
           <Card className="m-0">
             <CardContent>
               <div className="grid  grid-cols-1 md:grid-cols-2 gap-4">

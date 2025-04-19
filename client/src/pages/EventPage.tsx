@@ -13,9 +13,10 @@ const EventPage = () => {
       >
         List and Create all your events
       </motion.h1>
+      <Separator/>
       <div>
         <DateEvents />
-        <Separator />
+        <Separator  />
         <CreateEvent />
       </div>
     </section>
