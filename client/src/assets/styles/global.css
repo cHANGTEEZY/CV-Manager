@@ -1,9 +1,314 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+@import "tailwindcss";
+@import "tw-animate-css";
 
-* {
-    font-family: "Roboto", sans-serif;
+
+@layer utilities {
+  .text-gradient-primary {
+    background-image: linear-gradient(to right, var(--primary), var(--accent-foreground));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  
+  .text-gradient-primary-accent {
+    background-image: linear-gradient(to right, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .text-gradient-chart-1 {
+    background-image: linear-gradient(to right, var(--chart-1), var(--chart-3));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .text-gradient-chart-2 {
+    background-image: linear-gradient(to right, var(--chart-2), var(--chart-4));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .text-gradient-sidebar {
+    background-image: linear-gradient(to right, var(--sidebar-primary), var(--sidebar-accent-foreground));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .text-gradient-destructive {
+    background-image: linear-gradient(to right, var(--destructive), var(--primary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .text-gradient-muted {
+    background-image: linear-gradient(to right, var(--muted), var(--muted-foreground));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .text-gradient-ring {
+    background-image: linear-gradient(to right, var(--ring), var(--border));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .text-gradient-contrast {
+    background-image: linear-gradient(to right, var(--foreground), var(--background));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .text-gradient-spectrum {
+    background-image: linear-gradient(to right, 
+      var(--chart-1), 
+      var(--chart-2), 
+      var(--chart-3), 
+      var(--chart-4), 
+      var(--chart-5));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+ 
+
+  .text-gradient-blaze {
+    background-image: linear-gradient(
+      to right,
+      oklch(0.7 0.3 27),  
+      oklch(0.9 0.25 40)  
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .text-gradient-neon {
+    background-image: linear-gradient(
+      to right,
+      oklch(0.8 0.3 300),  
+      oklch(0.85 0.25 260) 
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .text-gradient-royal {
+    background-image: linear-gradient(
+      to right,
+      oklch(0.8 0.2 80),  
+      oklch(0.95 0.15 90)   
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .text-gradient-cyber {
+    background-image: linear-gradient(
+      to right,
+      oklch(0.85 0.3 350), 
+      oklch(0.8 0.25 220)   
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .text-gradient-emerald {
+    background-image: linear-gradient(
+      to right,
+      oklch(0.7 0.25 160),  
+      oklch(0.85 0.2 190)   
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .text-gradient-sunset {
+    background-image: linear-gradient(
+      to right,
+      oklch(0.8 0.3 50),  
+      oklch(0.85 0.25 350)  
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .text-gradient-arctic {
+    background-image: linear-gradient(
+      to right,
+      oklch(0.8 0.25 250), 
+      oklch(0.75 0.3 290)  
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .text-gradient-lava {
+    background-image: linear-gradient(
+      to right,
+      oklch(0.7 0.35 25),  
+      oklch(0.9 0.3 70)     
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .text-gradient-galaxy {
+    background-image: linear-gradient(
+      to right,
+      oklch(0.6 0.3 320),  
+      oklch(0.8 0.25 240)  
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .text-gradient-jungle {
+    background-image: linear-gradient(
+      to right,
+      oklch(0.7 0.3 140),  
+      oklch(0.85 0.25 90)  
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+.bg-gradient-misty {
+    background-image: linear-gradient(
+      to right,
+      oklch(0.95 0.02 260),  /* Pale blue */
+      oklch(0.93 0.01 280)    /* Soft gray */
+    );
+  }
+
+  /* 2. CLAY WASH (Warm earthy tones) */
+  .bg-gradient-clay {
+    background-image: linear-gradient(
+      to right,
+      oklch(0.92 0.03 40),   /* Warm beige */
+      oklch(0.94 0.02 60)     /* Soft clay */
+    );
+  }
+
+  /* 3. FROSTED LAVENDER (Cool pastels) */
+  .bg-gradient-frost {
+    background-image: linear-gradient(
+      to right,
+      oklch(0.96 0.04 300),  /* Pale lavender */
+      oklch(0.97 0.02 280)    /* Frosted blue */
+    );
+  }
+
+  /* 4. ASHEN SMOKE (Neutral grays) */
+  .bg-gradient-ashen {
+    background-image: linear-gradient(
+      to right,
+      oklch(0.93 0.01 280),
+      oklch(0.90 0.01 270)
+    );
+  }
+
+  /* 5. SEAFOAM DREAM (Soft green/blue) */
+  .bg-gradient-seafoam {
+    background-image: linear-gradient(
+      to right,
+      oklch(0.94 0.04 180),  /* Pale seafoam */
+      oklch(0.96 0.03 200)    /* Soft aqua */
+    );
+  }
+
+  /* 6. BLUSHED LINEN (Warm pink/beige) */
+  .bg-gradient-blush {
+    background-image: linear-gradient(
+      to right,
+      oklch(0.96 0.03 20),   /* Warm blush */
+      oklch(0.97 0.02 40)     /* Linen */
+    );
+  }
+
+  /* 7. DUSK HORIZON (Soft sunset) */
+  .bg-gradient-dusk {
+    background-image: linear-gradient(
+      to right,
+      oklch(0.93 0.03 30),   /* Pale peach */
+      oklch(0.95 0.02 350)    /* Soft rose */
+    );
+  }
+
+  /* 8. MOSSY STONE (Earthy green/gray) */
+  .bg-gradient-moss {
+    background-image: linear-gradient(
+      to right,
+      oklch(0.91 0.03 140),  /* Muted sage */
+      oklch(0.93 0.01 160)    /* Stone gray */
+    );
+  }
+
+
+  .bg-gradient-primary {
+    background-image: linear-gradient(to right, var(--primary), var(--accent-foreground));
+  }
+
+  .bg-gradient-chart {
+    background-image: linear-gradient(to right, var(--chart-1), var(--chart-3));
+  }
+
+
+  .bg-gradient-blaze { 
+    background-image: linear-gradient(to right, oklch(0.7 0.3 27), oklch(0.9 0.25 40));
+  }
+  
+  .bg-gradient-neon { 
+    background-image: linear-gradient(to right, oklch(0.8 0.3 300), oklch(0.85 0.25 260));
+  }
+  
+  .bg-gradient-royal {
+    background-image: linear-gradient(to right, oklch(0.8 0.2 80), oklch(0.95 0.15 90));
+  }
+  
+  .bg-gradient-cyber {
+    background-image: linear-gradient(to right, oklch(0.85 0.3 350), oklch(0.8 0.25 220));
+  }
+  
+  .bg-gradient-emerald {
+    background-image: linear-gradient(to right, oklch(0.7 0.25 160), oklch(0.85 0.2 190));
+  }
+  
+  .bg-gradient-sunset {
+    background-image: linear-gradient(to right, oklch(0.8 0.3 50), oklch(0.85 0.25 350));
+  }
+  
+  .bg-gradient-arctic {
+    background-image: linear-gradient(to right, oklch(0.8 0.25 250), oklch(0.75 0.3 290));
+  }
+  
+  .bg-gradient-lava {
+    background-image: linear-gradient(to right, oklch(0.7 0.35 25), oklch(0.9 0.3 70));
+  }
+  
+  .bg-gradient-galaxy {
+    background-image: linear-gradient(to right, oklch(0.6 0.3 320), oklch(0.8 0.25 240));
+  }
+  
+  .bg-gradient-jungle {
+    background-image: linear-gradient(to right, oklch(0.7 0.3 140), oklch(0.85 0.25 90));
+  }
 }
-
-
-
 

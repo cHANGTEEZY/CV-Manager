@@ -11,7 +11,7 @@ const Applications = () => {
   }
 
   return (
-    <section className="mx-auto mt-5 max-w-[1000px] ">
+    <section className="mx-auto mt-5 max-w-[1200px]  ">
       <motion.h1
         initial={{ opacity: 0, x: -7 }}
         animate={{ opacity: 1, x: 0 }}

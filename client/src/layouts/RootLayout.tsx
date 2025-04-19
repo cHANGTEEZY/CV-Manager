@@ -16,9 +16,7 @@ export default function RootLayout() {
         <header className="p-3 flex justify-between h-16 items-center gap-4 border-b bg-background ">
           <div className="flex text-primary">
             <SidebarTrigger />
-            <h1 className="text-xl font-semibold text-accent-foreground">
-              CV Manager
-            </h1>
+            <h1 className="text-xl font-semibold ">CV Manager</h1>
           </div>
           <div>
             <Button className="p-0 ">

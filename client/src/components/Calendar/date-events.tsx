@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
-import { CalendarIcon, Check, User } from "lucide-react";
+import { CalendarIcon, Check, Smile, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -58,7 +58,7 @@ export function DateEvents() {
             applicant_email,
             interviewer_name,
             applicant_details:applicant_email(applicant_name, applied_position)
-          `,
+          `
           )
           .filter("event_date_time", "gte", `${formattedDate}T00:00:00`)
           .filter("event_date_time", "lte", `${formattedDate}T23:59:59`)
@@ -89,7 +89,7 @@ export function DateEvents() {
     <div className="my-10">
       <h2 className="text-xl font-semibold mb-4 text-primary">View Events</h2>
       <div className="w-full m-auto ">
-        <Card>
+        <Card className="border-2">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
@@ -123,66 +123,72 @@ export function DateEvents() {
             ) : events.length > 0 ? (
               <div className="space-y-4 ">
                 {events.map((event) => (
-                  
                   <div
                     key={event.id}
                     className="border cursor-pointer rounded-lg p-4 transition-all duration-200 ease-in-out hover:border-primary"
                   >
                     <Link to={`/application-review/${event.id}`}>
-                    <div className="flex items-center justify-between">
-                      <div className="font-medium text-lg">
-                        {event.event_name}
+                      <div className="flex items-center justify-between">
+                        <div className="font-medium text-lg">
+                          {event.event_name}
+                        </div>
+                        <div className="text-sm bg-pink-400/20 px-2 py-1 rounded-full">
+                          {formatEventTime(event.event_date_time)}
+                        </div>
                       </div>
-                      <div className="text-sm bg-pink-400/20 px-2 py-1 rounded-full">
-                        {formatEventTime(event.event_date_time)}
-                      </div>
-                    </div>
 
-                    <div className="mt-2">
-                      <p className="text-sm text-muted-foreground">
-                        {event.event_description}
-                      </p>
-                    </div>
+                      <div className="mt-2">
+                        <p className="text-sm text-muted-foreground">
+                          {event.event_description}
+                        </p>
+                      </div>
 
-                    <div className="mt-3 pt-3 border-t border-primary/30">
-                      <div className="flex justify-between gap-2">
-                        <div>
-                          <p className="text-xs text-muted-foreground">
-                            Candidate
-                          </p>
-                          <p className="text-sm f`ont-medium">
-                            {event.applicant_details?.applicant_name || "N/A"}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {event.applicant_details?.applied_position || ""}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-muted-foreground">
-                            Interviewer
-                          </p>
-                          <p className="text-sm font-medium">
-                            {event.interviewer_name}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-muted-foreground">Status</p>
-                          <Button variant={"outline"} className="flex items-center gap-1 bg-grey-500">
-                            Completed
-                            <Check color="green"/>
-                          </Button>
+                      <div className="mt-3 pt-3 border-t bg">
+                        <div className="flex justify-between gap-2">
+                          <div>
+                            <p className="text-xs text-muted-foreground">
+                              Candidate
+                            </p>
+                            <p className="text-sm f`ont-medium">
+                              {event.applicant_details?.applicant_name || "N/A"}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {event.applicant_details?.applied_position || ""}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-muted-foreground">
+                              Interviewer
+                            </p>
+                            <p className="text-sm font-medium">
+                              {event.interviewer_name}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-muted-foreground">
+                              Status
+                            </p>
+                            <Button
+                              variant={"outline"}
+                              className="flex items-center gap-1 bg-grey-500 text-green-500"
+                            >
+                              Completed
+                              <Check className="text-green-500" />
+                            </Button>
+                          </div>
                         </div>
                       </div>
-                    </div>
                     </Link>
                   </div>
-                  
                 ))}
               </div>
             ) : (
               <div>
-                <div className="text-center py-6 text-muted-foreground">
-                  No events scheduled for this day
+                <div className="rounded-2xl flex items-center justify-center gap-3 py-15 border ">
+                  <Smile className="text-green-400" size={30} />
+                  <p className="text-green-400 font-bold">
+                    No events scheduled for this day
+                  </p>
                 </div>
               </div>
             )}

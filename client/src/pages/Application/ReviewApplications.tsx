@@ -2,9 +2,14 @@ import { motion } from "framer-motion";
 import { useParams } from "react-router-dom";
 
 import ReviewApplicationFrom from "@/components/Application/ReviewApplication";
+import { supabase } from "@/utils/supabaseClient";
 
 const ReviewApplications = () => {
   const { id } = useParams();
+
+  const getApplicantDetails = () => {
+    const { data, error } = supabase.from;
+  };
 
   return (
     <section className="mx-auto mt-5 max-w-[800px] ">

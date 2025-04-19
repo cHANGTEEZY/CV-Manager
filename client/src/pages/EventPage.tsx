@@ -9,14 +9,14 @@ const EventPage = () => {
       <motion.h1
         initial={{ opacity: 0, x: -7 }}
         animate={{ opacity: 1, x: 0 }}
-        className="text-3xl font-bold mb-5"
+        className="text-4xl font-bold mb-5 text-gradient-contrast "
       >
         List and Create all your events
       </motion.h1>
-      <Separator/>
+      <Separator />
       <div>
         <DateEvents />
-        <Separator  />
+        <Separator />
         <CreateEvent />
       </div>
     </section>
