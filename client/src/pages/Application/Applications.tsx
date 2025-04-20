@@ -11,11 +11,11 @@ const Applications = () => {
   }
 
   return (
-    <section className="mx-auto mt-5 max-w-[1200px]  ">
+    <section className="mx-auto mt-5 max-w-[1100px]  ">
       <motion.h1
         initial={{ opacity: 0, x: -7 }}
         animate={{ opacity: 1, x: 0 }}
-        className="text-3xl font-bold mb-5"
+        className="text-4xl font-bold mb-5 text-gradient-contrast "
       >
         Monitor and Search All applications
       </motion.h1>

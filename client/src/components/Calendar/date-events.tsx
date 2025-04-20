@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
-import { CalendarIcon, Check, Smile, User } from "lucide-react";
+import { CalendarIcon, Check, Heading1, Smile } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -20,7 +20,6 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { supabase } from "@/utils/supabaseClient";
 import { toast } from "sonner";
-import { IconRight } from "react-day-picker";
 import { Link } from "react-router-dom";
 
 type EventProps = {
@@ -39,6 +38,7 @@ type EventProps = {
 export function DateEvents() {
   const [date, setDate] = useState<Date>(new Date());
   const [events, setEvents] = useState<EventProps[]>([]);
+  console.log(events);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const formattedDate = format(date, "yyyy-MM-dd");
@@ -57,8 +57,8 @@ export function DateEvents() {
             event_description,
             applicant_email,
             interviewer_name,
-            applicant_details:applicant_email(applicant_name, applied_position)
-          `
+            applicant_details:applicant_email(applicant_name, applied_position,id)
+          `,
           )
           .filter("event_date_time", "gte", `${formattedDate}T00:00:00`)
           .filter("event_date_time", "lte", `${formattedDate}T23:59:59`)
@@ -127,7 +127,9 @@ export function DateEvents() {
                     key={event.id}
                     className="border cursor-pointer rounded-lg p-4 transition-all duration-200 ease-in-out hover:border-primary"
                   >
-                    <Link to={`/application-review/${event.id}`}>
+                    <Link
+                      to={`/application-review/${event?.applicant_details?.id}`}
+                    >
                       <div className="flex items-center justify-between">
                         <div className="font-medium text-lg">
                           {event.event_name}

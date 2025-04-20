@@ -2,23 +2,22 @@ import { motion } from "framer-motion";
 import { useParams } from "react-router-dom";
 
 import ReviewApplicationFrom from "@/components/Application/ReviewApplication";
-import { supabase } from "@/utils/supabaseClient";
+
+type paramsProp = {
+  id: string;
+}
 
 const ReviewApplications = () => {
-  const { id } = useParams();
-
-  const getApplicantDetails = () => {
-    const { data, error } = supabase.from;
-  };
+  const { id } = useParams<paramsProp>();
 
   return (
     <section className="mx-auto mt-5 max-w-[800px] ">
       <motion.h1
         initial={{ opacity: 0, x: -7 }}
         animate={{ opacity: 1, x: 0 }}
-        className="text-3xl font-bold mb-5 text-heading"
+        className="text-4xl font-bold mb-5 text-gradient-contrast" 
       >
-        Monitor and Search All applications
+        Monitor, Review and Update Applicants Data
       </motion.h1>
       <ReviewApplicationFrom eventId={id} />
     </section>
