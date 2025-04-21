@@ -33,3 +33,35 @@ A full-featured web application designed for HR teams to **manage and track appl
 - **File Storage**: AWS S3 for CVs, assessments, and offer letters
 
 ---
+
+
+## ✅ Prerequisites
+
+Before running the app, make sure you have the following installed and configured:
+
+- [Node.js](https://nodejs.org/) and [pnpm](https://pnpm.io/)
+- [TypeScript](https://www.typescriptlang.org/) installed globally
+- `.env` file created with your **Supabase Anon Key** and **URL**
+
+### Example `.env` file
+
+```env
+VITE_SUPABASE_URL=your-supabase-url
+VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
+```
+
+
+
+## How to run the project
+
+# 1. Clone the repository
+git clone https://github.com/cHANGTEEZY/CV-Manager.git
+
+# 2. Navigate to the frontend client folder
+cd CV-Manager/client
+
+# 3. Install dependencies
+pnpm install
+
+# 4. Run the development server
+pnpm run dev
