@@ -10,6 +10,7 @@ import {
 } from "../ui/card";
 import { Send } from "lucide-react";
 import { Separator } from "../ui/separator";
+import ApplicantTimeLine from "./ApplicantTimeLine";
 
 const dummyUserData = {
   name: "Sushank Gurung",
@@ -118,10 +119,13 @@ const ReviewApplicationForm = () => {
               </CardContent>
             </Card>
           </div>
+
+          <Separator className="mt-7" />
+          <ApplicantTimeLine />
           <Separator className="mt-7" />
           <div className="mt-5">
             <h2 className="text-xl font-semibold mb-4 text-primary">
-              VIew and Manage Applicant's Event
+              View Applicant's events
             </h2>
             <Card className="mb-10">
               <CardHeader className="border-b">

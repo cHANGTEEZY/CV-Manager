@@ -20,7 +20,7 @@ export const navItems = [
   {
     title: "Events",
     icon: Calendar,
-    path: "/calendar-events",
+    path: "/events/create-event",
     subitems: [
       { title: "Interview Scheduling", path: "/events/create-event" },
       { title: "Assessment Uploader", path: "/events/assessment-uploader" },

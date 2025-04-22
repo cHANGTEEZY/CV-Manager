@@ -1,7 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-
 @layer utilities {
   .text-gradient-primary {
     background-image: linear-gradient(to right, var(--primary), var(--accent-foreground));

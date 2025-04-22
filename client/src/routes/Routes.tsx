@@ -8,7 +8,7 @@ import AuthenticationLayout from "@/layouts/AuthenticationLayout";
 import RootLayout from "@/layouts/RootLayout";
 import HomePage from "@/pages/HomePage";
 import SettingPage from "@/pages/SettingPage";
-import EventPage from "@/pages/EventPage";
+import EventPage from "@/pages/Events/EventPage";
 import PublicRoute from "@/routes/PublicRoute";
 import ProtectedRoute from "@/routes/ProtectedRoute";
 import ProfilePage from "@/pages/ProfilePage";
@@ -17,8 +17,14 @@ import ApplicationUpload from "@/pages/Application/ApplicationUpload";
 import TrackApplications from "@/pages/Application/TrackApplications";
 import ReviewApplications from "@/pages/Application/ReviewApplications";
 import Email from "@/pages/Email/Email";
+import LandinPage from "@/pages/LandinPage";
+import AssessmentPage from "@/pages/Events/AssessmentPage";
 
 export const router = createBrowserRouter([
+  {
+    path: "/home",
+    element: <LandinPage />,
+  },
   {
     path: "/",
     element: <RootLayout />,
@@ -40,13 +46,22 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "calendar-events",
+        path: "events/create-event",
         element: (
           <ProtectedRoute>
             <EventPage />
           </ProtectedRoute>
         ),
       },
+      {
+        path: "events/assessment-uploader",
+        element: (
+          <ProtectedRoute>
+            <AssessmentPage />
+          </ProtectedRoute>
+        ),
+      },
+
       {
         path: "profile",
         element: (
