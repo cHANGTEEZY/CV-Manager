@@ -219,7 +219,7 @@ const ApplicationTable = ({ tableData }) => {
     onSortingChange: setSorting,
     onGlobalFilterChange: setGlobalFilter,
     globalFilterFn,
-    manualPagination: false, // Let tanstack handle pagination
+    manualPagination: false,
     state: {
       sorting,
       globalFilter,
@@ -229,7 +229,6 @@ const ApplicationTable = ({ tableData }) => {
       },
     },
     onPaginationChange: (updater) => {
-      // This is crucial for proper pagination control
       const newPagination =
         typeof updater === "function"
           ? updater({ pageIndex, pageSize })
@@ -240,7 +239,6 @@ const ApplicationTable = ({ tableData }) => {
     },
   });
 
-  // Handle pagination manually
   const handlePreviousPage = () => {
     table.previousPage();
   };
@@ -249,7 +247,6 @@ const ApplicationTable = ({ tableData }) => {
     table.nextPage();
   };
 
-  // Handle page size change
   const handlePageSizeChange = (value: string) => {
     const newPageSize = Number(value);
     table.setPageSize(newPageSize);

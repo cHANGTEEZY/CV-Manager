@@ -9,6 +9,7 @@ import { Calendar } from "@/components/ui/calendar";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -179,10 +180,13 @@ const CreateEvent = () => {
       <Card className="w-full">
         <CardHeader className="border-b">
           <CardTitle>New Event Details</CardTitle>
+          <CardDescription>
+            Create custom event's for applicants
+          </CardDescription>
         </CardHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-6">
               <FormField
                 control={form.control}
                 name="event_name"

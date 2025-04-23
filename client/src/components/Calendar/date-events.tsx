@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
-import { CalendarIcon, Check, Heading1, Smile } from "lucide-react";
+import { CalendarIcon, Check, Smile } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -58,7 +58,7 @@ export function DateEvents() {
             applicant_email,
             interviewer_name,
             applicant_details:applicant_email(applicant_name, applied_position,id)
-          `,
+          `
           )
           .filter("event_date_time", "gte", `${formattedDate}T00:00:00`)
           .filter("event_date_time", "lte", `${formattedDate}T23:59:59`)

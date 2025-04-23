@@ -96,7 +96,7 @@ const eventData: Event[] = [
   },
 ];
 
-const Search = () => {
+const Search = ({}) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [isMobile, setIsMobile] = useState(false);
