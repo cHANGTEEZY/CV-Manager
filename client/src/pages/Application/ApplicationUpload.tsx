@@ -23,6 +23,7 @@ import FileUpload from "@/components/Application/FileUpload";
 import { applicantFormFields } from "@/constants/ApplicantForm";
 import FormSuccessMessage from "@/components/Application/FormSuccess";
 import { supabase } from "@/utils/supabaseClient";
+import { FileIcon } from "lucide-react";
 
 const formSchema = z.object({
   username: z.string().min(2, "Username must be at least 2 characters"),
@@ -134,7 +135,7 @@ export default function ApplicationForm() {
           animate={{ opacity: 1, y: 0, transition: { delay: 0.1 } }}
           className="text-sm text-slate-600 dark:text-slate-300"
         >
-          Complete the form below to apply for the position
+          Complete the form to upload applicant's details
         </motion.p>
       </div>
 
@@ -157,7 +158,9 @@ export default function ApplicationForm() {
           onSubmit={handleSubmit(onSubmit)}
           className="space-y-6 max-w-[800px] mt-3 mb-10"
         >
-          <h2 className="text-xl font-semibold mb-4  mt-5 text-primary">Applicant Details</h2>
+          <h2 className="text-xl font-semibold mb-4  mt-5 text-primary flex items-center gap-2">
+            <FileIcon className="h-5 w-5" /> Applicant Details
+          </h2>
           <Card className="m-0">
             <CardContent>
               <div className="grid  grid-cols-1 md:grid-cols-2 gap-4">
@@ -203,7 +206,7 @@ export default function ApplicationForm() {
                       <div>
                         <Input
                           {...register(
-                            field.htmlFor as keyof ApplicationFormData,
+                            field.htmlFor as keyof ApplicationFormData
                           )}
                           id={field.id}
                           type={field.type}

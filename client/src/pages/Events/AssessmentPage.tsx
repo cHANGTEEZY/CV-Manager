@@ -1,4 +1,5 @@
 import CreateAssessmentForm from "@/components/Assessment/CreateAssessmentForm";
+import ListedAssessment from "@/components/Assessment/ListedAssessment";
 import { Separator } from "@/components/ui/separator";
 import { motion } from "framer-motion";
 
@@ -12,6 +13,8 @@ const AssessmentPage = () => {
       >
         Create and Assign Assessment
       </motion.h1>
+      <Separator />
+      <ListedAssessment />
       <Separator />
       <CreateAssessmentForm />
     </section>

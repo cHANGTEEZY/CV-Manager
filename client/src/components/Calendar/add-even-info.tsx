@@ -38,7 +38,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, FilePlus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { supabase } from "@/utils/supabaseClient";
@@ -176,7 +176,13 @@ const CreateEvent = () => {
 
   return (
     <div className="max-w-md mt-10">
-      <h3 className="text-xl font-semibold mb-4 text-primary">Create Event</h3>
+      <h3 className="text-xl font-semibold mb-4 text-primary flex items-center gap-2">
+        <FilePlus
+          className="h-5 w-f5
+        "
+        />
+        Create Event
+      </h3>
       <Card className="w-full">
         <CardHeader className="border-b">
           <CardTitle>New Event Details</CardTitle>

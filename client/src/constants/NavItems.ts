@@ -1,4 +1,5 @@
-import { Calendar, Home, FileText, Mail } from "lucide-react";
+import { Calendar, Home, FileText, Mail, UserPen } from "lucide-react";
+import path from "path";
 
 export const navItems = [
   {
@@ -24,10 +25,16 @@ export const navItems = [
     subitems: [
       { title: "Interview Scheduling", path: "/events/create-event" },
       { title: "Assessment Uploader", path: "/events/assessment-uploader" },
-      {
-        title: "Review Assessments",
-        path: "/evemts/review-assessment",
-      },
+    ],
+  },
+
+  {
+    title: "Assessment",
+    icon: UserPen,
+    path: "/assessment/review",
+    subitems: [
+      { title: "Manage Interviewer", path: "/assessment/interviewer" },
+      { title: "Review Assessment", path: "/assessment/review" },
     ],
   },
 

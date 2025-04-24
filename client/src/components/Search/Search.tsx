@@ -3,127 +3,67 @@ import { Input } from "../ui/input";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
 import Fuse from "fuse.js";
+import { useEvents, EventType } from "@/hooks/use-event-data";
+import useTableData from "@/hooks/use-table-data";
+import { Link } from "react-router-dom";
 
 type Applicant = {
-  userId: string;
-  userName: string;
-  technology: string;
-  position: string;
-  experience: string;
+  id: string;
+  applicant_name: string;
+  applied_position: string;
+  experience?: string;
   email: string;
+  technology?: string;
 };
 
-type Event = {
-  userId: string;
-  eventName: string;
-  date: string;
-  interviewer: string;
-};
-
-const cvData: Applicant[] = [
-  {
-    userId: "001",
-    userName: "Sushank Gurung",
-    technology: "React",
-    position: "Junior",
-    experience: "2 years",
-    email: "sushank@gmail.com",
-  },
-  {
-    userId: "002",
-    userName: "Aayush Shrestha",
-    technology: "Node.js",
-    position: "Mid-Level",
-    experience: "3 years",
-    email: "aayush.dev@gmail.com",
-  },
-  {
-    userId: "003",
-    userName: "Prerana Rai",
-    technology: "Vue.js",
-    position: "Junior",
-    experience: "1 year",
-    email: "prerana.rai@example.com",
-  },
-  {
-    userId: "004",
-    userName: "Bikash Lama",
-    technology: "Python",
-    position: "Senior",
-    experience: "5 years",
-    email: "bikash.lama@domain.com",
-  },
-  {
-    userId: "005",
-    userName: "Rina Maharjan",
-    technology: "Angular",
-    position: "Mid-Level",
-    experience: "4 years",
-    email: "rina.maharjan@mail.com",
-  },
-];
-
-const eventData: Event[] = [
-  {
-    userId: "001",
-    eventName: "HR Interview",
-    date: "12 Oct, 2025",
-    interviewer: "Sonu Pun",
-  },
-  {
-    userId: "002",
-    eventName: "Technical Round",
-    date: "14 Oct, 2025",
-    interviewer: "Prakash Tamang",
-  },
-  {
-    userId: "003",
-    eventName: "Final Interview",
-    date: "16 Oct, 2025",
-    interviewer: "Manisha Gurung",
-  },
-  {
-    userId: "004",
-    eventName: "HR Interview",
-    date: "18 Oct, 2025",
-    interviewer: "Sonu Pun",
-  },
-  {
-    userId: "005",
-    eventName: "Technical Round",
-    date: "20 Oct, 2025",
-    interviewer: "Niraj Shrestha",
-  },
-];
-
-const Search = ({}) => {
+const Search = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [isMobile, setIsMobile] = useState(false);
   const [applicantSearchResults, setApplicantSearchResults] = useState<
     Applicant[]
   >([]);
-  const [eventSearchResults, setEventSearchResults] = useState<Event[]>([]);
+  const [eventSearchResults, setEventSearchResults] = useState<EventType[]>([]);
   const [showResults, setShowResults] = useState(false);
+  const [allEvents, setAllEvents] = useState<EventType[]>([]);
   const searchRef = useRef<HTMLDivElement | null>(null);
 
-  const applicantFuse = new Fuse(cvData, {
+  const applicantData = useTableData();
+
+  const { fetchAllEvents, formatEventDate } = useEvents();
+
+  const applicantFuse = new Fuse(applicantData || [], {
     includeScore: true,
     threshold: 0.4,
-    keys: ["userName", "technology", "position", "email"],
+    keys: ["applicant_name", "applied_position", "email"],
   });
 
-  const eventFuse = new Fuse(eventData, {
+  const eventFuse = new Fuse(allEvents, {
     includeScore: true,
     threshold: 0.4,
-    keys: ["eventName", "interviewer", "date"],
+    keys: [
+      "event_name",
+      "interviewer_name",
+      "event_date_time",
+      "applicant_details.applicant_name",
+    ],
   });
+
+  useEffect(() => {
+    const loadEvents = async () => {
+      const events = await fetchAllEvents();
+      setAllEvents(events);
+    };
+
+    loadEvents();
+  }, []);
 
   useEffect(() => {
     if (searchText.trim()) {
       const applicantResults = applicantFuse
         .search(searchText)
         .map((result) => result.item);
+
       const eventResults = eventFuse
         .search(searchText)
         .map((result) => result.item);
@@ -136,7 +76,7 @@ const Search = ({}) => {
       setEventSearchResults([]);
       setShowResults(false);
     }
-  }, [searchText]);
+  }, [searchText, applicantData, allEvents]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -181,7 +121,7 @@ const Search = ({}) => {
     setShowResults(false);
   };
 
-  const handleEventClick = (event: Event) => {
+  const handleEventClick = (event: EventType) => {
     console.log("Selected event:", event);
     setShowResults(false);
   };
@@ -317,22 +257,31 @@ const Search = ({}) => {
                   <span>Candidates</span>
                 </div>
                 {applicantSearchResults.map((applicant) => (
-                  <motion.div
-                    key={applicant.userId}
-                    whileHover={{
-                      backgroundColor: "rgba(var(--primary), 0.1)",
-                    }}
-                    className="p-3 rounded-md cursor-pointer"
-                    onClick={() => handleApplicantClick(applicant)}
+                  <Link
+                    to={`/application-review/${applicant.id}`}
+                    key={applicant.id}
                   >
-                    <div className="font-medium">{applicant.userName}</div>
-                    <div className="text-sm text-muted-foreground flex justify-between">
-                      <span>
-                        {applicant.technology} • {applicant.position}
-                      </span>
-                      <span>{applicant.experience}</span>
-                    </div>
-                  </motion.div>
+                    <motion.div
+                      whileHover={{
+                        backgroundColor: "rgba(var(--primary), 0.1)",
+                      }}
+                      className="p-3 rounded-md cursor-pointer"
+                      onClick={() => handleApplicantClick(applicant)}
+                    >
+                      <div className="font-medium">
+                        {applicant.applicant_name}
+                      </div>
+                      <div className="text-sm text-muted-foreground flex justify-between">
+                        <span>
+                          {applicant.applied_position}{" "}
+                          {applicant.technology
+                            ? `• ${applicant.technology}`
+                            : ""}
+                        </span>
+                        <span>{applicant.experience || ""}</span>
+                      </div>
+                    </motion.div>
+                  </Link>
                 ))}
               </div>
             )}
@@ -348,36 +297,36 @@ const Search = ({}) => {
                   <Calendar size={14} />
                   <span>Events</span>
                 </div>
-                {eventSearchResults.map((event) => {
-                  const applicant = cvData.find(
-                    (app) => app.userId === event.userId
-                  );
-
-                  return (
+                {eventSearchResults.map((event) => (
+                  <Link
+                    to={`/application-review/${event?.applicant_details?.id}`}
+                    key={`${event.id}`}
+                  >
                     <motion.div
-                      key={`${event.userId}-${event.eventName}`}
                       whileHover={{
                         backgroundColor: "rgba(var(--primary), 0.1)",
                       }}
                       className="p-3 rounded-md cursor-pointer"
                       onClick={() => handleEventClick(event)}
                     >
-                      <div className="font-medium">{event.eventName}</div>
+                      <div className="font-medium">{event.event_name}</div>
                       <div className="text-sm flex justify-between">
-                        <span className="text-primary">{event.date}</span>
+                        <span className="text-primary">
+                          {formatEventDate(event.event_date_time)}
+                        </span>
                         <span className="text-muted-foreground">
-                          With {event.interviewer}
+                          With {event.interviewer_name}
                         </span>
                       </div>
-                      {applicant && (
+                      {event.applicant_details && (
                         <div className="text-xs text-muted-foreground mt-1">
-                          For: {applicant.userName} ({applicant.position}{" "}
-                          {applicant.technology})
+                          For: {event.applicant_details.applicant_name} (
+                          {event.applicant_details.applied_position})
                         </div>
                       )}
                     </motion.div>
-                  );
-                })}
+                  </Link>
+                ))}
               </div>
             )}
 

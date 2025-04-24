@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { format } from "date-fns";
-import { CalendarIcon, Check, Smile } from "lucide-react";
+import { CalendarDays, CalendarIcon, Check, Smile } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -18,76 +18,19 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
-import { supabase } from "@/utils/supabaseClient";
-import { toast } from "sonner";
 import { Link } from "react-router-dom";
-
-type EventProps = {
-  id: number;
-  event_name: string;
-  event_date_time: string;
-  event_description: string;
-  applicant_email: string;
-  interviewer_name: string;
-  applicant_details?: {
-    applicant_name: string;
-    applied_position: string;
-  };
-};
+import { useEvents } from "@/hooks/use-event-data";
 
 export function DateEvents() {
   const [date, setDate] = useState<Date>(new Date());
-  const [events, setEvents] = useState<EventProps[]>([]);
-  console.log(events);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-
-  const formattedDate = format(date, "yyyy-MM-dd");
-
-  useEffect(() => {
-    const fetchEvents = async () => {
-      setIsLoading(true);
-      try {
-        const { data, error } = await supabase
-          .from("events")
-          .select(
-            `
-            id,
-            event_name,
-            event_date_time,
-            event_description,
-            applicant_email,
-            interviewer_name,
-            applicant_details:applicant_email(applicant_name, applied_position,id)
-          `
-          )
-          .filter("event_date_time", "gte", `${formattedDate}T00:00:00`)
-          .filter("event_date_time", "lte", `${formattedDate}T23:59:59`)
-          .order("event_date_time", { ascending: true });
-
-        if (error) {
-          throw error;
-        }
-
-        setEvents(data || []);
-      } catch (error) {
-        console.error("Error fetching events:", error);
-        toast.error("Failed to load events");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchEvents();
-  }, [formattedDate]);
-
-  const formatEventTime = (dateTimeString: string): string => {
-    const date = new Date(dateTimeString);
-    return format(date, "h:mm a");
-  };
+  const { events, isLoading, formatEventTime } = useEvents(date);
 
   return (
     <div className="my-10">
-      <h2 className="text-xl font-semibold mb-4 text-primary">View Events</h2>
+      <h2 className="text-xl font-semibold mb-4 text-primary flex items-center gap-2">
+        <CalendarDays className="h-5 w-5" />
+        View Events
+      </h2>
       <div className="w-full m-auto ">
         <Card className="border-2">
           <CardHeader>
@@ -151,7 +94,7 @@ export function DateEvents() {
                             <p className="text-xs text-muted-foreground">
                               Candidate
                             </p>
-                            <p className="text-sm f`ont-medium">
+                            <p className="text-sm font-medium">
                               {event.applicant_details?.applicant_name || "N/A"}
                             </p>
                             <p className="text-xs text-muted-foreground">

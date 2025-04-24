@@ -73,12 +73,6 @@ export function AppSidebar() {
                     </Link>
                   </SidebarMenuButton>
 
-                  {/* {item.badge && (
-                    <SidebarMenuBadge className="text-muted bg-ring">
-                      {item.badge}
-                    </SidebarMenuBadge>
-                  )} */}
-
                   {item.subitems && (
                     <SidebarMenuSub>
                       {item.subitems.map((subitem) => (

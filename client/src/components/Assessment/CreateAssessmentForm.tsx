@@ -15,7 +15,6 @@ import {
 } from "../ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import {
@@ -27,45 +26,21 @@ import {
 } from "../ui/select";
 import { PopoverContent, Popover, PopoverTrigger } from "../ui/popover";
 import { Calendar } from "../ui/calendar";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, FilePlus } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/utils/supabaseClient";
 import { toast } from "sonner";
-
-const assessmentSchema = z.object({
-  title: z
-    .string()
-    .nonempty({ message: "Title is required" })
-    .min(4, { message: "Title must be at least 4 characters long" }),
-
-  type: z.enum(["Full Stack", "Frontend", "Backend", "Devops", "UI/UX"], {
-    required_error: "Please select the assessment type",
-  }),
-
-  level: z.enum(["Intern", "Junior", "Intermediate", "Senior"], {
-    required_error: "Please select the assessment level",
-  }),
-
-  formLink: z.string().min(1, {
-    message: "Assessment Link is required",
-  }),
-
-  submissionDate: z.date({
-    required_error: "Please specify the submission deadline",
-  }),
-
-  requirements: z
-    .string()
-    .nonempty({ message: "Requirements cannot be empty" }),
-});
+import { useState } from "react";
+import { AssessmentProps } from "@/schemas/assessmentSchema";
+import { assessmentSchema } from "@/schemas/assessmentSchema";
 
 const assessmentType = ["Full Stack", "Frontend", "Backend", "Devops", "UI/UX"];
 const assessmentLevel = ["Intern", "Junior", "Intermediate", "Senior"];
 
-type AssessmentProps = z.infer<typeof assessmentSchema>;
-
 const CreateAssessmentForm = () => {
+  const [isLoading, setIsLoading] = useState(false);
+
   const form = useForm<AssessmentProps>({
     resolver: zodResolver(assessmentSchema),
     defaultValues: {
@@ -78,6 +53,7 @@ const CreateAssessmentForm = () => {
 
   const onSubmit = async (data: AssessmentProps) => {
     try {
+      setIsLoading(true);
       const { error: assessmentError } = await supabase
         .from("assessment_table")
         .insert({
@@ -95,6 +71,7 @@ const CreateAssessmentForm = () => {
 
       toast.success("Assessment created successfully");
       form.reset();
+      setIsLoading(false);
     } catch (error: any) {
       console.error(error);
       toast.error(error);
@@ -103,8 +80,8 @@ const CreateAssessmentForm = () => {
 
   return (
     <div className="my-10 max-w-md">
-      <h2 className="text-xl font-semibold mb-4 text-primary">
-        Create Custom Assessment
+      <h2 className="text-xl font-semibold mb-4 text-primary flex items-center gap-2">
+        <FilePlus className="h-5 w-5" /> Create Custom Assessment
       </h2>
       <Card className="w-full">
         <CardHeader className="border-b">
@@ -257,7 +234,9 @@ const CreateAssessmentForm = () => {
                   </FormItem>
                 )}
               />
-              <Button type="submit">Submit</Button>
+              <Button type="submit" disabled={isLoading}>
+                Submit
+              </Button>
             </CardContent>
           </form>
         </Form>

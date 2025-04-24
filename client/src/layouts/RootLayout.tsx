@@ -44,7 +44,7 @@ export default function RootLayout() {
           </div>
           <motion.div
             whileHover={{ rotate: 10 }}
-            transition={{ type: "spring", stiffness: 300 }}
+            transition={{ type: "spring", stiffness: 100 }}
           >
             <Button className="p-0">
               <ModeToggle />

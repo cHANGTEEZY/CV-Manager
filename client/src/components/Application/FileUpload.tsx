@@ -36,7 +36,7 @@ const FileUpload = ({
         toast.success("File uploaded");
       } else {
         toast.error(
-          "Invalid file type. Please upload PDF, DOC, or DOCX files only.",
+          "Invalid file type. Please upload PDF, DOC, or DOCX files only."
         );
       }
     }
@@ -69,7 +69,7 @@ const FileUpload = ({
       toast.success("File uploaded");
     } else if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       toast.error(
-        "Invalid file type. Please upload PDF, DOC, or DOCX files only.",
+        "Invalid file type. Please upload PDF, DOC, or DOCX files only."
       );
     }
   };
@@ -83,7 +83,10 @@ const FileUpload = ({
   return (
     <div className="relative w-full">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold mb-4 text-primary">Upload file</h2>
+        <h2 className="text-xl font-semibold mb-4 text-primary flex items-center gap-2">
+          <CloudUpload className="h-5 w-5" />
+          Upload file
+        </h2>
         {showButton && <Button onClick={handleClose}>Close</Button>}
       </div>
       <div
@@ -117,7 +120,9 @@ const FileUpload = ({
               </p>
 
               <label className="relative cursor-pointer">
-                <Button className="relative z-10">Choose File</Button>
+                <Button className="relative z-10 cursor-pointer">
+                  Choose File
+                </Button>
                 <Input
                   type="file"
                   accept=".doc,.docx,.pdf"
