@@ -19,11 +19,12 @@ export const navItems = [
   },
 
   {
-    title: "Events",
+    title: "Interview",
     icon: Calendar,
     path: "/events/create-event",
     subitems: [
       { title: "Interview Scheduling", path: "/events/create-event" },
+      { title: "Interview Review", path: "/events/review-event" },
       { title: "Assessment Uploader", path: "/events/assessment-uploader" },
     ],
   },

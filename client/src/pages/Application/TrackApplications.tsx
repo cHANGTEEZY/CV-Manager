@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { DndContext, useDraggable, useDroppable } from "@dnd-kit/core";
 import { Card, CardDescription, CardHeader } from "@/components/ui/card";
@@ -136,7 +134,7 @@ function Column({ id, title, tasks, type }: ColumnProps) {
 
   return (
     <Card ref={setNodeRef} className={getColumnStyles()}>
-      <CardHeader className="p-0 font-bold text-lg m-0 ">
+      <CardHeader className="p-0 font-bold text-lg m-0 x">
         {type === "rejected" && (
           <X className="inline-flex mr-2 text-red-500" size={18} />
         )}
@@ -183,11 +181,10 @@ export default function KanbanBoard() {
 
     const taskId = active.id;
     const sourceColumn = Object.keys(tasks).find((columnId) =>
-      tasks[columnId].some((task) => task.id === taskId),
+      tasks[columnId].some((task) => task.id === taskId)
     );
     const destinationColumn = over.id;
 
-    // Don't do anything if dropped in the same column or if source column wasn't found
     if (!sourceColumn || sourceColumn === destinationColumn) {
       return;
     }
@@ -204,8 +201,7 @@ export default function KanbanBoard() {
         destinationColumn,
         taskId,
       });
-    }
-    else if (destinationColumn === "Offer") {
+    } else if (destinationColumn === "Offer") {
       setConfirmDialog({
         show: true,
         type: "offer",
@@ -214,8 +210,7 @@ export default function KanbanBoard() {
         destinationColumn,
         taskId,
       });
-    }
-    else {
+    } else {
       moveTask(sourceColumn, destinationColumn, taskId);
     }
   };
@@ -252,7 +247,7 @@ export default function KanbanBoard() {
       if (!taskToMove) return prev;
 
       const newSourceColumn = prev[sourceColumn].filter(
-        (task) => task.id !== taskId,
+        (task) => task.id !== taskId
       );
 
       const newDestinationColumn = [...prev[destinationColumn], taskToMove];
@@ -298,7 +293,9 @@ export default function KanbanBoard() {
                 ? "Applicant Rejected"
                 : "Offer Confirmed"}
             </AlertTitle>
-            <AlertDescription className="text-black">{notification.content}</AlertDescription>
+            <AlertDescription className="text-black">
+              {notification.content}
+            </AlertDescription>
           </Alert>
         )}
 

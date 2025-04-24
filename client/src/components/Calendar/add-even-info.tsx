@@ -51,6 +51,27 @@ const interviewers = [
   { id: "5", name: "Lisa Wong" },
 ];
 
+const interviewTypes = [
+  {
+    id: "interview1",
+    name: "Interview 1",
+    requiredStatus: "filled",
+    newStatus: "Interview 1 Scheduled",
+  },
+  {
+    id: "interview2",
+    name: "Interview 2",
+    requiredStatus: "Interview 1 Passed",
+    newStatus: "Interview 2 Scheduled",
+  },
+  {
+    id: "interview3",
+    name: "Interview 3",
+    requiredStatus: "Interview 2 Passed",
+    newStatus: "Interview 3 Scheduled",
+  },
+];
+
 interface Applicant {
   id: number;
   applicant_name: string;
@@ -61,6 +82,9 @@ interface Applicant {
 }
 
 const formSchema = z.object({
+  interview_type: z.string({
+    required_error: "Please select an interview type",
+  }),
   event_name: z
     .string()
     .min(3, { message: "Event title must be at least 3 characters" }),
@@ -86,36 +110,16 @@ type FormValues = z.infer<typeof formSchema>;
 const CreateEvent = () => {
   const [date, setDate] = useState<Date>();
   const [applicants, setApplicants] = useState<Applicant[]>([]);
+  const [filteredApplicants, setFilteredApplicants] = useState<Applicant[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchApplicants = async () => {
-      setIsLoading(true);
-      try {
-        const { data, error } = await supabase
-          .from("applicant_details")
-          .select("*")
-          .not("applicant_status", "eq", "Interview Scheduled");
-
-        if (error) {
-          throw error;
-        }
-
-        setApplicants(data || []);
-      } catch (error) {
-        console.error("Error fetching applicants:", error);
-        toast.error("Failed to load applicants");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchApplicants();
-  }, []);
+  const [selectedInterviewType, setSelectedInterviewType] = useState<
+    string | null
+  >(null);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      interview_type: "",
       event_name: "",
       event_description: "",
       event_date: undefined,
@@ -124,6 +128,77 @@ const CreateEvent = () => {
       interviewer_name: "",
     },
   });
+
+  const fetchApplicants = async () => {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from("applicant_details")
+        .select("*");
+
+      if (error) {
+        throw error;
+      }
+
+      setApplicants(data || []);
+    } catch (error) {
+      console.error("Error fetching applicants:", error);
+      toast.error("Failed to load applicants");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchApplicants();
+  }, []);
+
+  // Filter applicants based on selected interview type
+  useEffect(() => {
+    if (!selectedInterviewType || !applicants.length) {
+      setFilteredApplicants([]);
+      return;
+    }
+
+    const interviewType = interviewTypes.find(
+      (type) => type.id === selectedInterviewType
+    );
+
+    if (!interviewType) {
+      setFilteredApplicants([]);
+      return;
+    }
+
+    const filtered = applicants.filter(
+      (applicant) => applicant.applicant_status === interviewType.requiredStatus
+    );
+
+    setFilteredApplicants(filtered);
+
+    form.setValue("applicant_email", "");
+  }, [selectedInterviewType, applicants, form]);
+
+  const interviewTypeWatch = form.watch("interview_type");
+
+  useEffect(() => {
+    setSelectedInterviewType(interviewTypeWatch);
+
+    if (interviewTypeWatch) {
+      const selectedType = interviewTypes.find(
+        (type) => type.id === interviewTypeWatch
+      );
+      if (selectedType) {
+        form.setValue(
+          "event_name",
+          `${selectedType.name} - Candidate Assessment`
+        );
+        form.setValue(
+          "event_description",
+          `${selectedType.name} for candidate assessment and evaluation`
+        );
+      }
+    }
+  }, [interviewTypeWatch, form]);
 
   const onSubmit = async (data: FormValues) => {
     const eventDateTime = new Date(data.event_date);
@@ -134,6 +209,15 @@ const CreateEvent = () => {
       (a) => a.applicant_email === data.applicant_email
     );
 
+    const interviewType = interviewTypes.find(
+      (type) => type.id === data.interview_type
+    );
+
+    if (!interviewType || !selectedApplicant) {
+      toast.error("Invalid interview type or applicant");
+      return;
+    }
+
     try {
       const { error: eventError } = await supabase.from("events").insert({
         event_name: data.event_name,
@@ -141,33 +225,29 @@ const CreateEvent = () => {
         event_date_time: eventDateTime.toISOString(),
         applicant_email: data.applicant_email,
         interviewer_name: data.interviewer_name,
+        interview_type: data.interview_type,
       });
 
       if (eventError) {
         throw eventError;
       }
 
-      if (selectedApplicant) {
-        const { error: updateError } = await supabase
-          .from("applicant_details")
-          .update({ applicant_status: "Interview Scheduled" })
-          .eq("id", selectedApplicant.id);
+      // Update applicant status based on interview type
+      const { error: updateError } = await supabase
+        .from("applicant_details")
+        .update({ applicant_status: interviewType.newStatus })
+        .eq("id", selectedApplicant.id);
 
-        if (updateError) {
-          throw updateError;
-        }
+      if (updateError) {
+        throw updateError;
       }
 
-      toast.success("Event created successfully");
+      toast.success(`${interviewType.name} scheduled successfully`);
       form.reset();
       setDate(undefined);
 
-      const { data: refreshedData } = await supabase
-        .from("applicant_details")
-        .select("*")
-        .not("applicant_status", "eq", "Interview Scheduled");
-
-      setApplicants(refreshedData || []);
+      // Refresh applicants list
+      await fetchApplicants();
     } catch (error) {
       console.error("Error:", error);
       toast.error("Failed to create event");
@@ -177,22 +257,52 @@ const CreateEvent = () => {
   return (
     <div className="max-w-md mt-10">
       <h3 className="text-xl font-semibold mb-4 text-primary flex items-center gap-2">
-        <FilePlus
-          className="h-5 w-f5
-        "
-        />
+        <FilePlus className="h-5 w-5" />
         Create Event
       </h3>
       <Card className="w-full">
         <CardHeader className="border-b">
           <CardTitle>New Event Details</CardTitle>
-          <CardDescription>
-            Create custom event's for applicants
-          </CardDescription>
+          <CardDescription>Create custom events for applicants</CardDescription>
         </CardHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <CardContent className="space-y-6">
+              {/* Interview Type Dropdown */}
+              <FormField
+                control={form.control}
+                name="interview_type"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-accent-foreground font-normal text-sm">
+                      Interview Type
+                    </FormLabel>
+                    <FormControl>
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                        onBlur={field.onBlur}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select interview type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {interviewTypes.map((type) => (
+                            <SelectItem key={type.id} value={type.id}>
+                              {type.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormDescription>
+                      Select the type of interview to schedule
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <FormField
                 control={form.control}
                 name="event_name"
@@ -325,19 +435,27 @@ const CreateEvent = () => {
                         value={field.value}
                         onValueChange={field.onChange}
                         onBlur={field.onBlur}
-                        disabled={isLoading || applicants.length === 0}
+                        disabled={
+                          isLoading ||
+                          !selectedInterviewType ||
+                          filteredApplicants.length === 0
+                        }
                       >
                         <SelectTrigger>
                           <SelectValue
                             placeholder={
                               isLoading
                                 ? "Loading candidates..."
+                                : !selectedInterviewType
+                                ? "Select interview type first"
+                                : filteredApplicants.length === 0
+                                ? "No eligible candidates"
                                 : "Select candidate"
                             }
                           />
                         </SelectTrigger>
                         <SelectContent>
-                          {applicants.map((applicant) => (
+                          {filteredApplicants.map((applicant) => (
                             <SelectItem
                               key={applicant.id.toString()}
                               value={applicant.applicant_email}
@@ -351,7 +469,13 @@ const CreateEvent = () => {
                       </Select>
                     </FormControl>
                     <FormDescription>
-                      Select the candidate for this interview
+                      {selectedInterviewType
+                        ? `Select a candidate eligible for ${
+                            interviewTypes.find(
+                              (t) => t.id === selectedInterviewType
+                            )?.name
+                          }`
+                        : "Please select an interview type first"}
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -405,7 +529,15 @@ const CreateEvent = () => {
               >
                 Cancel
               </Button>
-              <Button type="submit cursor-pointer" disabled={isLoading}>
+              <Button
+                type="submit"
+                className="cursor-pointer"
+                disabled={
+                  isLoading ||
+                  !selectedInterviewType ||
+                  filteredApplicants.length === 0
+                }
+              >
                 Create Event
               </Button>
             </CardFooter>
