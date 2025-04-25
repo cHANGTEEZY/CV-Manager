@@ -2,7 +2,14 @@
 
 import { useState } from "react";
 import { format } from "date-fns";
-import { CalendarDays, CalendarIcon, Check, Smile } from "lucide-react";
+import {
+  CalendarDays,
+  CalendarIcon,
+  Check,
+  SearchCheck,
+  Smile,
+  Timer,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -21,9 +28,20 @@ import { Separator } from "@/components/ui/separator";
 import { Link } from "react-router-dom";
 import { useEvents } from "@/hooks/use-event-data";
 
+const generateIcon = (status: string) => {
+  if (status === "pending") {
+    return <Timer />;
+  } else if (status === "in review") {
+    return <SearchCheck />;
+  } else {
+    return <Check className="text-green-500" />;
+  }
+};
+
 export function DateEvents() {
   const [date, setDate] = useState<Date>(new Date());
   const { events, isLoading, formatEventTime } = useEvents(date);
+  console.log(events);
 
   return (
     <div className="my-10">
@@ -70,9 +88,7 @@ export function DateEvents() {
                     key={event.id}
                     className="border cursor-pointer rounded-lg p-4 transition-all duration-200 ease-in-out hover:border-primary"
                   >
-                    <Link
-                      to={`/application-review/${event?.applicant_details?.id}`}
-                    >
+                    <Link to={`/application-review/${event?.id}`}>
                       <div className="flex items-center justify-between">
                         <div className="font-medium text-lg">
                           {event.event_name}
@@ -115,10 +131,10 @@ export function DateEvents() {
                             </p>
                             <Button
                               variant={"outline"}
-                              className="flex items-center gap-1 bg-grey-500 text-green-500"
+                              className="flex items-center gap-1"
                             >
-                              Completed
-                              <Check className="text-green-500" />
+                              {event.interview_result}
+                              {generateIcon(event.interview_result)}
                             </Button>
                           </div>
                         </div>

@@ -1,15 +1,8 @@
 import { motion } from "framer-motion";
-import { useParams } from "react-router-dom";
 
 import ReviewApplicationFrom from "@/components/Application/ReviewApplication";
 
-type paramsProp = {
-  id: string;
-};
-
 const ReviewApplications = () => {
-  const { id } = useParams<paramsProp>();
-
   return (
     <section className="mx-auto mt-5 max-w-[800px] ">
       <motion.h1
@@ -20,7 +13,7 @@ const ReviewApplications = () => {
         Monitor, Review and Update Applicants Data
       </motion.h1>
 
-      <ReviewApplicationFrom eventId={id} />
+      <ReviewApplicationFrom />
     </section>
   );
 };

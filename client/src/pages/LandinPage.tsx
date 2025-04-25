@@ -1,3 +1,4 @@
+import { framerWhite } from "@/assets/images";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import {
@@ -5,6 +6,7 @@ import {
   ChevronDown,
   Dribbble,
   Facebook,
+  FramerIcon,
   Instagram,
   Linkedin,
   Slack,
@@ -47,8 +49,8 @@ const Header = () => {
   return (
     <header className="bg-[oklch(0.14_0.02_260)] border-b border-[oklch(1_0_0/8%)] ">
       <nav className="max-w-6xl mx-auto p-4 flex items-center justify-between">
-        <span className="font-medium text-lg text-[oklch(0.9_0.01_270)]">
-          Framer
+        <span className="font-medium text-lg text-[oklch(0.9_0.01_270)] flex gap-1 items-center ">
+          <img src={framerWhite} alt="framer company logo" className="h-10" />
         </span>
         <div className="space-x-2">
           <Button
@@ -70,7 +72,7 @@ const Hero = () => {
   return (
     <section className="h-96 flex items-center w-full justify-center  border-[oklch(1_0_0/8%)]">
       <div className="grid place-items-center gap-6">
-        <h1 className="text-7xl font-bold text-center text-[oklch(0.9_0.01_270)]">
+        <h1 className="text-8xl font-bold text-center text-[oklch(0.9_0.01_270)]">
           Manage it <br /> with Framer
         </h1>
         <p className="text-[oklch(0.65_0.02_270)] text-2xl">

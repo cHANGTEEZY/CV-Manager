@@ -32,14 +32,6 @@ export default function RootLayout() {
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <SidebarTrigger />
             </motion.div>
-            <motion.h1
-              className="text-xl font-semibold md:pr-4 hidden sm:block"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
-            >
-              CV Manager
-            </motion.h1>
             <Search />
           </div>
           <motion.div

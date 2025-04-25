@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { supabase } from "@/utils/supabaseClient";
 import { toast } from "sonner";
-import { FileText } from "lucide-react";
+import { FileText, Framer } from "lucide-react";
 
 import {
   Sidebar,
@@ -48,10 +48,10 @@ export function AppSidebar() {
             <SidebarMenuButton size="lg" asChild>
               <Link to="/">
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-white">
-                  <FileText className="size-4" />
+                  <Framer className="size-4" />
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-semibold">CV Manager</span>
+                  <span className="font-semibold">Framer</span>
                 </div>
               </Link>
             </SidebarMenuButton>

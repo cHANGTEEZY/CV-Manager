@@ -8,7 +8,7 @@ import {
 } from "../ui/card";
 import { Button } from "../ui/button";
 
-const ApplicantTimeline = () => {
+const ApplicantTimeline = ({ currentState }) => {
   const [currentStep, setCurrentStep] = useState(2);
 
   const timelineSteps = [

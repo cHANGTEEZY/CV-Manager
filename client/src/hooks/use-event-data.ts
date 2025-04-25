@@ -11,6 +11,7 @@ export type EventType = {
   event_description: string;
   applicant_email: string;
   interviewer_name: string;
+  interview_result: string;
   applicant_details?: {
     id: string;
     applicant_name: string;
@@ -42,6 +43,7 @@ export function useEvents(date?: Date) {
             event_description,
             applicant_email,
             interviewer_name,
+            interview_result,
             applicant_details:applicant_email(id, applicant_name, applied_position)
           `
           )

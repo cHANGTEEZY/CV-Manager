@@ -153,7 +153,6 @@ const CreateEvent = () => {
     fetchApplicants();
   }, []);
 
-  // Filter applicants based on selected interview type
   useEffect(() => {
     if (!selectedInterviewType || !applicants.length) {
       setFilteredApplicants([]);
@@ -226,6 +225,7 @@ const CreateEvent = () => {
         applicant_email: data.applicant_email,
         interviewer_name: data.interviewer_name,
         interview_type: data.interview_type,
+        interview_result: "pending"
       });
 
       if (eventError) {

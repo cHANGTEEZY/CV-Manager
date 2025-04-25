@@ -19,6 +19,7 @@ import ReviewApplications from "@/pages/Application/ReviewApplications";
 import Email from "@/pages/Email/Email";
 import LandinPage from "@/pages/LandinPage";
 import AssessmentPage from "@/pages/Events/AssessmentPage";
+import ReviewEvent from "@/pages/Events/ReviewEvent";
 
 export const router = createBrowserRouter([
   {
@@ -60,6 +61,15 @@ export const router = createBrowserRouter([
             <AssessmentPage />
           </ProtectedRoute>
         ),
+      },
+
+      {
+        path: "events/review-event",
+        element: (
+          <ProtectedRoute>
+            <ReviewEvent/>
+          </ProtectedRoute>
+        )
       },
 
       {
