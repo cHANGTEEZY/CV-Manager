@@ -40,6 +40,7 @@ import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { useEvents } from "@/hooks/use-event-data";
 import { supabase } from "@/utils/supabaseClient";
+import { cn } from "@/lib/utils";
 
 export default function PendingInterviews() {
   const [date, setDate] = useState<Date>(new Date());
@@ -54,6 +55,8 @@ export default function PendingInterviews() {
   const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
   const [candidateReview, setCandidateReview] = useState("");
   const [rating, setRating] = useState(0);
+
+  console.log(pendingEvents);
 
   useEffect(() => {
     if (allEvents && allEvents.length > 0) {
@@ -93,22 +96,12 @@ export default function PendingInterviews() {
         pendingEvents.filter((event) => event.id !== selectedEvent.id)
       );
 
-      toast({
-        title: "Interview completed",
-        description:
-          "The interview has been marked as completed and review saved.",
-        variant: "success",
-      });
+      toast.success("Interview state updated successfully");
 
       setReviewDialogOpen(false);
     } catch (error) {
       console.error("Error updating interview:", error);
-      toast({
-        title: "Failed to update",
-        description:
-          "There was an error saving the interview results. Please try again.",
-        variant: "destructive",
-      });
+      toast.error("There was an error");
     }
   };
 
@@ -235,8 +228,14 @@ export default function PendingInterviews() {
               <CardFooter className="pt-4 pb-4 flex justify-end">
                 <Button
                   variant="default"
-                  className="flex items-center gap-2"
+                  className={
+                    (cn("flex items-center gap-2"),
+                    new Date(event.event_date_time) > new Date())
+                      ? "hover:cursor-not-allowed"
+                      : "hover:cursor-pointer"
+                  }
                   onClick={() => openReviewDialog(event)}
+                  disabled={new Date(event.event_date_time) > new Date()}
                 >
                   <ThumbsUp size={16} />
                   Complete Interview

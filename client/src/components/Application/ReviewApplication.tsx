@@ -74,7 +74,6 @@ const ReviewApplicationForm = () => {
           appliedPosition: userData[0].applied_position,
         });
 
-        // Format and transform event data
         const formattedEventData = eventData.map((event) => {
           const eventDate = new Date(event.event_date_time);
           const formattedDate = eventDate.toLocaleDateString("en-US", {

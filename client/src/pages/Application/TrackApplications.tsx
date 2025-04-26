@@ -1,7 +1,23 @@
 import { useState } from "react";
 import { DndContext, useDraggable, useDroppable } from "@dnd-kit/core";
-import { Card, CardDescription, CardHeader } from "@/components/ui/card";
-import { AlertCircle, Check, X } from "lucide-react";
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  AlertCircle,
+  Check,
+  ClipboardCheck,
+  ClipboardList,
+  Code,
+  FileCheck,
+  UserPlus,
+  UserX,
+  Users,
+  X,
+} from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   AlertDialog,
@@ -35,6 +51,8 @@ interface ColumnProps {
   title: string;
   tasks: Task[];
   type?: string;
+  description: string;
+  icon?: React.ReactNode;
 }
 
 const initialTasks: TasksState = {
@@ -108,7 +126,7 @@ function Task({ id, content, className = "", columnType }: TaskProps) {
   );
 }
 
-function Column({ id, title, tasks, type }: ColumnProps) {
+function Column({ id, title, tasks, type, description, icon }: ColumnProps) {
   const { setNodeRef, isOver } = useDroppable({
     id,
   });
@@ -135,13 +153,13 @@ function Column({ id, title, tasks, type }: ColumnProps) {
   return (
     <Card ref={setNodeRef} className={getColumnStyles()}>
       <CardHeader className="p-0 font-bold text-lg m-0 x">
-        {type === "rejected" && (
-          <X className="inline-flex mr-2 text-red-500" size={18} />
-        )}
-        {type === "offer" && (
-          <Check className="inline-flex mr-2 text-green-500" size={18} />
-        )}
-        {title}
+        <CardTitle>
+          {icon && <span className="inline-flex mr-2">{icon}</span>}
+          {title}
+        </CardTitle>
+        <CardDescription className="font-medium text-xs">
+          {description}
+        </CardDescription>
       </CardHeader>
       <CardDescription className="mt-2">
         {tasks.map((task) => (
@@ -308,12 +326,16 @@ export default function KanbanBoard() {
               id="Applicant-List"
               title="Applicants"
               tasks={tasks["Applicant-List"]}
+              description="New applications awaiting initial screening and evaluation"
+              icon={<UserPlus size={18} className="text-blue-500" />}
             />
             <Column
               id="Rejected"
               title="Rejected List"
+              description="Candidates who didn't meet requirements or weren't selected to proceed"
               tasks={tasks["Rejected"]}
               type="rejected"
+              icon={<UserX size={18} className="text-red-500" />}
             />
           </div>
         </div>
@@ -326,12 +348,16 @@ export default function KanbanBoard() {
             <Column
               id="Assessment1"
               title="Assessment 1"
+              description="Candidates undergoing first-round technical skills evaluation"
               tasks={tasks["Assessment1"]}
+              icon={<ClipboardList size={18} className="text-amber-500" />}
             />
             <Column
               id="Assessment2"
               title="Assessment 2"
+              description="Applicants in advanced assessment phase for specialized skills"
               tasks={tasks["Assessment2"]}
+              icon={<ClipboardCheck size={18} className="text-amber-600" />}
             />
           </div>
         </div>
@@ -344,12 +370,16 @@ export default function KanbanBoard() {
             <Column
               id="technical-interview"
               title="Technical Interview"
+              description="Candidates scheduled for in-depth technical expertise evaluation"
               tasks={tasks["technical-interview"]}
+              icon={<Code size={18} className="text-indigo-500" />}
             />
             <Column
               id="Final-interview"
               title="Final Interview"
+              description="Applicants in final decision stage with leadership team"
               tasks={tasks["Final-interview"]}
+              icon={<Users size={18} className="text-indigo-600" />}
             />
           </div>
         </div>
@@ -361,8 +391,10 @@ export default function KanbanBoard() {
           <Column
             id="Offer"
             title="Offer"
+            description="Successful candidates receiving or negotiating employment offers"
             tasks={tasks["Offer"]}
             type="offer"
+            icon={<FileCheck size={18} className="text-green-500" />}
           />
         </div>
 

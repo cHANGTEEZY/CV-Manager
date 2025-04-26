@@ -6,9 +6,12 @@ import {
   CalendarDays,
   CalendarIcon,
   Check,
+  PersonStandingIcon,
   SearchCheck,
   Smile,
   Timer,
+  User,
+  UserPen,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -90,7 +93,7 @@ export function DateEvents() {
                   >
                     <Link to={`/application-review/${event?.id}`}>
                       <div className="flex items-center justify-between">
-                        <div className="font-medium text-lg">
+                        <div className="font-medium text-lg text-gradient-chart-1">
                           {event.event_name}
                         </div>
                         <div className="text-sm bg-pink-400/20 px-2 py-1 rounded-full">
@@ -106,24 +109,32 @@ export function DateEvents() {
 
                       <div className="mt-3 pt-3 border-t bg">
                         <div className="flex justify-between gap-2">
-                          <div>
-                            <p className="text-xs text-muted-foreground">
-                              Candidate
-                            </p>
-                            <p className="text-sm font-medium">
-                              {event.applicant_details?.applicant_name || "N/A"}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              {event.applicant_details?.applied_position || ""}
-                            </p>
+                          <div className="flex items-center gap-1.5">
+                            <User />
+                            <div>
+                              <p className="text-xs text-muted-foreground">
+                                Candidate
+                              </p>
+                              <p className="text-sm font-medium">
+                                {event.applicant_details?.applicant_name ||
+                                  "N/A"}
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                {event.applicant_details?.applied_position ||
+                                  ""}
+                              </p>
+                            </div>
                           </div>
-                          <div>
-                            <p className="text-xs text-muted-foreground">
-                              Interviewer
-                            </p>
-                            <p className="text-sm font-medium">
-                              {event.interviewer_name}
-                            </p>
+                          <div className="flex items-center gap-1.5">
+                            <UserPen />
+                            <div>
+                              <p className="text-xs text-muted-foreground">
+                                Interviewer
+                              </p>
+                              <p className="text-sm font-medium">
+                                {event.interviewer_name}
+                              </p>
+                            </div>
                           </div>
                           <div>
                             <p className="text-xs text-muted-foreground">

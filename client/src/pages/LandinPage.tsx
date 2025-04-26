@@ -2,17 +2,35 @@ import { framerWhite } from "@/assets/images";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import {
+  BanknoteArrowUp,
   Bird,
+  Check,
   ChevronDown,
   Dribbble,
   Facebook,
-  FramerIcon,
   Instagram,
   Linkedin,
   Slack,
   Trello,
   Youtube,
 } from "lucide-react";
+import { Link } from "react-router-dom";
+import { features, pricingPlans } from "@/constants/LandingPage";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
 
 const LandingPage = () => {
   return (
@@ -39,6 +57,11 @@ const LandingPage = () => {
           </motion.span>
         </motion.div>
       </div>
+      <section className="max-w-3xl m-auto">
+        <motion.div>
+          <Features />
+        </motion.div>
+      </section>
     </section>
   );
 };
@@ -53,15 +76,19 @@ const Header = () => {
           <img src={framerWhite} alt="framer company logo" className="h-10" />
         </span>
         <div className="space-x-2">
-          <Button
-            variant="ghost"
-            className="cursor-pointer text-[oklch(0.9_0.01_270)] hover:bg-[oklch(0.25_0.01_270)] hover:text-[oklch(0.98_0.01_270)]"
-          >
-            Login
-          </Button>
-          <Button className="cursor-pointer bg-[oklch(0.65_0.23_25)] text-[oklch(0.98_0.01_25)] hover:bg-[oklch(0.65_0.23_25/90%)]">
-            Signup
-          </Button>
+          <Link to={"/auth/signin"}>
+            <Button
+              variant="ghost"
+              className="cursor-pointer text-[oklch(0.9_0.01_270)] hover:bg-[oklch(0.25_0.01_270)] hover:text-[oklch(0.98_0.01_270)]"
+            >
+              Signin
+            </Button>
+          </Link>
+          <Link to={"/auth/signup"}>
+            <Button className="cursor-pointer bg-[oklch(0.65_0.23_25)] text-[oklch(0.98_0.01_25)] hover:bg-[oklch(0.65_0.23_25/90%)]">
+              Signup
+            </Button>
+          </Link>
         </div>
       </nav>
     </header>
@@ -79,12 +106,19 @@ const Hero = () => {
           The website CRM loved by HR
         </p>
         <span className="space-x-3 mt-2">
-          <Button className="bg-[oklch(0.65_0.23_25)] text-[oklch(0.98_0.01_25)] hover:bg-[oklch(0.65_0.23_25/90%)]">
+          <Button className="bg-[oklch(0.65_0.23_25)] text-[oklch(0.98_0.01_25)] hover:bg-[oklch(0.65_0.23_25/90%)] cursor-pointer">
             Get Started
           </Button>
-          <Button className="bg-[oklch(0.28_0.02_260)] text-[oklch(0.92_0.01_270)] hover:bg-[oklch(0.28_0.02_260/80%)]">
-            Learn More <ChevronDown className="ml-1" size={16} />
-          </Button>
+          <Dialog>
+            <DialogTrigger>
+              <Button className="bg-[oklch(0.28_0.02_260)] text-[oklch(0.92_0.01_270)] hover:bg-[oklch(0.28_0.02_260/80%)] cursor-pointer">
+                Find your plan <BanknoteArrowUp />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="bg-black border-none w-[max-content] p-0">
+              <Pricing />
+            </DialogContent>
+          </Dialog>
         </span>
       </div>
     </section>
@@ -109,9 +143,104 @@ const Customer = () => {
           whileHover={{ scale: 0.9 }}
           className="opacity-70 hover:opacity-100 transition-opacity duration-300 text-[oklch(0.9_0.01_270)]"
         >
-          <Icon size={30} strokeWidth={1.2} />
+          <Icon size={30} strokeWidth={1.5} />
         </motion.div>
       ))}
     </motion.div>
+  );
+};
+
+const Features = () => {
+  return (
+    <div className="my-5">
+      <h2 className="text-center text-6xl font-bold ">
+        Everything you need to find <br /> and manage top talent.
+      </h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-2 gap-y-3 mt-20 px-10">
+        {features.map((feature) => (
+          <Card className="bg-black border-black shadow-blue-900">
+            <CardContent>
+              <div className="flex items-center justify-center flex-col gap-5">
+                <feature.icon size={30} strokeWidth={2} color="white" />
+                <TooltipProvider>
+                  <Tooltip delayDuration={50}>
+                    <TooltipTrigger>
+                      <h3 className="text-gray-400 hover:text-gray-100 transition-all delay-50 ease-in-out cursor-default">
+                        {feature.title}
+                      </h3>
+                    </TooltipTrigger>
+                    <TooltipContent
+                      arrowClassName="bg-white fill-white"
+                      sideOffset={45}
+                      className="bg-white text-gray-800 max-w-[200px] text-sm py-3"
+                    >
+                      {feature.description}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const Carousel = () => {
+  return <div></div>;
+};
+
+const Pricing = () => {
+  const getTitleColor = (title) => {
+    if (title === "Starter") {
+      return "text-yellow-500";
+    } else if (title === "Pro") {
+      return "text-primary";
+    } else {
+      return "text-purple-500";
+    }
+  };
+
+  return (
+    <div className="grid gap-4 grid-cols-1 md:grid-cols-3 w-[1200px] mx-auto">
+      {pricingPlans.map((plan) => (
+        <Card className="bg-black border-black shadow-slate-600">
+          <CardHeader>
+            <CardTitle
+              className={cn(
+                "text-white text-3xl font-light",
+                getTitleColor(plan.title)
+              )}
+            >
+              {plan.title}
+            </CardTitle>
+            <CardDescription className="max-w-[200px]">
+              {plan.description}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="text-white">
+              <h3 className={cn("text-5xl mt-2 mb-5 ")}>{plan.price}</h3>
+              <Button className="w-full bg-white text-black">
+                {plan.buttonText}
+              </Button>
+              <div>
+                <ul className="mt-4 space-y-2">
+                  {plan.features.map((feature) => (
+                    <li className="flex gap-3 items-center">
+                      <span className="bg-primary p-0.5  rounded-full flex items-center justify-center">
+                        <Check size={20} />
+                      </span>{" "}
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
   );
 };
