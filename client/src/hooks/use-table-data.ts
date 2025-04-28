@@ -17,8 +17,6 @@ const useTableData = () => {
           throw new Error(error.message || "Error retrieving table data");
         }
 
-        console.log("Data fetched from Supabase:", data);
-
         if (Array.isArray(data)) {
           setTableData(data);
         } else {

@@ -37,13 +37,7 @@ export function useEvents(date?: Date) {
           .from("events")
           .select(
             `
-            id,
-            event_name,
-            event_date_time,
-            event_description,
-            applicant_email,
-            interviewer_name,
-            interview_result,
+           *,
             applicant_details:applicant_email(id, applicant_name, applied_position)
           `
           )
@@ -76,12 +70,7 @@ export function useEvents(date?: Date) {
         .from("events")
         .select(
           `
-          id,
-          event_name,
-          event_date_time,
-          event_description,
-          applicant_email,
-          interviewer_name,
+          *,
           applicant_details:applicant_email(id, applicant_name, applied_position)
         `
         )

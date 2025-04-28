@@ -46,10 +46,18 @@ const globalFilterFn: FilterFn<any> = (row, columnId, filterValue) => {
 const getStatusColor = (status: string) => {
   status = status.toLowerCase();
 
-  if (status.includes("hired") || status.includes("accepted"))
+  if (
+    status.includes("hired") ||
+    status.includes("accepted") ||
+    status.includes("passed")
+  )
     return "bg-green-500 text-white";
 
-  if (status.includes("rejected") || status.includes("declined"))
+  if (
+    status.includes("rejected") ||
+    status.includes("declined") ||
+    status.includes("failed")
+  )
     return "bg-red-500 text-white";
 
   if (status.includes("interview") || status.includes("reviewing"))
@@ -58,7 +66,7 @@ const getStatusColor = (status: string) => {
   if (status.includes("pending") || status.includes("waiting"))
     return "bg-gray-400 text-white";
 
-  return "bg-[var(--muted)] text-[var(--muted-foreground)]";
+  return "bg-slate-500";
 };
 
 const ApplicationTable = ({ tableData }) => {

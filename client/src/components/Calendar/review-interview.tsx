@@ -6,7 +6,6 @@ import {
   CalendarIcon,
   Check,
   Clock,
-  Filter,
   MessageSquare,
   Star,
   ThumbsUp,
@@ -41,6 +40,15 @@ import { Badge } from "@/components/ui/badge";
 import { useEvents } from "@/hooks/use-event-data";
 import { supabase } from "@/utils/supabaseClient";
 import { cn } from "@/lib/utils";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { InterviewTypeResults } from "@/constants/EventData";
 
 export default function PendingInterviews() {
   const [date, setDate] = useState<Date>(new Date());
@@ -52,11 +60,12 @@ export default function PendingInterviews() {
   } = useEvents(date);
   const [pendingEvents, setPendingEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  console.log("Selected event is", selectedEvent);
   const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
+  const [interviewResult, setInterviewResult] = useState("");
+  console.log(interviewResult);
   const [candidateReview, setCandidateReview] = useState("");
   const [rating, setRating] = useState(0);
-
-  console.log(pendingEvents);
 
   useEffect(() => {
     if (allEvents && allEvents.length > 0) {
@@ -73,6 +82,7 @@ export default function PendingInterviews() {
     setSelectedEvent(event);
     setCandidateReview("");
     setRating(0);
+    setInterviewResult("");
     setReviewDialogOpen(true);
   };
 
@@ -83,14 +93,27 @@ export default function PendingInterviews() {
       const { error } = await supabase
         .from("events")
         .update({
-          interview_result: "completed",
+          interview_result: interviewResult,
           interview_remarks: candidateReview,
           interview_rating: rating,
-          completed_at: new Date().toISOString(),
         })
         .eq("id", selectedEvent.id);
 
       if (error) throw error;
+
+      if (selectedEvent.applicant_details?.id) {
+        const { error: applicantTableError } = await supabase
+          .from("applicant_details")
+          .update({
+            applicant_status: interviewResult,
+            applicant_verdict: interviewResult.includes("Failed") ? "Fail" : "",
+          })
+          .eq("id", selectedEvent.applicant_details.id);
+
+        if (error) {
+          throw applicantTableError;
+        }
+      }
 
       setPendingEvents(
         pendingEvents.filter((event) => event.id !== selectedEvent.id)
@@ -235,7 +258,7 @@ export default function PendingInterviews() {
                       : "hover:cursor-pointer"
                   }
                   onClick={() => openReviewDialog(event)}
-                  disabled={new Date(event.event_date_time) > new Date()}
+                  // disabled={new Date(event.event_date_time) > new Date()}
                 >
                   <ThumbsUp size={16} />
                   Complete Interview
@@ -270,6 +293,34 @@ export default function PendingInterviews() {
               completed.
             </DialogDescription>
           </DialogHeader>
+
+          <div className="mb-4">
+            <label className="font-medium text-sm mb-2 block">
+              Interview Result
+            </label>
+            <Select value={interviewResult} onValueChange={setInterviewResult}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select Interview Result" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {selectedEvent &&
+                    InterviewTypeResults.map((interviewType) => {
+                      if (
+                        interviewType.title === selectedEvent.interview_type
+                      ) {
+                        return interviewType.status.map((status) => (
+                          <SelectItem key={status} value={status}>
+                            {status}
+                          </SelectItem>
+                        ));
+                      }
+                      return null;
+                    })}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
 
           <div className="space-y-4 py-4">
             <div>

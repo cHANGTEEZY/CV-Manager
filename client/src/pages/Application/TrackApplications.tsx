@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DndContext, useDraggable, useDroppable } from "@dnd-kit/core";
 import {
   Card,
@@ -29,6 +29,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import useTableData from "@/hooks/use-table-data";
+import { table } from "console";
 
 interface Task {
   id: string;
@@ -119,7 +121,7 @@ function Task({ id, content, className = "", columnType }: TaskProps) {
       style={style}
       {...listeners}
       {...attributes}
-      className={`p-3 mb-2 cursor-pointer hover:shadow-md transition-all ${getBgColor()} ${className}`}
+      className={`p-3 mb-2  hover:shadow-md transition-all ${getBgColor()} ${className}`}
     >
       {content}
     </Card>
@@ -177,6 +179,9 @@ function Column({ id, title, tasks, type, description, icon }: ColumnProps) {
 
 export default function KanbanBoard() {
   const [tasks, setTasks] = useState<TasksState>(initialTasks);
+  console.log("all tasks", tasks);
+  const tableData = useTableData();
+  console.log("TData is ", tableData);
   const [notification, setNotification] = useState<{
     show: boolean;
     type: string;
@@ -277,6 +282,33 @@ export default function KanbanBoard() {
       };
     });
   };
+
+  useEffect(() => {
+    if (tableData && Array.isArray(tableData)) {
+      const rejectedList = tableData
+        .filter((r) => r.applicant_verdict === "Failed")
+        .map((applicant, index) => ({
+          id: `rejected-${index}`,
+          content: `Name: ${applicant.applicant_name}, Email: ${applicant.applicant_email}`,
+        }));
+
+      const addedCandidate = tableData
+        .filter((a) => a.applicant_status === "filled")
+        .map((applicant, index) => ({
+          id: `applicant-${index}`,
+          content: `Name: ${applicant.applicant_name}, Email: ${applicant.applicant_email}`,
+        }));
+
+      setTasks((prevData) => ({
+        ...prevData,
+        "Applicant-List":
+          addedCandidate.length > 0
+            ? addedCandidate
+            : prevData["Applicant-List"],
+        Rejected: rejectedList.length > 0 ? rejectedList : prevData["Rejected"],
+      }));
+    }
+  }, [tableData]);
 
   return (
     <DndContext onDragEnd={handleDragEnd}>

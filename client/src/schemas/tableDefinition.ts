@@ -10,4 +10,5 @@ export type tableDefinition = {
   expected_salary: string;
   references: string;
   applicant_file_path: string;
+  applicant_verdict: string;
 };

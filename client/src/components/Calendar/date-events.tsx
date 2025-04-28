@@ -6,12 +6,13 @@ import {
   CalendarDays,
   CalendarIcon,
   Check,
-  PersonStandingIcon,
+  Cross,
   SearchCheck,
   Smile,
   Timer,
   User,
   UserPen,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -30,21 +31,24 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Link } from "react-router-dom";
 import { useEvents } from "@/hooks/use-event-data";
+import { cn } from "@/lib/utils";
 
 const generateIcon = (status: string) => {
+  const statusCheck = status.toLowerCase();
+
   if (status === "pending") {
     return <Timer />;
-  } else if (status === "in review") {
-    return <SearchCheck />;
-  } else {
+  } else if (statusCheck.includes("passed")) {
     return <Check className="text-green-500" />;
+  } else if (statusCheck.includes("failed")) {
+    return <X className="text-red-500" />;
   }
 };
 
 export function DateEvents() {
   const [date, setDate] = useState<Date>(new Date());
   const { events, isLoading, formatEventTime } = useEvents(date);
-  console.log(events);
+  console.log("events are", events);
 
   return (
     <div className="my-10">
@@ -91,7 +95,9 @@ export function DateEvents() {
                     key={event.id}
                     className="border cursor-pointer rounded-lg p-4 transition-all duration-200 ease-in-out hover:border-primary"
                   >
-                    <Link to={`/application-review/${event?.id}`}>
+                    <Link
+                      to={`/dashboard/application-review/${event?.applicant_details?.id}`}
+                    >
                       <div className="flex items-center justify-between">
                         <div className="font-medium text-lg text-gradient-chart-1">
                           {event.event_name}
@@ -142,7 +148,18 @@ export function DateEvents() {
                             </p>
                             <Button
                               variant={"outline"}
-                              className="flex items-center gap-1"
+                              className={cn(
+                                "flex items-center gap-1",
+                                event.interview_result
+                                  .toLowerCase()
+                                  .includes("passed")
+                                  ? "text-green-500 hover:text-green-500 cursor-pointer"
+                                  : event.interview_result
+                                      .toLowerCase()
+                                      .includes("pending")
+                                  ? "text-yellow-500 hover:text-yellow-500 cursor-pointer"
+                                  : "text-red-500 hover:text-red-500"
+                              )}
                             >
                               {event.interview_result}
                               {generateIcon(event.interview_result)}

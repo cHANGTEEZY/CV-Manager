@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const assessmentSchema = z.object({
+  id: z.string(),
   title: z
     .string()
     .nonempty({ message: "Title is required" })

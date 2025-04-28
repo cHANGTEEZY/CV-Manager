@@ -258,7 +258,7 @@ const Search = () => {
                 </div>
                 {applicantSearchResults.map((applicant) => (
                   <Link
-                    to={`/application-review/${applicant.id}`}
+                    to={`/dashboard/application-review/${applicant.id}`}
                     key={applicant.id}
                   >
                     <motion.div

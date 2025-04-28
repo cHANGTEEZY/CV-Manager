@@ -1,6 +1,6 @@
 import { Paperclip, Send, X } from "lucide-react";
 import { Avatar, AvatarFallback } from "../ui/avatar";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card, CardDescription, CardFooter, CardHeader } from "../ui/card";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
@@ -21,6 +21,8 @@ import {
 import { Textarea } from "../ui/textarea";
 import FileUpload from "../Application/FileUpload";
 import { AnimatePresence, motion } from "framer-motion";
+import emailjs from "@emailjs/browser";
+import { supabase } from "@/utils/supabaseClient";
 
 const emailTemplates = {
   SuccessMail,
@@ -28,33 +30,18 @@ const emailTemplates = {
   AssignmentMail,
 };
 
-const data = [
-  {
-    email: "sushank@gmail.com",
-    name: "Sushank Gurung",
-  },
-  {
-    email: "alex@gmail.com",
-    name: "Alex Maharjan",
-  },
-  {
-    email: "aryan@gmail.com",
-    name: "Aryan Shrestha",
-  },
-  {
-    email: "binit@gmail.com",
-    name: "Binit Maharjan",
-  },
-];
-
-const EmailBody = () => {
-  const [recepients, setRecepients] = useState(data);
+const EmailBody = ({
+  setCandidateStatus,
+  matchingCandidates,
+}: {
+  setCandidateStatus: (type: string) => void;
+  matchingCandidates: any[];
+}) => {
+  const [recepients, setRecepients] = useState([]);
   const [emailType, setEmailType] = useState("SuccessMail");
   const [subject, setSubject] = useState("");
   const [toggleFileDrop, setToggleFileDrop] = useState(false);
   const [file, setFile] = useState();
-  console.log(file);
-  console.log(toggleFileDrop);
   const [message, setMessage] = useState({
     header: "",
     body: "",
@@ -62,13 +49,29 @@ const EmailBody = () => {
   });
   const [sendingMessage, setSendingMessage] = useState(false);
 
+  const formRef = useRef();
+
+  useEffect(() => {
+    emailjs.init(import.meta.env.VITE_EMAILJS_PUBLIC_KEY);
+  }, []);
+
+  useEffect(() => {
+    setRecepients(matchingCandidates || []);
+  }, [matchingCandidates]);
+
+  useEffect(() => {
+    setCandidateStatus(emailType);
+  }, [emailType, setCandidateStatus]);
+
   useEffect(() => {
     const selected = emailTemplates[emailType];
-    setMessage({
-      header: selected.header,
-      body: selected.body,
-      footer: selected.footer,
-    });
+    if (selected) {
+      setMessage({
+        header: selected.header,
+        body: selected.body,
+        footer: selected.footer,
+      });
+    }
   }, [emailType]);
 
   const handleRemoveApplicant = (email: string) => {
@@ -106,18 +109,98 @@ const EmailBody = () => {
       return toast.error("You have not uploaded file");
     }
 
+    const invalidEmails = recepients.filter((r) => !r.email || !r.email.trim());
+    if (invalidEmails.length > 0) {
+      return toast.error("Some recipients have invalid email addresses");
+    }
+
     setSendingMessage(true);
 
-    console.log("Sending email to:", recepients);
-    console.log("Subject:", subject);
-    console.log("Message:", message);
-    setSendingMessage(false);
-    toast.success("Emails sent successfully!");
-    setSubject("");
+    try {
+      const emailContent = `${message.header}\n\n${message.body}\n\n${message.footer}`;
+
+      const sendPromises = recepients.map((recipient) => {
+        if (!recipient.email || !recipient.email.trim()) {
+          throw new Error(
+            `Invalid email for recipient: ${recipient.name || "Unknown"}`
+          );
+        }
+
+        const templateParams = {
+          to_email: recipient.email.trim(),
+          to_name: recipient.name || "Candidate",
+          subject: subject,
+          message: emailContent,
+          reply_to: recipient.email.trim(),
+        };
+
+        console.log("Sending email to:", recipient.email);
+
+        return emailjs.send(
+          import.meta.env.VITE_EMAILJS_SERVICE_ID,
+          import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+          templateParams
+        );
+      });
+
+      let newStatus;
+      if (emailType === "RejectionMail") {
+        newStatus = "Failed";
+      } else if (emailType === "SuccessMail") {
+        newStatus = "Hired";
+      } else if (emailType === "AssignmentMail") {
+        newStatus = "Task";
+      }
+
+      if (newStatus) {
+        const applicantIds = recepients
+          .map((recipient) => recipient.id)
+          .filter(Boolean);
+
+        if (applicantIds.length > 0) {
+          const { error: applicantDetailError } = await supabase
+            .from("applicant_details")
+            .update({ applicant_verdict: newStatus })
+            .in("id", applicantIds);
+
+          if (applicantDetailError) {
+            console.error(
+              "Error updating applicant status:",
+              applicantDetailError
+            );
+            toast.error("Failed to update applicant status in database");
+          } else {
+            console.log(
+              `Updated ${applicantIds.length} applicants to status: ${newStatus}`
+            );
+          }
+        }
+      }
+
+      const results = await Promise.all(sendPromises);
+      console.log("Email results:", results);
+
+      toast.success("Emails sent successfully!");
+      setSubject("");
+    } catch (error) {
+      console.error("Error sending email:", error);
+
+      if (error.status === 422) {
+        toast.error("Error: Recipient email address is empty or invalid");
+      } else {
+        toast.error(
+          `Failed to send emails: ${
+            error.text || error.message || "Unknown error"
+          }`
+        );
+      }
+    } finally {
+      setSendingMessage(false);
+    }
   };
 
   return (
-    <section className="flex-col md:flex-row   flex gap-4">
+    <section className="flex-col md:flex-row flex gap-4">
       <div>
         <div className="w-[750px] flex justify-end mb-2">
           <Select onValueChange={setEmailType} value={emailType}>
@@ -143,28 +226,36 @@ const EmailBody = () => {
                 <p className="mr-4 text-sm font-medium">To:</p>
               </div>
               <div className="flex-1 flex flex-wrap gap-2">
-                {recepients.map((recepient) => (
-                  <span
-                    key={recepient.email}
-                    className="flex items-center gap-1 shadow-sm bg-muted/50 p-1 pl-1 pr-2 rounded-full"
-                  >
-                    <Avatar className="h-6 w-6">
-                      <AvatarFallback className="text-xs bg-primary-foreground">
-                        {recepient.name
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")}
-                      </AvatarFallback>
-                    </Avatar>
-                    <p className="text-xs">{recepient.email}</p>
-                    <button
-                      className="p-0.5 cursor-pointer rounded-full hover:bg-muted/80 transition-colors"
-                      onClick={() => handleRemoveApplicant(recepient.email)}
+                {recepients.length > 0 ? (
+                  recepients.map((recepient) => (
+                    <span
+                      key={recepient.email}
+                      className="flex items-center gap-1 shadow-sm bg-muted/50 p-1 pl-1 pr-2 rounded-full"
                     >
-                      <X size={12} />
-                    </button>
-                  </span>
-                ))}
+                      <Avatar className="h-6 w-6">
+                        <AvatarFallback className="text-xs bg-gradient-moss text-gray-500">
+                          {recepient.name
+                            ? recepient.name
+                                .split(" ")
+                                .map((n) => n[0])
+                                .join("")
+                            : "??"}
+                        </AvatarFallback>
+                      </Avatar>
+                      <p className="text-xs">{recepient.email}</p>
+                      <button
+                        className="p-0.5 cursor-pointer rounded-full hover:bg-muted/80 transition-colors"
+                        onClick={() => handleRemoveApplicant(recepient.email)}
+                      >
+                        <X size={12} />
+                      </button>
+                    </span>
+                  ))
+                ) : (
+                  <p className="text-sm text-red-300 text-center">
+                    No eligible candidates available
+                  </p>
+                )}
               </div>
               <div className="flex gap-4 mt-2 sm:mt-0 sm:ml-auto">
                 <button className="text-xs text-muted-foreground hover:text-foreground">

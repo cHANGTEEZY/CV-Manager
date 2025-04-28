@@ -225,7 +225,7 @@ const CreateEvent = () => {
         applicant_email: data.applicant_email,
         interviewer_name: data.interviewer_name,
         interview_type: data.interview_type,
-        interview_result: "pending"
+        interview_result: "pending",
       });
 
       if (eventError) {

@@ -31,12 +31,10 @@ import { Button } from "../ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { navItems } from "@/constants/NavItems";
+import useLogout from "@/hooks/use-logout";
 
 export function AppSidebar() {
-  const signout = async () => {
-    await supabase.auth.signOut({ scope: "local" });
-    toast.success("Signed out successfully!");
-  };
+  const signout = useLogout();
 
   const { user } = useAuth();
 

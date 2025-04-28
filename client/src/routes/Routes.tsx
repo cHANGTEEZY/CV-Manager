@@ -17,17 +17,17 @@ import ApplicationUpload from "@/pages/Application/ApplicationUpload";
 import TrackApplications from "@/pages/Application/TrackApplications";
 import ReviewApplications from "@/pages/Application/ReviewApplications";
 import Email from "@/pages/Email/Email";
-import LandinPage from "@/pages/LandinPage";
+import LandingPage from "@/pages/LandinPage"; // corrected typo from LandinPage -> LandingPage
 import AssessmentPage from "@/pages/Events/AssessmentPage";
 import ReviewEvent from "@/pages/Events/ReviewEvent";
 
 export const router = createBrowserRouter([
   {
-    path: "/home",
-    element: <LandinPage />,
+    path: "/",
+    element: <LandingPage />,
   },
   {
-    path: "/",
+    path: "/dashboard",
     element: <RootLayout />,
     children: [
       {
@@ -62,16 +62,14 @@ export const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
-
       {
         path: "events/review-event",
         element: (
           <ProtectedRoute>
-            <ReviewEvent/>
+            <ReviewEvent />
           </ProtectedRoute>
-        )
+        ),
       },
-
       {
         path: "profile",
         element: (
@@ -80,7 +78,6 @@ export const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
-
       {
         path: "applications",
         element: (
@@ -89,7 +86,6 @@ export const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
-
       {
         path: "application-upload",
         element: (
@@ -107,15 +103,13 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "/application-review/:id",
+        path: "application-review/:id",
         element: (
           <ProtectedRoute>
             <ReviewApplications />
           </ProtectedRoute>
         ),
       },
-
-      //email
       {
         path: "mail",
         element: (
