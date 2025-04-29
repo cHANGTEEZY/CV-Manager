@@ -1,14 +1,13 @@
-import { useEffect, useState } from "react";
-import { DndContext, useDraggable, useDroppable } from "@dnd-kit/core";
+import { useEffect, useState } from 'react';
+import { DndContext, useDraggable, useDroppable } from '@dnd-kit/core';
 import {
   Card,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from '@/components/ui/card';
 import {
   AlertCircle,
-  Check,
   ClipboardCheck,
   ClipboardList,
   Code,
@@ -16,9 +15,8 @@ import {
   UserPlus,
   UserX,
   Users,
-  X,
-} from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+} from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,9 +26,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import useTableData from "@/hooks/use-table-data";
-import { table } from "console";
+} from '@/components/ui/alert-dialog';
+import useTableData from '@/hooks/use-table-data';
 
 interface Task {
   id: string;
@@ -58,45 +55,45 @@ interface ColumnProps {
 }
 
 const initialTasks: TasksState = {
-  "Applicant-List": [
-    { id: "task-1", content: "Review resume: John Doe" },
-    { id: "task-2", content: "Screen application: Jane Smith" },
-    { id: "task-3", content: "Verify portfolio: Alex Johnson" },
-    { id: "task-4", content: "Check LinkedIn profile: Sara Khan" },
+  'Applicant-List': [
+    { id: 'task-1', content: 'Review resume: John Doe' },
+    { id: 'task-2', content: 'Screen application: Jane Smith' },
+    { id: 'task-3', content: 'Verify portfolio: Alex Johnson' },
+    { id: 'task-4', content: 'Check LinkedIn profile: Sara Khan' },
   ],
   Assessment1: [
-    { id: "task-5", content: "Send coding assessment to John Doe" },
-    { id: "task-6", content: "Evaluate JavaScript test: Jane Smith" },
-    { id: "task-7", content: "Send reminder for pending test: Alex Johnson" },
+    { id: 'task-5', content: 'Send coding assessment to John Doe' },
+    { id: 'task-6', content: 'Evaluate JavaScript test: Jane Smith' },
+    { id: 'task-7', content: 'Send reminder for pending test: Alex Johnson' },
   ],
   Assessment2: [
-    { id: "task-8", content: "Design aptitude test for Sara Khan" },
-    { id: "task-9", content: "Check assessment results: Jane Smith" },
-    { id: "task-10", content: "Schedule follow-up test for John Doe" },
+    { id: 'task-8', content: 'Design aptitude test for Sara Khan' },
+    { id: 'task-9', content: 'Check assessment results: Jane Smith' },
+    { id: 'task-10', content: 'Schedule follow-up test for John Doe' },
   ],
-  "Final-interview": [
-    { id: "task-11", content: "Conduct final HR interview: Jane Smith" },
-    { id: "task-12", content: "Collect feedback from HR panel" },
-    { id: "task-13", content: "Finalize candidate decision: John Doe" },
+  'Final-interview': [
+    { id: 'task-11', content: 'Conduct final HR interview: Jane Smith' },
+    { id: 'task-12', content: 'Collect feedback from HR panel' },
+    { id: 'task-13', content: 'Finalize candidate decision: John Doe' },
   ],
-  "technical-interview": [
-    { id: "task-14", content: "Schedule technical interview: Alex Johnson" },
-    { id: "task-15", content: "Prepare technical questions set" },
-    { id: "task-16", content: "Evaluate coding interview: Sara Khan" },
+  'technical-interview': [
+    { id: 'task-14', content: 'Schedule technical interview: Alex Johnson' },
+    { id: 'task-15', content: 'Prepare technical questions set' },
+    { id: 'task-16', content: 'Evaluate coding interview: Sara Khan' },
   ],
   Offer: [
-    { id: "task-17", content: "Create offer letter: Jane Smith" },
-    { id: "task-18", content: "Send offer via email: John Doe" },
-    { id: "task-19", content: "Confirm acceptance: Alex Johnson" },
+    { id: 'task-17', content: 'Create offer letter: Jane Smith' },
+    { id: 'task-18', content: 'Send offer via email: John Doe' },
+    { id: 'task-19', content: 'Confirm acceptance: Alex Johnson' },
   ],
   Rejected: [
-    { id: "task-20", content: "Send rejection email: Sara Khan" },
-    { id: "task-21", content: "Mark candidate inactive: Mark Lee" },
-    { id: "task-22", content: "Update rejection reason: Tim Baker" },
+    { id: 'task-20', content: 'Send rejection email: Sara Khan' },
+    { id: 'task-21', content: 'Mark candidate inactive: Mark Lee' },
+    { id: 'task-22', content: 'Update rejection reason: Tim Baker' },
   ],
 };
 
-function Task({ id, content, className = "", columnType }: TaskProps) {
+function Task({ id, content, className = '', columnType }: TaskProps) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id,
     data: { content },
@@ -110,9 +107,9 @@ function Task({ id, content, className = "", columnType }: TaskProps) {
     : undefined;
 
   const getBgColor = () => {
-    if (columnType === "rejected") return " border-red-200";
-    if (columnType === "offer") return " border-green-200";
-    return "";
+    if (columnType === 'rejected') return ' border-red-200';
+    if (columnType === 'offer') return ' border-green-200';
+    return '';
   };
 
   return (
@@ -121,7 +118,7 @@ function Task({ id, content, className = "", columnType }: TaskProps) {
       style={style}
       {...listeners}
       {...attributes}
-      className={`p-3 mb-2  hover:shadow-md transition-all ${getBgColor()} ${className}`}
+      className={`mb-2 p-3 transition-all hover:shadow-md ${getBgColor()} ${className}`}
     >
       {content}
     </Card>
@@ -135,18 +132,18 @@ function Column({ id, title, tasks, type, description, icon }: ColumnProps) {
 
   const getColumnStyles = () => {
     let baseStyles =
-      "w-full p-5 mb-4 transition-all duration-200 flex flex-col ";
+      'w-full p-5 mb-4 transition-all duration-200 flex flex-col ';
 
     if (isOver) {
-      baseStyles += "border-blue-500 shadow-md ";
+      baseStyles += 'border-blue-500 shadow-md ';
     }
 
-    if (type === "rejected") {
-      baseStyles += "border-l-4 border-l-red-500  ";
-    } else if (type === "offer") {
-      baseStyles += "border-l-4 border-l-green-500  ";
+    if (type === 'rejected') {
+      baseStyles += 'border-l-4 border-l-red-500  ';
+    } else if (type === 'offer') {
+      baseStyles += 'border-l-4 border-l-green-500  ';
     } else {
-      baseStyles += "border-l-3 border-l-muted-foreground  hover:shadow-sm ";
+      baseStyles += 'border-l-3 border-l-muted-foreground  hover:shadow-sm ';
     }
 
     return baseStyles;
@@ -154,12 +151,12 @@ function Column({ id, title, tasks, type, description, icon }: ColumnProps) {
 
   return (
     <Card ref={setNodeRef} className={getColumnStyles()}>
-      <CardHeader className="p-0 font-bold text-lg m-0 x">
+      <CardHeader className="x m-0 p-0 text-lg font-bold">
         <CardTitle>
-          {icon && <span className="inline-flex mr-2">{icon}</span>}
+          {icon && <span className="mr-2 inline-flex">{icon}</span>}
           {title}
         </CardTitle>
-        <CardDescription className="font-medium text-xs">
+        <CardDescription className="text-xs font-medium">
           {description}
         </CardDescription>
       </CardHeader>
@@ -179,9 +176,9 @@ function Column({ id, title, tasks, type, description, icon }: ColumnProps) {
 
 export default function KanbanBoard() {
   const [tasks, setTasks] = useState<TasksState>(initialTasks);
-  console.log("all tasks", tasks);
+  console.log('all tasks', tasks);
   const tableData = useTableData();
-  console.log("TData is ", tableData);
+  console.log('TData is ', tableData);
   const [notification, setNotification] = useState<{
     show: boolean;
     type: string;
@@ -213,21 +210,21 @@ export default function KanbanBoard() {
     }
 
     const taskContent =
-      tasks[sourceColumn].find((task) => task.id === taskId)?.content || "";
+      tasks[sourceColumn].find((task) => task.id === taskId)?.content || '';
 
-    if (destinationColumn === "Rejected") {
+    if (destinationColumn === 'Rejected') {
       setConfirmDialog({
         show: true,
-        type: "reject",
+        type: 'reject',
         content: taskContent,
         sourceColumn,
         destinationColumn,
         taskId,
       });
-    } else if (destinationColumn === "Offer") {
+    } else if (destinationColumn === 'Offer') {
       setConfirmDialog({
         show: true,
-        type: "offer",
+        type: 'offer',
         content: taskContent,
         sourceColumn,
         destinationColumn,
@@ -250,7 +247,7 @@ export default function KanbanBoard() {
       show: true,
       type,
       content:
-        type === "reject"
+        type === 'reject'
           ? `${content} has been moved to rejected list`
           : `Offer will be prepared for ${content}`,
     });
@@ -286,14 +283,14 @@ export default function KanbanBoard() {
   useEffect(() => {
     if (tableData && Array.isArray(tableData)) {
       const rejectedList = tableData
-        .filter((r) => r.applicant_verdict === "Failed")
+        .filter((r) => r.applicant_verdict === 'Failed')
         .map((applicant, index) => ({
           id: `rejected-${index}`,
           content: `Name: ${applicant.applicant_name}, Email: ${applicant.applicant_email}`,
         }));
 
       const addedCandidate = tableData
-        .filter((a) => a.applicant_status === "filled")
+        .filter((a) => a.applicant_status === 'filled')
         .map((applicant, index) => ({
           id: `applicant-${index}`,
           content: `Name: ${applicant.applicant_name}, Email: ${applicant.applicant_email}`,
@@ -301,20 +298,20 @@ export default function KanbanBoard() {
 
       setTasks((prevData) => ({
         ...prevData,
-        "Applicant-List":
+        'Applicant-List':
           addedCandidate.length > 0
             ? addedCandidate
-            : prevData["Applicant-List"],
-        Rejected: rejectedList.length > 0 ? rejectedList : prevData["Rejected"],
+            : prevData['Applicant-List'],
+        Rejected: rejectedList.length > 0 ? rejectedList : prevData['Rejected'],
       }));
     }
   }, [tableData]);
 
   return (
     <DndContext onDragEnd={handleDragEnd}>
-      <section className="mx-auto mt-5 max-w-[1000px] p-6 ">
+      <section className="mx-auto mt-5 max-w-[1000px] p-6">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold ">
+          <h1 className="text-3xl font-bold">
             Applicant Progress Management Board
           </h1>
           <p className="text-muted-foreground">
@@ -326,22 +323,22 @@ export default function KanbanBoard() {
         {notification && (
           <Alert
             className={
-              notification.type === "reject"
-                ? "bg-red-50 border-red-200 mb-4"
-                : "bg-green-50 border-green-200 mb-4"
+              notification.type === 'reject'
+                ? 'mb-4 border-red-200 bg-red-50'
+                : 'mb-4 border-green-200 bg-green-50'
             }
           >
             <AlertCircle
               className={
-                notification.type === "reject"
-                  ? "text-red-500"
-                  : "text-green-500"
+                notification.type === 'reject'
+                  ? 'text-red-500'
+                  : 'text-green-500'
               }
             />
             <AlertTitle className="text-black">
-              {notification.type === "reject"
-                ? "Applicant Rejected"
-                : "Offer Confirmed"}
+              {notification.type === 'reject'
+                ? 'Applicant Rejected'
+                : 'Offer Confirmed'}
             </AlertTitle>
             <AlertDescription className="text-black">
               {notification.content}
@@ -350,14 +347,14 @@ export default function KanbanBoard() {
         )}
 
         <div className="mb-8">
-          <h2 className="text-primary text-xl font-semibold mb-4">
+          <h2 className="text-primary mb-4 text-xl font-semibold">
             Applicant Management
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <Column
               id="Applicant-List"
               title="Applicants"
-              tasks={tasks["Applicant-List"]}
+              tasks={tasks['Applicant-List']}
               description="New applications awaiting initial screening and evaluation"
               icon={<UserPlus size={18} className="text-blue-500" />}
             />
@@ -365,7 +362,7 @@ export default function KanbanBoard() {
               id="Rejected"
               title="Rejected List"
               description="Candidates who didn't meet requirements or weren't selected to proceed"
-              tasks={tasks["Rejected"]}
+              tasks={tasks['Rejected']}
               type="rejected"
               icon={<UserX size={18} className="text-red-500" />}
             />
@@ -373,58 +370,58 @@ export default function KanbanBoard() {
         </div>
 
         <div className="mb-8">
-          <h2 className="text-primary text-xl font-semibold mb-4">
+          <h2 className="text-primary mb-4 text-xl font-semibold">
             Assessment Management
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <Column
               id="Assessment1"
               title="Assessment 1"
               description="Candidates undergoing first-round technical skills evaluation"
-              tasks={tasks["Assessment1"]}
+              tasks={tasks['Assessment1']}
               icon={<ClipboardList size={18} className="text-amber-500" />}
             />
             <Column
               id="Assessment2"
               title="Assessment 2"
               description="Applicants in advanced assessment phase for specialized skills"
-              tasks={tasks["Assessment2"]}
+              tasks={tasks['Assessment2']}
               icon={<ClipboardCheck size={18} className="text-amber-600" />}
             />
           </div>
         </div>
 
         <div className="mb-8">
-          <h2 className="text-primary text-xl font-semibold mb-4">
+          <h2 className="text-primary mb-4 text-xl font-semibold">
             Interview Management
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <Column
               id="technical-interview"
               title="Technical Interview"
               description="Candidates scheduled for in-depth technical expertise evaluation"
-              tasks={tasks["technical-interview"]}
+              tasks={tasks['technical-interview']}
               icon={<Code size={18} className="text-indigo-500" />}
             />
             <Column
               id="Final-interview"
               title="Final Interview"
               description="Applicants in final decision stage with leadership team"
-              tasks={tasks["Final-interview"]}
+              tasks={tasks['Final-interview']}
               icon={<Users size={18} className="text-indigo-600" />}
             />
           </div>
         </div>
 
         <div className="mb-8">
-          <h2 className="text-primary text-xl font-semibold mb-4">
+          <h2 className="text-primary mb-4 text-xl font-semibold">
             Offer Management
           </h2>
           <Column
             id="Offer"
             title="Offer"
             description="Successful candidates receiving or negotiating employment offers"
-            tasks={tasks["Offer"]}
+            tasks={tasks['Offer']}
             type="offer"
             icon={<FileCheck size={18} className="text-green-500" />}
           />
@@ -437,12 +434,12 @@ export default function KanbanBoard() {
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>
-                {confirmDialog?.type === "reject"
-                  ? "Confirm Rejection"
-                  : "Confirm Offer"}
+                {confirmDialog?.type === 'reject'
+                  ? 'Confirm Rejection'
+                  : 'Confirm Offer'}
               </AlertDialogTitle>
               <AlertDialogDescription>
-                {confirmDialog?.type === "reject"
+                {confirmDialog?.type === 'reject'
                   ? `Are you sure you want to reject "${confirmDialog?.content}"?`
                   : `Are you sure you want to send an offer to "${confirmDialog?.content}"?`}
               </AlertDialogDescription>
@@ -454,12 +451,12 @@ export default function KanbanBoard() {
               <AlertDialogAction
                 onClick={handleConfirm}
                 className={
-                  confirmDialog?.type === "reject"
-                    ? "bg-red-500 hover:bg-red-600"
-                    : ""
+                  confirmDialog?.type === 'reject'
+                    ? 'bg-red-500 hover:bg-red-600'
+                    : ''
                 }
               >
-                {confirmDialog?.type === "reject" ? "Reject" : "Confirm Offer"}
+                {confirmDialog?.type === 'reject' ? 'Reject' : 'Confirm Offer'}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

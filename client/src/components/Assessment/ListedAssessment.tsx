@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 import {
   Card,
   CardContent,
@@ -6,13 +6,13 @@ import {
   CardHeader,
   CardTitle,
   CardFooter,
-} from "../ui/card";
-import { Separator } from "../ui/separator";
-import { supabase } from "@/utils/supabaseClient";
-import { AssessmentProps } from "@/schemas/assessmentSchema";
-import Spinner from "../Loading/Spinner";
-import { format } from "date-fns";
-import { Button } from "../ui/button";
+} from '../ui/card';
+import { Separator } from '../ui/separator';
+import { supabase } from '@/utils/supabaseClient';
+import { AssessmentProps } from '@/schemas/assessmentSchema';
+import Spinner from '../Loading/Spinner';
+import { format } from 'date-fns';
+import { Button } from '../ui/button';
 import {
   Drawer,
   DrawerContent,
@@ -22,11 +22,11 @@ import {
   DrawerFooter,
   DrawerClose,
   DrawerTrigger,
-} from "../ui/drawer";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
-import { toast } from "sonner";
+} from '../ui/drawer';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
+import { toast } from 'sonner';
 import {
   Edit,
   Send,
@@ -35,38 +35,44 @@ import {
   BarChart3,
   FileText,
   Link as LinkIcon,
-} from "lucide-react";
-import { Textarea } from "../ui/textarea";
+} from 'lucide-react';
+import { Textarea } from '../ui/textarea';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
+} from '../ui/select';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "../ui/tooltip";
+} from '../ui/tooltip';
+import useTableData from '@/hooks/use-table-data';
+
+//? interview ko second stage ma ni assignment stage haldine
 
 const ListedAssessment = () => {
   const [listedAssessments, setListedAssessments] = useState<AssessmentProps[]>(
     []
   );
+  const tableData = useTableData();
+  console.log(tableData);
+
   const [isLoading, setIsLoading] = useState(false);
   const [selectedAssessment, setSelectedAssessment] =
     useState<AssessmentProps | null>(null);
-  const [assignTo, setAssignTo] = useState("all");
-  const [email, setEmail] = useState("");
+  const [assignTo, setAssignTo] = useState('all');
+  const [email, setEmail] = useState('');
 
   useEffect(() => {
     const getListedAssessment = async () => {
       try {
         setIsLoading(true);
         const { data, error } = await supabase
-          .from("assessment_table")
+          .from('assessment_table')
           .select();
         if (error) throw error;
         setListedAssessments(data);
@@ -84,28 +90,28 @@ const ListedAssessment = () => {
     try {
       const { id, ...updatedData } = selectedAssessment;
       const { error } = await supabase
-        .from("assessment_table")
+        .from('assessment_table')
         .update(updatedData)
-        .eq("id", id);
+        .eq('id', id);
       if (error) throw error;
 
       setListedAssessments((prev) =>
         prev.map((item) => (item.id === id ? selectedAssessment : item))
       );
 
-      toast.success("Assessment updated successfully");
+      toast.success('Assessment updated successfully');
     } catch (error) {
-      toast.error("Failed to update assessment");
+      toast.error('Failed to update assessment');
       console.error(error);
     }
   };
 
-  const handleAssign = () => {
-    if (assignTo === "individual" && !email.trim()) {
-      toast.error("Email of candidate required for individual assignment");
+  const handleAssign = (assessment) => {
+    if (assignTo === 'individual' && !email.trim()) {
+      toast.error('Email of candidate required for individual assignment');
       return;
     }
-    toast.success("Assessment assigned");
+    console.log(assessment.id);
   };
 
   const selectAssessment = (assessment: AssessmentProps) => {
@@ -116,7 +122,7 @@ const ListedAssessment = () => {
 
   return (
     <section className="my-10">
-      <h2 className="text-xl font-semibold mb-4 text-primary flex items-center gap-2">
+      <h2 className="text-primary mb-4 flex items-center gap-2 text-xl font-semibold">
         <FileText className="h-5 w-5" />
         View Assessments
       </h2>
@@ -126,7 +132,7 @@ const ListedAssessment = () => {
           {listedAssessments.map((assessment) => (
             <Card
               key={assessment.id}
-              className="border shadow-sm hover:shadow-md transition-all"
+              className="border shadow-sm transition-all hover:shadow-md"
             >
               <CardHeader className="pb-2">
                 <CardTitle className="text-lg font-medium">
@@ -134,29 +140,29 @@ const ListedAssessment = () => {
                 </CardTitle>
                 <CardDescription className="flex items-center gap-1 text-xs">
                   <CalendarIcon className="h-3 w-3" />
-                  {format(new Date(assessment.submissionDate), "PPP")}
+                  {format(new Date(assessment.submissionDate), 'PPP')}
                 </CardDescription>
               </CardHeader>
 
               <CardContent className="space-y-3">
                 <div className="flex gap-2">
-                  <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 px-2 py-1 rounded-md text-xs flex items-center gap-1">
+                  <span className="flex items-center gap-1 rounded-md bg-blue-100 px-2 py-1 text-xs text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
                     <Layers className="h-3 w-3" />
                     {assessment.type}
                   </span>
-                  <span className="bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300 px-2 py-1 rounded-md text-xs flex items-center gap-1">
+                  <span className="flex items-center gap-1 rounded-md bg-purple-100 px-2 py-1 text-xs text-purple-800 dark:bg-purple-900/30 dark:text-purple-300">
                     <BarChart3 className="h-3 w-3" />
                     {assessment.level}
                   </span>
                 </div>
 
-                <p className="text-sm text-muted-foreground line-clamp-3">
+                <p className="text-muted-foreground line-clamp-3 text-sm">
                   {assessment.requirements}
                 </p>
 
                 <a
                   href={assessment.formLink}
-                  className="text-sm text-blue-600 dark:text-blue-400 flex items-center gap-1 hover:underline"
+                  className="flex items-center gap-1 text-sm text-blue-600 hover:underline dark:text-blue-400"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -167,7 +173,7 @@ const ListedAssessment = () => {
 
               <Separator />
 
-              <CardFooter className="pt-4 flex justify-between">
+              <CardFooter className="flex justify-between pt-4">
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -195,7 +201,7 @@ const ListedAssessment = () => {
                               <Label htmlFor="title">Title</Label>
                               <Input
                                 id="title"
-                                value={selectedAssessment?.title || ""}
+                                value={selectedAssessment?.title || ''}
                                 onChange={(e) =>
                                   setSelectedAssessment((prev) => ({
                                     ...prev!,
@@ -274,7 +280,7 @@ const ListedAssessment = () => {
                               <Label htmlFor="formLink">Form Link</Label>
                               <Input
                                 id="formLink"
-                                value={selectedAssessment?.formLink || ""}
+                                value={selectedAssessment?.formLink || ''}
                                 onChange={(e) =>
                                   setSelectedAssessment((prev) => ({
                                     ...prev!,
@@ -288,7 +294,7 @@ const ListedAssessment = () => {
                               <Label htmlFor="requirements">Requirements</Label>
                               <Textarea
                                 id="requirements"
-                                value={selectedAssessment?.requirements || ""}
+                                value={selectedAssessment?.requirements || ''}
                                 onChange={(e) =>
                                   setSelectedAssessment((prev) => ({
                                     ...prev!,
@@ -342,24 +348,24 @@ const ListedAssessment = () => {
                             <div className="space-y-2">
                               <Label>Assignment Details</Label>
                               <Card className="bg-muted/50">
-                                <CardContent className="pt-4 space-y-2">
+                                <CardContent className="space-y-2 pt-4">
                                   <div className="flex justify-between">
                                     <span className="font-medium">
                                       {selectedAssessment?.title}
                                     </span>
-                                    <span className="text-sm text-muted-foreground">
-                                      {selectedAssessment?.type} -{" "}
+                                    <span className="text-muted-foreground text-sm">
+                                      {selectedAssessment?.type} -{' '}
                                       {selectedAssessment?.level}
                                     </span>
                                   </div>
                                   <div className="text-sm">
-                                    Due:{" "}
+                                    Due:{' '}
                                     {selectedAssessment?.submissionDate &&
                                       format(
                                         new Date(
                                           selectedAssessment.submissionDate
                                         ),
-                                        "PPP"
+                                        'PPP'
                                       )}
                                   </div>
                                 </CardContent>
@@ -398,7 +404,7 @@ const ListedAssessment = () => {
                               </RadioGroup>
                             </div>
 
-                            {assignTo === "individual" && (
+                            {assignTo === 'individual' && (
                               <div className="space-y-2">
                                 <Label htmlFor="email">Candidate Email</Label>
                                 <Input
@@ -412,7 +418,10 @@ const ListedAssessment = () => {
                             )}
                           </div>
                           <DrawerFooter>
-                            <Button onClick={handleAssign} className="w-full">
+                            <Button
+                              onClick={() => handleAssign(assessment)}
+                              className="w-full"
+                            >
                               Assign Assessment
                             </Button>
                             <DrawerClose asChild>
@@ -433,8 +442,8 @@ const ListedAssessment = () => {
         </div>
       ) : (
         <Card className="w-full py-16">
-          <div className="text-center text-muted-foreground">
-            <FileText className="h-12 w-12 mx-auto mb-2 opacity-30" />
+          <div className="text-muted-foreground text-center">
+            <FileText className="mx-auto mb-2 h-12 w-12 opacity-30" />
             <h3 className="text-lg font-medium">No assessments available</h3>
             <p className="text-sm">
               Create assessments to see them listed here

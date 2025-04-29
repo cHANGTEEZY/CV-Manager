@@ -1,15 +1,15 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, ScrollRestoration } from 'react-router-dom';
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-} from "@/components/ui/sidebar";
-import { AppSidebar } from "../components/SideBarGroup/SideBarContent";
-import { Button } from "@/components/ui/button";
-import { ModeToggle } from "@/components/mode-toggle";
-import Search from "@/components/Search/Search";
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+} from '@/components/ui/sidebar';
+import { AppSidebar } from '../components/SideBarGroup/SideBarContent';
+import { Button } from '@/components/ui/button';
+import { ModeToggle } from '@/components/mode-toggle';
+import Search from '@/components/Search/Search';
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 
 export default function RootLayout() {
   const [isMounted, setIsMounted] = useState(false);
@@ -20,15 +20,16 @@ export default function RootLayout() {
 
   return (
     <SidebarProvider defaultOpen>
+      <ScrollRestoration />
       <AppSidebar />
       <SidebarInset>
         <motion.header
-          className="p-3 flex justify-between h-16 items-center gap-4 border-b bg-background"
+          className="bg-background flex h-16 items-center justify-between gap-4 border-b p-3"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: isMounted ? 1 : 0, y: isMounted ? 0 : -20 }}
           transition={{ duration: 0.3, delay: 0.1 }}
         >
-          <div className="flex items-center gap-2 flex-wrap text-primary">
+          <div className="text-primary flex flex-wrap items-center gap-2">
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <SidebarTrigger />
             </motion.div>
@@ -36,7 +37,7 @@ export default function RootLayout() {
           </div>
           <motion.div
             whileHover={{ rotate: 10 }}
-            transition={{ type: "spring", stiffness: 100 }}
+            transition={{ type: 'spring', stiffness: 100 }}
           >
             <Button className="p-0">
               <ModeToggle />

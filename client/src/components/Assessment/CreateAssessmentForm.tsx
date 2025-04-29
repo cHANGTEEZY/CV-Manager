@@ -4,7 +4,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../ui/card";
+} from '../ui/card';
 import {
   Form,
   FormControl,
@@ -12,31 +12,31 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../ui/form";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
+} from '../ui/form';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Input } from '../ui/input';
+import { Button } from '../ui/button';
 import {
   SelectTrigger,
   Select,
   SelectContent,
   SelectItem,
   SelectValue,
-} from "../ui/select";
-import { PopoverContent, Popover, PopoverTrigger } from "../ui/popover";
-import { Calendar } from "../ui/calendar";
-import { CalendarIcon, FilePlus } from "lucide-react";
-import { format } from "date-fns";
-import { cn } from "@/lib/utils";
-import { supabase } from "@/utils/supabaseClient";
-import { toast } from "sonner";
-import { useState } from "react";
-import { AssessmentProps } from "@/schemas/assessmentSchema";
-import { assessmentSchema } from "@/schemas/assessmentSchema";
+} from '../ui/select';
+import { PopoverContent, Popover, PopoverTrigger } from '../ui/popover';
+import { Calendar } from '../ui/calendar';
+import { CalendarIcon, FilePlus } from 'lucide-react';
+import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
+import { supabase } from '@/utils/supabaseClient';
+import { toast } from 'sonner';
+import { useState } from 'react';
+import { AssessmentProps } from '@/schemas/assessmentSchema';
+import { assessmentSchema } from '@/schemas/assessmentSchema';
 
-const assessmentType = ["Full Stack", "Frontend", "Backend", "Devops", "UI/UX"];
-const assessmentLevel = ["Intern", "Junior", "Intermediate", "Senior"];
+const assessmentType = ['Full Stack', 'Frontend', 'Backend', 'Devops', 'UI/UX'];
+const assessmentLevel = ['Intern', 'Junior', 'Intermediate', 'Senior'];
 
 const CreateAssessmentForm = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -44,18 +44,18 @@ const CreateAssessmentForm = () => {
   const form = useForm<AssessmentProps>({
     resolver: zodResolver(assessmentSchema),
     defaultValues: {
-      title: "",
-      formLink: "",
-      requirements: "",
+      title: '',
+      formLink: '',
+      requirements: '',
     },
-    mode: "onBlur",
+    mode: 'onBlur',
   });
 
   const onSubmit = async (data: AssessmentProps) => {
     try {
       setIsLoading(true);
       const { error: assessmentError } = await supabase
-        .from("assessment_table")
+        .from('assessment_table')
         .insert({
           title: data.title,
           type: data.type,
@@ -69,7 +69,7 @@ const CreateAssessmentForm = () => {
         throw assessmentError;
       }
 
-      toast.success("Assessment created successfully");
+      toast.success('Assessment created successfully');
       form.reset();
       setIsLoading(false);
     } catch (error: any) {
@@ -80,7 +80,7 @@ const CreateAssessmentForm = () => {
 
   return (
     <div className="my-10 max-w-md">
-      <h2 className="text-xl font-semibold mb-4 text-primary flex items-center gap-2">
+      <h2 className="text-primary mb-4 flex items-center gap-2 text-xl font-semibold">
         <FilePlus className="h-5 w-5" /> Create Custom Assessment
       </h2>
       <Card className="w-full">
@@ -187,14 +187,14 @@ const CreateAssessmentForm = () => {
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button
-                            variant={"outline"}
+                            variant={'outline'}
                             className={cn(
-                              "w-full pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
+                              'w-full pl-3 text-left font-normal',
+                              !field.value && 'text-muted-foreground'
                             )}
                           >
                             {field.value ? (
-                              format(field.value, "PPP")
+                              format(field.value, 'PPP')
                             ) : (
                               <span>Select date</span>
                             )}
