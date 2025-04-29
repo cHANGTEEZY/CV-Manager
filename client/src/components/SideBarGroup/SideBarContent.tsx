@@ -1,7 +1,7 @@
-import { Link } from "react-router-dom";
-import { supabase } from "@/utils/supabaseClient";
-import { toast } from "sonner";
-import { FileText, Framer } from "lucide-react";
+import { Link } from 'react-router-dom';
+import { supabase } from '@/utils/supabaseClient';
+import { toast } from 'sonner';
+import { FileText, Framer } from 'lucide-react';
 
 import {
   Sidebar,
@@ -18,7 +18,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   SidebarRail,
-} from "@/components/ui/sidebar";
+} from '@/components/ui/sidebar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,12 +26,12 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
-import { Button } from "../ui/button";
-import { useAuth } from "@/contexts/AuthContext";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { navItems } from "@/constants/NavItems";
-import useLogout from "@/hooks/use-logout";
+} from '../ui/dropdown-menu';
+import { Button } from '../ui/button';
+import { useAuth } from '@/contexts/AuthContext';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { navItems } from '@/constants/NavItems';
+import useLogout from '@/hooks/use-logout';
 
 export function AppSidebar() {
   const signout = useLogout();
@@ -45,7 +45,7 @@ export function AppSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <Link to="/">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-white">
+                <div className="bg-primary flex aspect-square size-8 items-center justify-center rounded-lg text-white">
                   <Framer className="size-4" />
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
@@ -66,7 +66,7 @@ export function AppSidebar() {
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <Link to={item.path}>
-                      <item.icon className="size-4 text-primary" />
+                      <item.icon className="text-primary size-4" />
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
@@ -99,29 +99,33 @@ export function AppSidebar() {
               <DropdownMenu>
                 <DropdownMenuTrigger>
                   <Button
-                    className="flex py-3 items-center cursor-pointer w-full "
-                    variant={"ghost"}
+                    className="flex w-full cursor-pointer items-center py-3"
+                    variant={'ghost'}
                   >
                     <Avatar>
                       <AvatarImage src={user?.user_metadata?.avatar_url} />
                       <AvatarFallback>CN</AvatarFallback>
                     </Avatar>
-                    <p>{user?.user_metadata?.full_name}</p>
+                    <p>
+                      {user?.user_metadata?.full_name ||
+                        user?.user_metadata?.username ||
+                        'User'}
+                    </p>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuLabel>My Account</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>
-                    <Button variant={"ghost"} className="w-full cursor-pointer">
-                      <Link to={"/profile"}>Profile</Link>
+                    <Button variant={'ghost'} className="w-full cursor-pointer">
+                      <Link to={'/profile'}>Profile</Link>
                     </Button>
                   </DropdownMenuItem>
                   <DropdownMenuItem className="bg-destructive">
                     <Button
-                      variant={"ghost"}
+                      variant={'ghost'}
                       onClick={signout}
-                      className="text-center w-full bg-destructive cursor-pointer"
+                      className="bg-destructive w-full cursor-pointer text-center"
                     >
                       Logout
                     </Button>

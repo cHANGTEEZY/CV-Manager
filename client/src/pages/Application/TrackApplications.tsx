@@ -177,7 +177,7 @@ function Column({ id, title, tasks, type, description, icon }: ColumnProps) {
 export default function KanbanBoard() {
   const [tasks, setTasks] = useState<TasksState>(initialTasks);
   console.log('all tasks', tasks);
-  const tableData = useTableData();
+  const { tableData } = useTableData();
   console.log('TData is ', tableData);
   const [notification, setNotification] = useState<{
     show: boolean;

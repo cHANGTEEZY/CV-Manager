@@ -1,11 +1,11 @@
-import { Search as SearchIcon, X, User, Calendar } from "lucide-react";
-import { Input } from "../ui/input";
-import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect, useRef } from "react";
-import Fuse from "fuse.js";
-import { useEvents, EventType } from "@/hooks/use-event-data";
-import useTableData from "@/hooks/use-table-data";
-import { Link } from "react-router-dom";
+import { Search as SearchIcon, X, User, Calendar } from 'lucide-react';
+import { Input } from '../ui/input';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect, useRef } from 'react';
+import Fuse from 'fuse.js';
+import { useEvents, EventType } from '@/hooks/use-event-data';
+import useTableData from '@/hooks/use-table-data';
+import { Link } from 'react-router-dom';
 
 type Applicant = {
   id: string;
@@ -18,7 +18,7 @@ type Applicant = {
 
 const Search = () => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [searchText, setSearchText] = useState("");
+  const [searchText, setSearchText] = useState('');
   const [isMobile, setIsMobile] = useState(false);
   const [applicantSearchResults, setApplicantSearchResults] = useState<
     Applicant[]
@@ -28,24 +28,24 @@ const Search = () => {
   const [allEvents, setAllEvents] = useState<EventType[]>([]);
   const searchRef = useRef<HTMLDivElement | null>(null);
 
-  const applicantData = useTableData();
+  const { tableData } = useTableData();
 
   const { fetchAllEvents, formatEventDate } = useEvents();
 
-  const applicantFuse = new Fuse(applicantData || [], {
+  const applicantFuse = new Fuse(tableData || [], {
     includeScore: true,
     threshold: 0.4,
-    keys: ["applicant_name", "applied_position", "email"],
+    keys: ['applicant_name', 'applied_position', 'email'],
   });
 
   const eventFuse = new Fuse(allEvents, {
     includeScore: true,
     threshold: 0.4,
     keys: [
-      "event_name",
-      "interviewer_name",
-      "event_date_time",
-      "applicant_details.applicant_name",
+      'event_name',
+      'interviewer_name',
+      'event_date_time',
+      'applicant_details.applicant_name',
     ],
   });
 
@@ -76,7 +76,7 @@ const Search = () => {
       setEventSearchResults([]);
       setShowResults(false);
     }
-  }, [searchText, applicantData, allEvents]);
+  }, [searchText, tableData, allEvents]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -88,41 +88,41 @@ const Search = () => {
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
     if (!isExpanded) {
       setTimeout(() => {
-        const inputElement = document.querySelector("input");
+        const inputElement = document.querySelector('input');
         if (inputElement) inputElement.focus();
       }, 300);
     }
   };
 
   const clearSearch = () => {
-    setSearchText("");
+    setSearchText('');
     setShowResults(false);
   };
 
   const handleApplicantClick = (applicant: Applicant) => {
-    console.log("Selected applicant:", applicant);
+    console.log('Selected applicant:', applicant);
     setShowResults(false);
   };
 
   const handleEventClick = (event: EventType) => {
-    console.log("Selected event:", event);
+    console.log('Selected event:', event);
     setShowResults(false);
   };
 
@@ -130,7 +130,7 @@ const Search = () => {
     applicantSearchResults.length > 0 || eventSearchResults.length > 0;
 
   return (
-    <div className="ml-4 flex items-center relative" ref={searchRef}>
+    <div className="relative ml-4 flex items-center" ref={searchRef}>
       {isMobile ? (
         <div className="flex items-center">
           <AnimatePresence>
@@ -138,14 +138,14 @@ const Search = () => {
               <motion.div
                 key="expanded"
                 initial={{ width: 0, opacity: 0 }}
-                animate={{ width: "auto", opacity: 1 }}
+                animate={{ width: 'auto', opacity: 1 }}
                 exit={{ width: 0, opacity: 0 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
                 className="flex items-center"
               >
                 <Input
                   type="text"
-                  className="indent-8 w-full min-w-0 text-foreground"
+                  className="text-foreground w-full min-w-0 indent-8"
                   placeholder="Search candidates or events"
                   value={searchText}
                   onChange={(e) => setSearchText(e.target.value)}
@@ -179,7 +179,7 @@ const Search = () => {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={toggleExpand}
-                className="p-2 rounded-full bg-primary/10 text-primary"
+                className="bg-primary/10 text-primary rounded-full p-2"
               >
                 <SearchIcon size={18} />
               </motion.button>
@@ -212,7 +212,7 @@ const Search = () => {
           </motion.span>
           <Input
             type="text"
-            className="indent-8 text-foreground focus:border-primary transition-all duration-300"
+            className="text-foreground focus:border-primary indent-8 transition-all duration-300"
             placeholder="Search candidates or events"
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
@@ -247,12 +247,12 @@ const Search = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
             transition={{ duration: 0.2 }}
-            className="absolute top-full left-0 right-0 z-50 mt-1 bg-card border rounded-md shadow-lg max-h-80 overflow-y-auto"
-            style={{ width: isMobile ? "calc(100vw - 2rem)" : "400px" }}
+            className="bg-card absolute top-full right-0 left-0 z-50 mt-1 max-h-80 overflow-y-auto rounded-md border shadow-lg"
+            style={{ width: isMobile ? 'calc(100vw - 2rem)' : '400px' }}
           >
             {applicantSearchResults.length > 0 && (
               <div className="p-2">
-                <div className="text-xs uppercase tracking-wider text-muted-foreground px-2 py-1 flex items-center gap-1">
+                <div className="text-muted-foreground flex items-center gap-1 px-2 py-1 text-xs tracking-wider uppercase">
                   <User size={14} />
                   <span>Candidates</span>
                 </div>
@@ -263,22 +263,22 @@ const Search = () => {
                   >
                     <motion.div
                       whileHover={{
-                        backgroundColor: "rgba(var(--primary), 0.1)",
+                        backgroundColor: 'rgba(var(--primary), 0.1)',
                       }}
-                      className="p-3 rounded-md cursor-pointer"
+                      className="cursor-pointer rounded-md p-3"
                       onClick={() => handleApplicantClick(applicant)}
                     >
                       <div className="font-medium">
                         {applicant.applicant_name}
                       </div>
-                      <div className="text-sm text-muted-foreground flex justify-between">
+                      <div className="text-muted-foreground flex justify-between text-sm">
                         <span>
-                          {applicant.applied_position}{" "}
+                          {applicant.applied_position}{' '}
                           {applicant.technology
                             ? `• ${applicant.technology}`
-                            : ""}
+                            : ''}
                         </span>
-                        <span>{applicant.experience || ""}</span>
+                        <span>{applicant.experience || ''}</span>
                       </div>
                     </motion.div>
                   </Link>
@@ -288,12 +288,12 @@ const Search = () => {
 
             {applicantSearchResults.length > 0 &&
               eventSearchResults.length > 0 && (
-                <div className="border-t mx-2"></div>
+                <div className="mx-2 border-t"></div>
               )}
 
             {eventSearchResults.length > 0 && (
               <div className="p-2">
-                <div className="text-xs uppercase tracking-wider text-muted-foreground px-2 py-1 flex items-center gap-1">
+                <div className="text-muted-foreground flex items-center gap-1 px-2 py-1 text-xs tracking-wider uppercase">
                   <Calendar size={14} />
                   <span>Events</span>
                 </div>
@@ -304,13 +304,13 @@ const Search = () => {
                   >
                     <motion.div
                       whileHover={{
-                        backgroundColor: "rgba(var(--primary), 0.1)",
+                        backgroundColor: 'rgba(var(--primary), 0.1)',
                       }}
-                      className="p-3 rounded-md cursor-pointer"
+                      className="cursor-pointer rounded-md p-3"
                       onClick={() => handleEventClick(event)}
                     >
                       <div className="font-medium">{event.event_name}</div>
-                      <div className="text-sm flex justify-between">
+                      <div className="flex justify-between text-sm">
                         <span className="text-primary">
                           {formatEventDate(event.event_date_time)}
                         </span>
@@ -319,7 +319,7 @@ const Search = () => {
                         </span>
                       </div>
                       {event.applicant_details && (
-                        <div className="text-xs text-muted-foreground mt-1">
+                        <div className="text-muted-foreground mt-1 text-xs">
                           For: {event.applicant_details.applicant_name} (
                           {event.applicant_details.applied_position})
                         </div>
@@ -331,7 +331,7 @@ const Search = () => {
             )}
 
             {!hasResults && searchText && (
-              <div className="p-4 text-center text-muted-foreground">
+              <div className="text-muted-foreground p-4 text-center">
                 No results found for "{searchText}"
               </div>
             )}

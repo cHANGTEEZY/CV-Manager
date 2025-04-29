@@ -1,21 +1,21 @@
-import ApplicationTable from "@/components/Application/ApplicationTable";
-import Spinner from "@/components/Loading/Spinner";
-import useTableData from "@/hooks/use-table-data";
-import { motion } from "framer-motion";
+import ApplicationTable from '@/components/Application/ApplicationTable';
+import Spinner from '@/components/Loading/Spinner';
+import useTableData from '@/hooks/use-table-data';
+import { motion } from 'framer-motion';
 
 const Applications = () => {
-  const data = useTableData();
+  const { tableData } = useTableData();
 
-  if (!data) {
+  if (!tableData) {
     return <Spinner />;
   }
 
   return (
-    <section className="mx-auto mt-5 max-w-[1100px]  ">
+    <section className="mx-auto mt-5 max-w-[1100px]">
       <motion.h1
         initial={{ opacity: 0, x: -7 }}
         animate={{ opacity: 1, x: 0 }}
-        className="text-4xl font-bold mb-5 text-gradient-contrast "
+        className="text-gradient-contrast mb-5 text-4xl font-bold"
       >
         Monitor and Search All applications
       </motion.h1>
@@ -26,7 +26,7 @@ const Applications = () => {
           delay: 0.2,
         }}
       >
-        <ApplicationTable tableData={data} />
+        <ApplicationTable tableData={tableData} />
       </motion.div>
     </section>
   );

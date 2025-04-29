@@ -52,14 +52,14 @@ import {
 } from '../ui/tooltip';
 import useTableData from '@/hooks/use-table-data';
 
-//? interview ko second stage ma ni assignment stage haldine
-
 const ListedAssessment = () => {
   const [listedAssessments, setListedAssessments] = useState<AssessmentProps[]>(
     []
   );
-  const tableData = useTableData();
-  console.log(tableData);
+  const { secondInterviewPassed, thirdInterviewPassed } = useTableData();
+
+  console.log('Applicants passed second interview', secondInterviewPassed);
+  console.log('Applicants passed third interview', thirdInterviewPassed);
 
   const [isLoading, setIsLoading] = useState(false);
   const [selectedAssessment, setSelectedAssessment] =

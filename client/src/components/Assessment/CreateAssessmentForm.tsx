@@ -35,6 +35,18 @@ import { useState } from 'react';
 import { AssessmentProps } from '@/schemas/assessmentSchema';
 import { assessmentSchema } from '@/schemas/assessmentSchema';
 
+const assessmentTitle = [
+  'Full Stack Assessment Round 1',
+  'Full Stack Assessment Round 2',
+  'Frontend Assessment Round 1',
+  'Frontend Assessment Round 2',
+  'Backend Assessment Round 1',
+  'Backend Assessment Round 2',
+  'Devops Assessment Round 1',
+  'Devops Assessment Round 2',
+  'UI/UX Assessment Round 1',
+  'UI/UX Assessment Round 2',
+];
 const assessmentType = ['Full Stack', 'Frontend', 'Backend', 'Devops', 'UI/UX'];
 const assessmentLevel = ['Intern', 'Junior', 'Intermediate', 'Senior'];
 
@@ -100,12 +112,18 @@ const CreateAssessmentForm = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Assessment Title</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Enter title for assessment"
-                        {...field}
-                      />
-                    </FormControl>
+                    <Select>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select The Assessment Round" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {assessmentTitle.map((title) => (
+                          <SelectItem value={title}>{title}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}

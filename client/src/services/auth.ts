@@ -1,4 +1,4 @@
-import { supabase } from "../utils/supabaseClient";
+import { supabase } from '../utils/supabaseClient';
 
 export const AuthService = {
   async signInWithEmail(email: string, password: string) {
@@ -28,7 +28,7 @@ export const AuthService = {
 
   async signInWithGoogle() {
     const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
+      provider: 'google',
       options: {
         redirectTo: `${window.location.origin}/auth/callback`,
       },

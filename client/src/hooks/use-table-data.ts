@@ -1,31 +1,37 @@
-import { tableDefinition } from "@/schemas/tableDefinition";
-import { supabase } from "@/utils/supabaseClient";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import { tableDefinition } from '@/schemas/tableDefinition';
+import { supabase } from '@/utils/supabaseClient';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 const useTableData = () => {
   const [tableData, setTableData] = useState<tableDefinition[] | null>(null);
+  const [secondInterviewPassed, setSecondInterviewPassed] = useState<
+    tableDefinition[] | null
+  >([]);
+  const [thirdInterviewPassed, setThirdInterviewPassed] = useState<
+    tableDefinition[] | null
+  >([]);
 
   useEffect(() => {
     const getTableData = async () => {
       try {
         const { data, error } = await supabase
-          .from("applicant_details")
+          .from('applicant_details')
           .select();
 
         if (error) {
-          throw new Error(error.message || "Error retrieving table data");
+          throw new Error(error.message || 'Error retrieving table data');
         }
 
         if (Array.isArray(data)) {
           setTableData(data);
         } else {
-          console.error("Data returned is not an array:", data);
+          console.error('Data returned is not an array:', data);
           setTableData([]);
         }
       } catch (error: any) {
-        console.error("Error fetching table data:", error);
-        toast.error(error.message || "Something went wrong");
+        console.error('Error fetching table data:', error);
+        toast.error(error.message || 'Something went wrong');
         setTableData([]);
       }
     };
@@ -33,7 +39,21 @@ const useTableData = () => {
     getTableData();
   }, []);
 
-  return tableData;
+  useEffect(() => {
+    if (!tableData) return;
+
+    const secondInterviewPassedUsers = tableData.filter(
+      (r) => r.applicant_status === 'Interview 2 Passed'
+    );
+    setSecondInterviewPassed(secondInterviewPassedUsers);
+
+    const thirdInterviewPassedUsers = tableData.filter(
+      (r) => r.applicant_status === 'Interview 3 Passed'
+    );
+    setThirdInterviewPassed(thirdInterviewPassedUsers);
+  }, [tableData]);
+
+  return { tableData, secondInterviewPassed, thirdInterviewPassed };
 };
 
 export default useTableData;
