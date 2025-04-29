@@ -35,6 +35,7 @@ import {
   BarChart3,
   FileText,
   Link as LinkIcon,
+  Users,
 } from 'lucide-react';
 import { Textarea } from '../ui/textarea';
 import {
@@ -58,14 +59,13 @@ const ListedAssessment = () => {
   );
   const { secondInterviewPassed, thirdInterviewPassed } = useTableData();
 
-  console.log('Applicants passed second interview', secondInterviewPassed);
-  console.log('Applicants passed third interview', thirdInterviewPassed);
-
   const [isLoading, setIsLoading] = useState(false);
   const [selectedAssessment, setSelectedAssessment] =
     useState<AssessmentProps | null>(null);
-  const [assignTo, setAssignTo] = useState('all');
+  const [assignTo, setAssignTo] = useState('group');
   const [email, setEmail] = useState('');
+  const [selectedGroup, setSelectedGroup] = useState('');
+  const [isAssigning, setIsAssigning] = useState(false);
 
   useEffect(() => {
     const getListedAssessment = async () => {
@@ -106,16 +106,77 @@ const ListedAssessment = () => {
     }
   };
 
-  const handleAssign = (assessment) => {
+  const handleAssign = async (assessment) => {
     if (assignTo === 'individual' && !email.trim()) {
       toast.error('Email of candidate required for individual assignment');
       return;
     }
-    console.log(assessment.id);
+
+    if (assignTo === 'group' && !selectedGroup) {
+      toast.error('Please select a candidate group');
+      return;
+    }
+
+    try {
+      setIsAssigning(true);
+
+      // Get candidates to assign to
+      let candidatesToAssign = [];
+
+      if (assignTo === 'individual') {
+        candidatesToAssign = [{ email: email.trim() }];
+      } else {
+        // Group assignment
+        switch (selectedGroup) {
+          case 'interview2':
+            candidatesToAssign = secondInterviewPassed;
+            break;
+          case 'interview3':
+            candidatesToAssign = thirdInterviewPassed;
+            break;
+          default:
+            toast.error('Invalid candidate group selected');
+            return;
+        }
+      }
+
+      if (candidatesToAssign.length === 0) {
+        toast.warning('No candidates found in the selected group');
+        return;
+      }
+
+      // Create assessment assignments in batch
+      const assignmentData = candidatesToAssign.map((candidate) => ({
+        assessment_id: assessment.id,
+        candidate_email: candidate.email,
+        assigned_date: new Date().toISOString(),
+        status: 'pending',
+        due_date: assessment.submissionDate,
+      }));
+
+      const { error } = await supabase
+        .from('assessment_assignments')
+        .insert(assignmentData);
+
+      if (error) throw error;
+
+      toast.success(
+        `Assessment assigned to ${candidatesToAssign.length} candidate(s)`
+      );
+    } catch (error) {
+      console.error('Error assigning assessment:', error);
+      toast.error('Failed to assign assessment');
+    } finally {
+      setIsAssigning(false);
+    }
   };
 
   const selectAssessment = (assessment: AssessmentProps) => {
     setSelectedAssessment(assessment);
+    // Reset form values when selecting a new assessment
+    setAssignTo('group');
+    setEmail('');
+    setSelectedGroup('');
   };
 
   if (isLoading) return <Spinner />;
@@ -346,7 +407,7 @@ const ListedAssessment = () => {
                           </DrawerHeader>
                           <div className="space-y-6 p-4">
                             <div className="space-y-2">
-                              <Label>Assignment Details</Label>
+                              <Label>Assessment Details</Label>
                               <Card className="bg-muted/50">
                                 <CardContent className="space-y-2 pt-4">
                                   <div className="flex justify-between">
@@ -375,18 +436,18 @@ const ListedAssessment = () => {
                             <div className="space-y-3">
                               <Label>Assign To</Label>
                               <RadioGroup
-                                defaultValue="all"
+                                defaultValue="group"
                                 value={assignTo}
                                 onValueChange={setAssignTo}
                                 className="space-y-3"
                               >
                                 <div className="flex items-center space-x-2">
-                                  <RadioGroupItem value="all" id="all" />
+                                  <RadioGroupItem value="group" id="group" />
                                   <Label
-                                    htmlFor="all"
+                                    htmlFor="group"
                                     className="cursor-pointer"
                                   >
-                                    All Candidates
+                                    Candidate Group
                                   </Label>
                                 </div>
                                 <div className="flex items-center space-x-2">
@@ -403,6 +464,42 @@ const ListedAssessment = () => {
                                 </div>
                               </RadioGroup>
                             </div>
+
+                            {assignTo === 'group' && (
+                              <div className="space-y-2">
+                                <Label htmlFor="candidateGroup">
+                                  Select Candidate Group
+                                </Label>
+                                <Select
+                                  value={selectedGroup}
+                                  onValueChange={setSelectedGroup}
+                                >
+                                  <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Select a group" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="interview2">
+                                      <div className="flex items-center gap-2">
+                                        <Users className="h-4 w-4" />
+                                        Candidates Passed Interview 2
+                                        <span className="ml-1 rounded-full bg-blue-100 px-2 py-0.5 text-xs text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
+                                          {secondInterviewPassed?.length || 0}
+                                        </span>
+                                      </div>
+                                    </SelectItem>
+                                    <SelectItem value="interview3">
+                                      <div className="flex items-center gap-2">
+                                        <Users className="h-4 w-4" />
+                                        Candidates Passed Interview 3
+                                        <span className="ml-1 rounded-full bg-green-100 px-2 py-0.5 text-xs text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                                          {thirdInterviewPassed?.length || 0}
+                                        </span>
+                                      </div>
+                                    </SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            )}
 
                             {assignTo === 'individual' && (
                               <div className="space-y-2">
@@ -421,8 +518,16 @@ const ListedAssessment = () => {
                             <Button
                               onClick={() => handleAssign(assessment)}
                               className="w-full"
+                              disabled={isAssigning}
                             >
-                              Assign Assessment
+                              {isAssigning ? (
+                                <>
+                                  <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+                                  Assigning...
+                                </>
+                              ) : (
+                                'Assign Assessment'
+                              )}
                             </Button>
                             <DrawerClose asChild>
                               <Button variant="outline">Cancel</Button>
