@@ -11,6 +11,9 @@ const useTableData = () => {
   const [thirdInterviewPassed, setThirdInterviewPassed] = useState<
     tableDefinition[] | null
   >([]);
+  const [firstAssessmentPassed, setFirstAssessmentPassed] = useState<
+    tableDefinition[] | null
+  >([]);
 
   useEffect(() => {
     const getTableData = async () => {
@@ -51,9 +54,19 @@ const useTableData = () => {
       (r) => r.applicant_status === 'Interview 3 Passed'
     );
     setThirdInterviewPassed(thirdInterviewPassedUsers);
+
+    const firstAssessmentPassedUsers = tableData.filter(
+      (r) => r.applicant_status === 'Assessment 1 Passed'
+    );
+    setFirstAssessmentPassed(firstAssessmentPassedUsers);
   }, [tableData]);
 
-  return { tableData, secondInterviewPassed, thirdInterviewPassed };
+  return {
+    tableData,
+    secondInterviewPassed,
+    thirdInterviewPassed,
+    firstAssessmentPassed,
+  };
 };
 
 export default useTableData;

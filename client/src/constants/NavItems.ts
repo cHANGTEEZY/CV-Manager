@@ -1,50 +1,53 @@
-import { Calendar, Home, FileText, Mail, UserPen } from "lucide-react";
+import { Calendar, Home, FileText, Mail, UserPen } from 'lucide-react';
 
 export const navItems = [
   {
-    title: "Dashboard",
+    title: 'Dashboard',
     icon: Home,
-    path: "/dashboard",
+    path: '/dashboard',
   },
   {
-    title: "Applications",
+    title: 'Applications',
     icon: FileText,
-    path: "/dashboard/applications",
-    badge: "3",
+    path: '/dashboard/applications',
+    badge: '3',
     subitems: [
-      { title: "Upload Applications", path: "/dashboard/application-upload" },
-      { title: "Track Applications", path: "/dashboard/application-tracking" },
+      { title: 'Upload Applications', path: '/dashboard/application-upload' },
+      { title: 'Track Applications', path: '/dashboard/application-tracking' },
     ],
   },
   {
-    title: "Interview",
+    title: 'Interview',
     icon: Calendar,
-    path: "/dashboard/events/create-event",
+    path: '/dashboard/events/create-event',
     subitems: [
-      { title: "Interview Scheduling", path: "/dashboard/events/create-event" },
-      { title: "Interview Review", path: "/dashboard/events/review-event" },
+      { title: 'Interview Scheduling', path: '/dashboard/events/create-event' },
+      { title: 'Interview Review', path: '/dashboard/events/review-event' },
       {
-        title: "Manage Interviewer",
-        path: "/dashboard/assessment/interviewer",
+        title: 'Manage Interviewer',
+        path: '/dashboard/assessment/interviewer',
       }, // make sure this route exists!
     ],
   },
   {
-    title: "Assessment",
+    title: 'Assessment',
     icon: UserPen,
-    path: "/dashboard/assessment/review",
+    path: '/dashboard/events/assessment-uploader',
     subitems: [
       {
-        title: "Assessment Uploader",
-        path: "/dashboard/events/assessment-uploader",
+        title: 'Assessment Uploader',
+        path: '/dashboard/events/assessment-uploader',
       },
-      { title: "Review Assessment", path: "/dashboard/assessment/review" },
+      {
+        title: 'Review Assessment',
+        path: '/dashboard/events/assessment-review',
+      },
     ],
   },
   {
-    title: "Draft",
+    title: 'Draft',
     icon: Mail,
-    path: "/dashboard/mail",
+    path: '/dashboard/mail',
     // subitems: [
     //   {
     //     title: "Create Draft",

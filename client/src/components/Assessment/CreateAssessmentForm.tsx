@@ -47,7 +47,13 @@ const assessmentTitle = [
   'UI/UX Assessment Round 1',
   'UI/UX Assessment Round 2',
 ];
-const assessmentType = ['Full Stack', 'Frontend', 'Backend', 'Devops', 'UI/UX'];
+const assessmentType = [
+  'Full Stack Engineer',
+  'Frontend Engineer',
+  'Backend Engineer',
+  'Devops Engineer',
+  'UI/UX Designer',
+];
 const assessmentLevel = ['Intern', 'Junior', 'Intermediate', 'Senior'];
 
 const CreateAssessmentForm = () => {
@@ -56,7 +62,6 @@ const CreateAssessmentForm = () => {
   const form = useForm<AssessmentProps>({
     resolver: zodResolver(assessmentSchema),
     defaultValues: {
-      title: '',
       formLink: '',
       requirements: '',
     },
@@ -112,7 +117,10 @@ const CreateAssessmentForm = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Assessment Title</FormLabel>
-                    <Select>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select The Assessment Round" />
@@ -120,7 +128,9 @@ const CreateAssessmentForm = () => {
                       </FormControl>
                       <SelectContent>
                         {assessmentTitle.map((title) => (
-                          <SelectItem value={title}>{title}</SelectItem>
+                          <SelectItem key={title} value={title}>
+                            {title}
+                          </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>

@@ -1,14 +1,35 @@
 import { z } from 'zod';
 
 export const assessmentSchema = z.object({
-  title: z
-    .string()
-    .nonempty({ message: 'Title is required' })
-    .min(4, { message: 'Title must be at least 4 characters long' }),
-
-  type: z.enum(['Full Stack', 'Frontend', 'Backend', 'Devops', 'UI/UX'], {
-    required_error: 'Please select the assessment type',
-  }),
+  title: z.enum(
+    [
+      'Full Stack Assessment Round 1',
+      'Full Stack Assessment Round 2',
+      'Frontend Assessment Round 1',
+      'Frontend Assessment Round 2',
+      'Backend Assessment Round 1',
+      'Backend Assessment Round 2',
+      'Devops Assessment Round 1',
+      'Devops Assessment Round 2',
+      'UI/UX Assessment Round 1',
+      'UI/UX Assessment Round 2',
+    ],
+    {
+      required_error: 'Please select the assessment title',
+    }
+  ),
+  type: z.enum(
+    [
+      'Full Stack Engineer',
+      'Frontend Engineer',
+      'Backend Engineer',
+      'Devops Engineer',
+      'UI/UX Designer',
+    ],
+    {
+      required_error: 'Please select the assessment type',
+    }
+  ),
 
   level: z.enum(['Intern', 'Junior', 'Intermediate', 'Senior'], {
     required_error: 'Please select the assessment level',

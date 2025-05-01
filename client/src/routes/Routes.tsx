@@ -1,33 +1,34 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter } from 'react-router-dom';
 
-import Signin from "@/components/auth/Signin";
-import Signup from "@/components/auth/Signup";
-import AuthCallback from "@/components/auth/AuthCallback";
-import ErrorPage from "@/components/Error/ErrorPage";
-import AuthenticationLayout from "@/layouts/AuthenticationLayout";
-import RootLayout from "@/layouts/RootLayout";
-import HomePage from "@/pages/HomePage";
-import SettingPage from "@/pages/SettingPage";
-import EventPage from "@/pages/Events/EventPage";
-import PublicRoute from "@/routes/PublicRoute";
-import ProtectedRoute from "@/routes/ProtectedRoute";
-import ProfilePage from "@/pages/ProfilePage";
-import Applications from "@/pages/Application/Applications";
-import ApplicationUpload from "@/pages/Application/ApplicationUpload";
-import TrackApplications from "@/pages/Application/TrackApplications";
-import ReviewApplications from "@/pages/Application/ReviewApplications";
-import Email from "@/pages/Email/Email";
-import LandingPage from "@/pages/LandinPage"; // corrected typo from LandinPage -> LandingPage
-import AssessmentPage from "@/pages/Events/AssessmentPage";
-import ReviewEvent from "@/pages/Events/ReviewEvent";
+import Signin from '@/components/auth/Signin';
+import Signup from '@/components/auth/Signup';
+import AuthCallback from '@/components/auth/AuthCallback';
+import ErrorPage from '@/components/Error/ErrorPage';
+import AuthenticationLayout from '@/layouts/AuthenticationLayout';
+import RootLayout from '@/layouts/RootLayout';
+import HomePage from '@/pages/HomePage';
+import SettingPage from '@/pages/SettingPage';
+import EventPage from '@/pages/Events/EventPage';
+import PublicRoute from '@/routes/PublicRoute';
+import ProtectedRoute from '@/routes/ProtectedRoute';
+import ProfilePage from '@/pages/ProfilePage';
+import Applications from '@/pages/Application/Applications';
+import ApplicationUpload from '@/pages/Application/ApplicationUpload';
+import TrackApplications from '@/pages/Application/TrackApplications';
+import ReviewApplications from '@/pages/Application/ReviewApplications';
+import Email from '@/pages/Email/Email';
+import LandingPage from '@/pages/LandinPage'; // corrected typo from LandinPage -> LandingPage
+import AssessmentPage from '@/pages/Events/AssessmentPage';
+import ReviewEvent from '@/pages/Events/ReviewEvent';
+import AssessmentReview from '@/pages/Events/AssessmentReview';
 
 export const router = createBrowserRouter([
   {
-    path: "/",
+    path: '/',
     element: <LandingPage />,
   },
   {
-    path: "/dashboard",
+    path: '/dashboard',
     element: <RootLayout />,
     children: [
       {
@@ -39,7 +40,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "settings",
+        path: 'settings',
         element: (
           <ProtectedRoute>
             <SettingPage />
@@ -47,7 +48,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "events/create-event",
+        path: 'events/create-event',
         element: (
           <ProtectedRoute>
             <EventPage />
@@ -55,7 +56,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "events/assessment-uploader",
+        path: 'events/assessment-uploader',
         element: (
           <ProtectedRoute>
             <AssessmentPage />
@@ -63,7 +64,15 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "events/review-event",
+        path: 'events/assessment-review',
+        element: (
+          <ProtectedRoute>
+            <AssessmentReview />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'events/review-event',
         element: (
           <ProtectedRoute>
             <ReviewEvent />
@@ -71,7 +80,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "profile",
+        path: 'profile',
         element: (
           <ProtectedRoute>
             <ProfilePage />
@@ -79,7 +88,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "applications",
+        path: 'applications',
         element: (
           <ProtectedRoute>
             <Applications />
@@ -87,7 +96,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "application-upload",
+        path: 'application-upload',
         element: (
           <ProtectedRoute>
             <ApplicationUpload />
@@ -95,7 +104,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "application-tracking",
+        path: 'application-tracking',
         element: (
           <ProtectedRoute>
             <TrackApplications />
@@ -103,7 +112,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "application-review/:id",
+        path: 'application-review/:id',
         element: (
           <ProtectedRoute>
             <ReviewApplications />
@@ -111,7 +120,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "mail",
+        path: 'mail',
         element: (
           <ProtectedRoute>
             <Email />
@@ -121,11 +130,11 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    path: "/auth",
+    path: '/auth',
     element: <AuthenticationLayout />,
     children: [
       {
-        path: "signin",
+        path: 'signin',
         element: (
           <PublicRoute>
             <Signin />
@@ -133,7 +142,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "signup",
+        path: 'signup',
         element: (
           <PublicRoute>
             <Signup />
@@ -141,13 +150,13 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "callback",
+        path: 'callback',
         element: <AuthCallback />,
       },
     ],
   },
   {
-    path: "*",
+    path: '*',
     element: <ErrorPage />,
   },
 ]);
