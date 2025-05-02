@@ -139,11 +139,12 @@ function Column({ id, title, tasks, type, description, icon }: ColumnProps) {
     }
 
     if (type === 'rejected') {
-      baseStyles += 'border-l-4 border-l-red-500  ';
+      baseStyles += 'border-l-4 border-l-red-500 border-t-red-500 ';
     } else if (type === 'offer') {
-      baseStyles += 'border-l-4 border-l-green-500  ';
+      baseStyles += 'border-l-4 border-l-green-500 border-l-green-500 ';
     } else {
-      baseStyles += 'border-l-3 border-l-muted-foreground  hover:shadow-sm ';
+      baseStyles +=
+        'border-l-3 border-l-muted-foreground border-t-muted-foreground  hover:shadow-sm ';
     }
 
     return baseStyles;
@@ -161,14 +162,22 @@ function Column({ id, title, tasks, type, description, icon }: ColumnProps) {
         </CardDescription>
       </CardHeader>
       <CardDescription className="mt-2">
-        {tasks.map((task) => (
-          <Task
-            key={task.id}
-            id={task.id}
-            content={task.content}
-            columnType={type}
-          />
-        ))}
+        {tasks.length > 0 ? (
+          <div className="scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-200 hover:scrollbar-thumb-gray-300 h-[300px] overflow-y-auto pr-2 whitespace-pre-line">
+            {tasks.map((task) => (
+              <Task
+                key={task.id}
+                id={task.id}
+                content={task.content}
+                columnType={type}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="text-muted-foreground flex h-[300px] items-center justify-center text-sm">
+            No applicants in this column
+          </div>
+        )}
       </CardDescription>
     </Card>
   );
@@ -282,27 +291,49 @@ export default function KanbanBoard() {
 
   useEffect(() => {
     if (tableData && Array.isArray(tableData)) {
+      const statusMap = {
+        rejected: ['Failed'],
+        applicantList: ['filled'],
+        firstInterview: ['Interview 1 Schedule', 'Interview 1 Passed'],
+        secondInterview: ['Interview 2 Schedule', 'Interview 2 Passed'],
+        thirdInterview: ['Interview 3 Schedule', 'Interview 3 Passed'],
+        assessment1: ['Assessment 1 Assigned', 'Assessment 1 Passed'],
+        assessment2: ['Assessment 2 Assigned', 'Assessment 2 Passed'],
+      };
+
+      const formatContent = (applicant) =>
+        `Name: ${applicant.applicant_name}\nEmail: ${applicant.applicant_email}\nStatus: ${applicant.applicant_status}`;
+
+      const getList = (statuses, listIdPrefix) =>
+        tableData
+          .filter((item) => statuses.includes(item.applicant_status))
+          .map((applicant, index) => ({
+            id: `${listIdPrefix}-${index}`,
+            content: formatContent(applicant),
+          }));
+
       const rejectedList = tableData
-        .filter((r) => r.applicant_verdict === 'Failed')
+        .filter((r) => statusMap.rejected.includes(r.applicant_verdict))
         .map((applicant, index) => ({
           id: `rejected-${index}`,
-          content: `Name: ${applicant.applicant_name}, Email: ${applicant.applicant_email}`,
-        }));
-
-      const addedCandidate = tableData
-        .filter((a) => a.applicant_status === 'filled')
-        .map((applicant, index) => ({
-          id: `applicant-${index}`,
-          content: `Name: ${applicant.applicant_name}, Email: ${applicant.applicant_email}`,
+          content: formatContent(applicant),
         }));
 
       setTasks((prevData) => ({
         ...prevData,
-        'Applicant-List':
-          addedCandidate.length > 0
-            ? addedCandidate
-            : prevData['Applicant-List'],
-        Rejected: rejectedList.length > 0 ? rejectedList : prevData['Rejected'],
+        'Applicant-List': getList(statusMap.applicantList, 'applicant'),
+        'technical-interview': getList(
+          statusMap.firstInterview,
+          'first-interview'
+        ),
+        'Final-interview': getList(
+          statusMap.secondInterview,
+          'second-interview'
+        ),
+        'Interview-3': getList(statusMap.thirdInterview, 'third-interview'),
+        Assessment1: getList(statusMap.assessment1, 'assessment1'),
+        Assessment2: getList(statusMap.assessment2, 'assessment2'),
+        Rejected: rejectedList,
       }));
     }
   }, [tableData]);
@@ -371,44 +402,66 @@ export default function KanbanBoard() {
 
         <div className="mb-8">
           <h2 className="text-primary mb-4 text-xl font-semibold">
-            Assessment Management
+            Interview Management
           </h2>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <Column
-              id="Assessment1"
-              title="Assessment 1"
-              description="Candidates undergoing first-round technical skills evaluation"
-              tasks={tasks['Assessment1']}
-              icon={<ClipboardList size={18} className="text-amber-500" />}
+              id="technical-interview"
+              title="First Interview"
+              description="Candidates scheduled for technical evaluation"
+              tasks={tasks['technical-interview'] || []}
+              icon={
+                <Code
+                  size={18}
+                  className="whitespace-pre-line text-indigo-500"
+                />
+              }
             />
             <Column
-              id="Assessment2"
-              title="Assessment 2"
-              description="Applicants in advanced assessment phase for specialized skills"
-              tasks={tasks['Assessment2']}
-              icon={<ClipboardCheck size={18} className="text-amber-600" />}
+              id="Final-interview"
+              title="Second Interview"
+              description="Applicants in second round interview"
+              tasks={tasks['Final-interview'] || []}
+              icon={
+                <Users
+                  size={18}
+                  className="whitespace-pre-line text-indigo-600"
+                />
+              }
+            />
+            <Column
+              id="Interview-3"
+              title="Third Interview"
+              description="Final round interview with leadership"
+              tasks={tasks['Interview-3'] || []}
+              icon={
+                <Users
+                  size={18}
+                  className="whitespace-pre-line text-indigo-700"
+                />
+              }
             />
           </div>
         </div>
 
         <div className="mb-8">
           <h2 className="text-primary mb-4 text-xl font-semibold">
-            Interview Management
+            Assessment Management
           </h2>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <Column
-              id="technical-interview"
-              title="Technical Interview"
-              description="Candidates scheduled for in-depth technical expertise evaluation"
-              tasks={tasks['technical-interview']}
-              icon={<Code size={18} className="text-indigo-500" />}
+              id="Assessment1"
+              title="Assessment 1"
+              description="First round technical assessment"
+              tasks={tasks['Assessment1'] || []}
+              icon={<ClipboardList size={18} className="text-amber-500" />}
             />
             <Column
-              id="Final-interview"
-              title="Final Interview"
-              description="Applicants in final decision stage with leadership team"
-              tasks={tasks['Final-interview']}
-              icon={<Users size={18} className="text-indigo-600" />}
+              id="Assessment2"
+              title="Assessment 2"
+              description="Advanced technical assessment"
+              tasks={tasks['Assessment2'] || []}
+              icon={<ClipboardCheck size={18} className="text-amber-600" />}
             />
           </div>
         </div>

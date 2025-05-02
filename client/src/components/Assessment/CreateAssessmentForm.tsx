@@ -34,27 +34,11 @@ import { toast } from 'sonner';
 import { useState } from 'react';
 import { AssessmentProps } from '@/schemas/assessmentSchema';
 import { assessmentSchema } from '@/schemas/assessmentSchema';
-
-const assessmentTitle = [
-  'Full Stack Assessment Round 1',
-  'Full Stack Assessment Round 2',
-  'Frontend Assessment Round 1',
-  'Frontend Assessment Round 2',
-  'Backend Assessment Round 1',
-  'Backend Assessment Round 2',
-  'Devops Assessment Round 1',
-  'Devops Assessment Round 2',
-  'UI/UX Assessment Round 1',
-  'UI/UX Assessment Round 2',
-];
-const assessmentType = [
-  'Full Stack Engineer',
-  'Frontend Engineer',
-  'Backend Engineer',
-  'Devops Engineer',
-  'UI/UX Designer',
-];
-const assessmentLevel = ['Intern', 'Junior', 'Intermediate', 'Senior'];
+import {
+  assessmentTitle,
+  assessmentType,
+  assessmentLevel,
+} from '@/constants/Assessments';
 
 const CreateAssessmentForm = () => {
   const [isLoading, setIsLoading] = useState(false);

@@ -44,6 +44,7 @@ import {
   Select,
   SelectContent,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '../ui/select';
@@ -54,11 +55,20 @@ import {
   TooltipTrigger,
 } from '../ui/tooltip';
 import useTableData from '@/hooks/use-table-data';
+import {
+  assessmentFilter,
+  assessmentLevel,
+  assessmentTitle,
+  assessmentType,
+} from '@/constants/Assessments';
 
 const ListedAssessment = () => {
   const [listedAssessments, setListedAssessments] = useState<AssessmentProps[]>(
     []
   );
+  const [filteredAssessments, setFilteredAssessments] = useState<
+    AssessmentProps[]
+  >([]);
   const { secondInterviewPassed, thirdInterviewPassed, firstAssessmentPassed } =
     useTableData();
 
@@ -70,6 +80,7 @@ const ListedAssessment = () => {
   const [selectedGroup, setSelectedGroup] = useState('');
   const [isAssigning, setIsAssigning] = useState(false);
   const [filteredCandidates, setFilteredCandidates] = useState([]);
+  const [selectedType, setSelectedType] = useState(assessmentFilter[0]);
 
   useEffect(() => {
     const getListedAssessment = async () => {
@@ -80,6 +91,7 @@ const ListedAssessment = () => {
           .select();
         if (error) throw error;
         setListedAssessments(data);
+        setFilteredAssessments(data);
       } catch (error) {
         console.error(error);
       } finally {
@@ -88,6 +100,29 @@ const ListedAssessment = () => {
     };
     getListedAssessment();
   }, []);
+
+  useEffect(() => {
+    if (!listedAssessments.length) return;
+
+    let filtered = [...listedAssessments];
+
+    if (selectedType !== 'All Assessment') {
+      filtered = filtered.filter(
+        (assessment) =>
+          assessment.type
+            ?.toLowerCase()
+            .includes(selectedType.toLowerCase().trim()) ||
+          assessment.title
+            ?.toLowerCase()
+            .includes(selectedType.toLowerCase().trim()) ||
+          assessment.requirements
+            ?.toLowerCase()
+            .includes(selectedType.toLowerCase().trim())
+      );
+    }
+
+    setFilteredAssessments(filtered);
+  }, [selectedType, listedAssessments]);
 
   const handleSave = async () => {
     if (!selectedAssessment) return;
@@ -186,8 +221,6 @@ const ListedAssessment = () => {
       return;
     }
 
-    console.log(assessment);
-
     if (assignTo === 'individual' && !email.trim()) {
       toast.error('Email of candidate required for individual assignment');
       return;
@@ -222,9 +255,6 @@ const ListedAssessment = () => {
         }
       }
 
-      const { data: candidateStatus, error: candidateStusError } =
-        await supabase.from('applicant_details');
-
       const assignmentData = candidatesToAssign.map((candidate) => {
         const candidateEmail =
           candidate.applicant_email ||
@@ -237,6 +267,7 @@ const ListedAssessment = () => {
 
         return {
           assessment_id: assessment.id,
+          assessment_title: assessment.title,
           candidate_email: candidateEmail,
           assigned_date: new Date().toISOString(),
           status: 'pending',
@@ -325,14 +356,31 @@ const ListedAssessment = () => {
 
   return (
     <section className="my-10">
-      <h2 className="text-primary mb-4 flex items-center gap-2 text-xl font-semibold">
-        <FileText className="h-5 w-5" />
-        View Assessments
-      </h2>
+      <div className="mb-4 flex justify-between">
+        <h2 className="text-primary mb-4 flex items-center gap-2 text-xl font-semibold">
+          <FileText className="h-5 w-5" />
+          View Assessments
+        </h2>
 
-      {listedAssessments.length ? (
+        <div className="flex gap-4">
+          <Select value={selectedType} onValueChange={setSelectedType}>
+            <SelectTrigger className="w-40">
+              <SelectValue placeholder="Filter by type" />
+            </SelectTrigger>
+            <SelectContent>
+              {assessmentFilter.map((type) => (
+                <SelectItem key={type} value={type}>
+                  {type}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      {filteredAssessments.length ? (
         <div className="grid grid-cols-1 gap-3">
-          {listedAssessments.map((assessment) => (
+          {filteredAssessments.map((assessment) => (
             <Card
               key={assessment.id}
               className="border shadow-sm transition-all hover:shadow-md"
@@ -402,16 +450,26 @@ const ListedAssessment = () => {
                           <div className="space-y-4 p-4">
                             <div className="space-y-2">
                               <Label htmlFor="title">Title</Label>
-                              <Input
-                                id="title"
+                              <Select
                                 value={selectedAssessment?.title || ''}
-                                onChange={(e) =>
+                                onValueChange={(value) =>
                                   setSelectedAssessment((prev) => ({
                                     ...prev!,
-                                    title: e.target.value,
+                                    type: value as any,
                                   }))
                                 }
-                              />
+                              >
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Change Assessment Title" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {assessmentTitle.map((title) => (
+                                    <SelectItem value={title}>
+                                      {title}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
@@ -430,19 +488,11 @@ const ListedAssessment = () => {
                                     <SelectValue placeholder="Select type" />
                                   </SelectTrigger>
                                   <SelectContent>
-                                    <SelectItem value="Full Stack">
-                                      Full Stack
-                                    </SelectItem>
-                                    <SelectItem value="Frontend">
-                                      Frontend
-                                    </SelectItem>
-                                    <SelectItem value="Backend">
-                                      Backend
-                                    </SelectItem>
-                                    <SelectItem value="Devops">
-                                      DevOps
-                                    </SelectItem>
-                                    <SelectItem value="UI/UX">UI/UX</SelectItem>
+                                    {assessmentType.map((type) => (
+                                      <SelectItem value={type}>
+                                        {type}
+                                      </SelectItem>
+                                    ))}
                                   </SelectContent>
                                 </Select>
                               </div>
@@ -462,18 +512,11 @@ const ListedAssessment = () => {
                                     <SelectValue placeholder="Select level" />
                                   </SelectTrigger>
                                   <SelectContent>
-                                    <SelectItem value="Intern">
-                                      Intern
-                                    </SelectItem>
-                                    <SelectItem value="Junior">
-                                      Junior
-                                    </SelectItem>
-                                    <SelectItem value="Intermediate">
-                                      Intermediate
-                                    </SelectItem>
-                                    <SelectItem value="Senior">
-                                      Senior
-                                    </SelectItem>
+                                    {assessmentLevel.map((level) => (
+                                      <SelectItem value={level}>
+                                        {level}
+                                      </SelectItem>
+                                    ))}
                                   </SelectContent>
                                 </Select>
                               </div>
@@ -626,7 +669,9 @@ const ListedAssessment = () => {
                                       <SelectValue placeholder="Select a group" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                      {assessment.title.includes('1') ? (
+                                      {selectedAssessment &&
+                                      selectedAssessment.title &&
+                                      selectedAssessment.title.includes('1') ? (
                                         <>
                                           <SelectItem value="interview2">
                                             <div className="flex items-center gap-2">
@@ -703,12 +748,60 @@ const ListedAssessment = () => {
                                   filteredCandidates.length === 0 && (
                                     <div className="flex items-center gap-2 rounded-md bg-amber-50 p-3 text-amber-700 dark:bg-amber-900/20 dark:text-amber-200">
                                       <AlertTriangle className="h-4 w-4" />
-                                      <span className="text-sm">
-                                        No candidates match the assessment
-                                        criteria in this group. Consider
-                                        selecting a different group or changing
-                                        the assessment requirements.
-                                      </span>
+                                      {selectedGroup &&
+                                        filteredCandidates.length === 0 && (
+                                          <div className="space-y-3">
+                                            <div className="flex items-center gap-2 rounded-md bg-amber-50 p-3 text-amber-700 dark:bg-amber-900/20 dark:text-amber-200">
+                                              <AlertTriangle className="h-4 w-4" />
+                                              <span className="text-sm">
+                                                No candidates match the
+                                                assessment criteria in this
+                                                group. Consider selecting a
+                                                different group or changing the
+                                                assessment requirements.
+                                              </span>
+                                            </div>
+
+                                            {/* Show unmatched candidates */}
+                                            <div className="mt-2 space-y-2 rounded-md border border-amber-200 bg-amber-50/50 p-3">
+                                              <p className="text-sm font-medium text-amber-800">
+                                                Unmatched Candidates:
+                                              </p>
+                                              <div className="max-h-32 space-y-1 overflow-y-auto">
+                                                {(selectedGroup === 'interview2'
+                                                  ? secondInterviewPassed
+                                                  : selectedGroup ===
+                                                      'interview3'
+                                                    ? thirdInterviewPassed
+                                                    : selectedGroup ===
+                                                        'assessment1'
+                                                      ? firstAssessmentPassed
+                                                      : []
+                                                ).map((candidate, index) => (
+                                                  <div
+                                                    key={index}
+                                                    className="text-sm text-amber-700"
+                                                  >
+                                                    <span className="font-medium">
+                                                      {candidate.applicant_name}
+                                                    </span>
+                                                    <span className="text-amber-600">
+                                                      {' '}
+                                                      -{' '}
+                                                    </span>
+                                                    <span className="text-amber-600/80">
+                                                      {candidate.tech_stack} (
+                                                      {
+                                                        candidate.applicant_experience_level
+                                                      }
+                                                      )
+                                                    </span>
+                                                  </div>
+                                                ))}
+                                              </div>
+                                            </div>
+                                          </div>
+                                        )}
                                     </div>
                                   )}
                               </div>
@@ -734,7 +827,8 @@ const ListedAssessment = () => {
                               disabled={
                                 isAssigning ||
                                 (assignTo === 'group' &&
-                                  filteredCandidates.length === 0)
+                                  filteredCandidates.length === 0 &&
+                                  selectedGroup !== '')
                               }
                             >
                               {isAssigning ? (
@@ -766,9 +860,15 @@ const ListedAssessment = () => {
         <Card className="w-full py-16">
           <div className="text-muted-foreground text-center">
             <FileText className="mx-auto mb-2 h-12 w-12 opacity-30" />
-            <h3 className="text-lg font-medium">No assessments available</h3>
+            <h3 className="text-lg font-medium">
+              {listedAssessments.length > 0
+                ? 'No assessments match your filter criteria'
+                : 'No assessments available'}
+            </h3>
             <p className="text-sm">
-              Create assessments to see them listed here
+              {listedAssessments.length > 0
+                ? 'Try adjusting your filters or create new assessments'
+                : 'Create assessments to see them listed here'}
             </p>
           </div>
         </Card>

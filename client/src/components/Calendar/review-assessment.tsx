@@ -10,7 +10,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Button } from '../ui/button';
 import { format } from 'date-fns';
 import { Calendar } from '../ui/calendar';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useAssessmentData } from '@/hooks/use-assement-data';
 import {
   Card,
@@ -38,6 +38,9 @@ import {
 } from '../ui/select';
 import { assessmentReviewResults } from '@/constants/Assessments';
 import { Textarea } from '../ui/textarea';
+import PendingCard from '../Pending';
+import { supabase } from '@/utils/supabaseClient';
+import { toast } from 'sonner';
 
 const ReviewAssessment = () => {
   const [date, setDate] = useState<Date>(new Date());
@@ -45,18 +48,67 @@ const ReviewAssessment = () => {
     useAssessmentData(date);
 
   const [assessmentDialogOpen, setAssessmentDialogOpen] = useState(false);
-  const [selectedAssessment, setSelecteAssessment] = useState(null);
+  const [selectedAssessment, setSelectedAssessment] = useState(null);
   const [assessmentResult, setAssessmentResult] = useState('');
   const [assessmentReview, setAssessmentReview] = useState('');
 
   const openReviewDialog = (assessment) => {
-    setSelecteAssessment(assessment);
+    setSelectedAssessment(assessment);
     setAssessmentDialogOpen(true);
   };
 
-  const handleAssessmentCompleteReview = () => {
-    console.log(assessmentResult, assessmentReview);
-    setAssessmentDialogOpen(false);
+  const handleAssessmentCompleteReview = async () => {
+    try {
+      if (!selectedAssessment) {
+        toast.error('No assessment selected');
+        return;
+      }
+
+      const { error: assessmentUploadError } = await supabase
+        .from('assessment_event')
+        .update({
+          status: 'Completed',
+          assessment_remarks: assessmentReview,
+          assessment_result: assessmentResult.includes('Pass')
+            ? 'Passed'
+            : 'Failed',
+        })
+        .eq('id', selectedAssessment.id);
+
+      if (assessmentUploadError) {
+        toast.error(
+          `Assessment update failed: ${assessmentUploadError.message}`
+        );
+        return;
+      }
+
+      // Update applicant_details table - FIX: Using correct update syntax
+      const { error: applicantTableUpdateError } = await supabase
+        .from('applicant_details')
+        .update({
+          applicant_status: assessmentResult,
+          applicant_verdict: assessmentResult.toLowerCase().includes('fail')
+            ? 'Fail'
+            : '',
+        })
+        .eq('applicant_email', selectedAssessment.candidate_email);
+
+      if (applicantTableUpdateError) {
+        toast.error(
+          `Applicant update failed: ${applicantTableUpdateError.message}`
+        );
+        return;
+      }
+
+      toast.success('Assessment reviewed successfully');
+      setAssessmentDialogOpen(false);
+
+      setAssessmentResult('');
+      setAssessmentReview('');
+      setSelectedAssessment(null);
+    } catch (error) {
+      toast.error(`An error occurred: ${error.message}`);
+    }
   };
 
   return (
@@ -107,11 +159,19 @@ const ReviewAssessment = () => {
       ) : assessmentsData.length > 0 ? (
         <div className="grid grid-cols-1 gap-4">
           {assessmentsData.map((assessment) => (
-            <Card>
+            <Card
+              key={assessment.id}
+              className={cn(
+                'border-l-4',
+                new Date(assessment.due_date) > new Date()
+                  ? 'border-l-yellow-500'
+                  : 'border-l-green-500'
+              )}
+            >
               <CardHeader className="border-b">
                 <div className="flex items-start justify-between">
                   <div>
-                    <CardTitle className="text-lg">
+                    <CardTitle className="text-gradient-chart-1 text-lg">
                       {assessment.title}
                     </CardTitle>
                     <CardDescription>
@@ -190,20 +250,12 @@ const ReviewAssessment = () => {
           ))}
         </div>
       ) : (
-        <Card className="bg-muted/20">
-          <CardContent className="py-16">
-            <div className="text-center">
-              <div className="bg-primary/10 mb-4 inline-flex rounded-full p-3">
-                <Check className="text-primary h-8 w-8" />
-              </div>
-              <h3 className="mb-2 text-xl font-semibold">All caught up!</h3>
-              <p className="text-muted-foreground mx-auto max-w-md">
-                There are no pending assessment for the selected date. Try
-                selecting a different date or check back later.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+        <PendingCard
+          title={'All caught up!'}
+          description={
+            'There are no pending assessments for the selected date. Try selecting a different date or check back later.'
+          }
+        />
       )}
       <Dialog
         open={assessmentDialogOpen}

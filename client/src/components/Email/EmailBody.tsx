@@ -1,28 +1,28 @@
-import { Paperclip, Send, X } from "lucide-react";
-import { Avatar, AvatarFallback } from "../ui/avatar";
-import { useState, useEffect, useRef } from "react";
-import { Card, CardDescription, CardFooter, CardHeader } from "../ui/card";
-import { Button } from "../ui/button";
-import { toast } from "sonner";
-import { Input } from "../ui/input";
-import "../../assets/styles/animation.css";
+import { Paperclip, Send, X } from 'lucide-react';
+import { Avatar, AvatarFallback } from '../ui/avatar';
+import { useState, useEffect, useRef } from 'react';
+import { Card, CardDescription, CardFooter, CardHeader } from '../ui/card';
+import { Button } from '../ui/button';
+import { toast } from 'sonner';
+import { Input } from '../ui/input';
+import '../../assets/styles/animation.css';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
+} from '../ui/select';
 import {
   SuccessMail,
   RejectionMail,
   AssignmentMail,
-} from "@/constants/EmailDraft";
-import { Textarea } from "../ui/textarea";
-import FileUpload from "../Application/FileUpload";
-import { AnimatePresence, motion } from "framer-motion";
-import emailjs from "@emailjs/browser";
-import { supabase } from "@/utils/supabaseClient";
+} from '@/constants/EmailDraft';
+import { Textarea } from '../ui/textarea';
+import FileUpload from '../Application/FileUpload';
+import { AnimatePresence, motion } from 'framer-motion';
+import emailjs from '@emailjs/browser';
+import { supabase } from '@/utils/supabaseClient';
 
 const emailTemplates = {
   SuccessMail,
@@ -38,14 +38,14 @@ const EmailBody = ({
   matchingCandidates: any[];
 }) => {
   const [recepients, setRecepients] = useState([]);
-  const [emailType, setEmailType] = useState("SuccessMail");
-  const [subject, setSubject] = useState("");
+  const [emailType, setEmailType] = useState('SuccessMail');
+  const [subject, setSubject] = useState('');
   const [toggleFileDrop, setToggleFileDrop] = useState(false);
   const [file, setFile] = useState();
   const [message, setMessage] = useState({
-    header: "",
-    body: "",
-    footer: "",
+    header: '',
+    body: '',
+    footer: '',
   });
   const [sendingMessage, setSendingMessage] = useState(false);
 
@@ -81,7 +81,7 @@ const EmailBody = ({
   const handleSubjectChange = (e) => {
     const newValue = e.target.value;
     if (newValue.length > 200) {
-      return toast.error("Subject length limit");
+      return toast.error('Subject length limit');
     }
     setSubject(newValue);
   };
@@ -99,19 +99,19 @@ const EmailBody = ({
 
   const sendEmail = async () => {
     if (!subject.trim()) {
-      return toast.error("Please add a subject");
+      return toast.error('Please add a subject');
     }
     if (recepients.length === 0) {
-      return toast.error("No recipients selected");
+      return toast.error('No recipients selected');
     }
 
     if (toggleFileDrop && !file) {
-      return toast.error("You have not uploaded file");
+      return toast.error('You have not uploaded file');
     }
 
     const invalidEmails = recepients.filter((r) => !r.email || !r.email.trim());
     if (invalidEmails.length > 0) {
-      return toast.error("Some recipients have invalid email addresses");
+      return toast.error('Some recipients have invalid email addresses');
     }
 
     setSendingMessage(true);
@@ -122,19 +122,19 @@ const EmailBody = ({
       const sendPromises = recepients.map((recipient) => {
         if (!recipient.email || !recipient.email.trim()) {
           throw new Error(
-            `Invalid email for recipient: ${recipient.name || "Unknown"}`
+            `Invalid email for recipient: ${recipient.name || 'Unknown'}`
           );
         }
 
         const templateParams = {
           to_email: recipient.email.trim(),
-          to_name: recipient.name || "Candidate",
+          to_name: recipient.name || 'Candidate',
           subject: subject,
           message: emailContent,
           reply_to: recipient.email.trim(),
         };
 
-        console.log("Sending email to:", recipient.email);
+        console.log('Sending email to:', recipient.email);
 
         return emailjs.send(
           import.meta.env.VITE_EMAILJS_SERVICE_ID,
@@ -144,12 +144,12 @@ const EmailBody = ({
       });
 
       let newStatus;
-      if (emailType === "RejectionMail") {
-        newStatus = "Failed";
-      } else if (emailType === "SuccessMail") {
-        newStatus = "Hired";
-      } else if (emailType === "AssignmentMail") {
-        newStatus = "Task";
+      if (emailType === 'RejectionMail') {
+        newStatus = 'Failed';
+      } else if (emailType === 'SuccessMail') {
+        newStatus = 'Hired';
+      } else if (emailType === 'AssignmentMail') {
+        newStatus = 'Task';
       }
 
       if (newStatus) {
@@ -159,16 +159,19 @@ const EmailBody = ({
 
         if (applicantIds.length > 0) {
           const { error: applicantDetailError } = await supabase
-            .from("applicant_details")
-            .update({ applicant_verdict: newStatus })
-            .in("id", applicantIds);
+            .from('applicant_details')
+            .update({
+              applicant_verdict: newStatus,
+              applicant_status: 'Rejected',
+            })
+            .in('id', applicantIds);
 
           if (applicantDetailError) {
             console.error(
-              "Error updating applicant status:",
+              'Error updating applicant status:',
               applicantDetailError
             );
-            toast.error("Failed to update applicant status in database");
+            toast.error('Failed to update applicant status in database');
           } else {
             console.log(
               `Updated ${applicantIds.length} applicants to status: ${newStatus}`
@@ -178,19 +181,19 @@ const EmailBody = ({
       }
 
       const results = await Promise.all(sendPromises);
-      console.log("Email results:", results);
+      console.log('Email results:', results);
 
-      toast.success("Emails sent successfully!");
-      setSubject("");
+      toast.success('Emails sent successfully!');
+      setSubject('');
     } catch (error) {
-      console.error("Error sending email:", error);
+      console.error('Error sending email:', error);
 
       if (error.status === 422) {
-        toast.error("Error: Recipient email address is empty or invalid");
+        toast.error('Error: Recipient email address is empty or invalid');
       } else {
         toast.error(
           `Failed to send emails: ${
-            error.text || error.message || "Unknown error"
+            error.text || error.message || 'Unknown error'
           }`
         );
       }
@@ -200,9 +203,9 @@ const EmailBody = ({
   };
 
   return (
-    <section className="flex-col md:flex-row flex gap-4">
+    <section className="flex flex-col gap-4 md:flex-row">
       <div>
-        <div className="w-[750px] flex justify-end mb-2">
+        <div className="mb-2 flex w-[750px] justify-end">
           <Select onValueChange={setEmailType} value={emailType}>
             <SelectTrigger>
               <SelectValue />
@@ -220,31 +223,31 @@ const EmailBody = ({
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.2 }}
-              className="flex items-center flex-col sm:flex-row border-b pb-3"
+              className="flex flex-col items-center border-b pb-3 sm:flex-row"
             >
-              <div className="flex items-center mb-2 sm:mb-0">
+              <div className="mb-2 flex items-center sm:mb-0">
                 <p className="mr-4 text-sm font-medium">To:</p>
               </div>
-              <div className="flex-1 flex flex-wrap gap-2">
+              <div className="flex flex-1 flex-wrap gap-2">
                 {recepients.length > 0 ? (
                   recepients.map((recepient) => (
                     <span
                       key={recepient.email}
-                      className="flex items-center gap-1 shadow-sm bg-muted/50 p-1 pl-1 pr-2 rounded-full"
+                      className="bg-muted/50 flex items-center gap-1 rounded-full p-1 pr-2 pl-1 shadow-sm"
                     >
                       <Avatar className="h-6 w-6">
-                        <AvatarFallback className="text-xs bg-gradient-moss text-gray-500">
+                        <AvatarFallback className="bg-gradient-moss text-xs text-gray-500">
                           {recepient.name
                             ? recepient.name
-                                .split(" ")
+                                .split(' ')
                                 .map((n) => n[0])
-                                .join("")
-                            : "??"}
+                                .join('')
+                            : '??'}
                         </AvatarFallback>
                       </Avatar>
                       <p className="text-xs">{recepient.email}</p>
                       <button
-                        className="p-0.5 cursor-pointer rounded-full hover:bg-muted/80 transition-colors"
+                        className="hover:bg-muted/80 cursor-pointer rounded-full p-0.5 transition-colors"
                         onClick={() => handleRemoveApplicant(recepient.email)}
                       >
                         <X size={12} />
@@ -252,31 +255,31 @@ const EmailBody = ({
                     </span>
                   ))
                 ) : (
-                  <p className="text-sm text-red-300 text-center">
+                  <p className="text-center text-sm text-red-300">
                     No eligible candidates available
                   </p>
                 )}
               </div>
-              <div className="flex gap-4 mt-2 sm:mt-0 sm:ml-auto">
-                <button className="text-xs text-muted-foreground hover:text-foreground">
+              <div className="mt-2 flex gap-4 sm:mt-0 sm:ml-auto">
+                <button className="text-muted-foreground hover:text-foreground text-xs">
                   Cc
                 </button>
-                <button className="text-xs text-muted-foreground hover:text-foreground">
+                <button className="text-muted-foreground hover:text-foreground text-xs">
                   Bcc
                 </button>
               </div>
             </motion.div>
 
-            <div className="flex flex-col items-center sm:flex-row sm:items-start gap-2 pb-5 border-b">
-              <p className="text-sm font-medium w-[70px]">Subject:</p>
+            <div className="flex flex-col items-center gap-2 border-b pb-5 sm:flex-row sm:items-start">
+              <p className="w-[70px] text-sm font-medium">Subject:</p>
               <Input
                 type="text"
                 value={subject}
                 onChange={handleSubjectChange}
                 placeholder="Subject"
-                className="w-full bg-transparent text-sm focus:outline-none border-b border-transparent focus:border-primary/30 transition-colors"
+                className="focus:border-primary/30 w-full border-b border-transparent bg-transparent text-sm transition-colors focus:outline-none"
               />
-              <span className="text-slate-400 text-sm">
+              <span className="text-sm text-slate-400">
                 {subject.length}/200
               </span>
             </div>
@@ -291,32 +294,32 @@ const EmailBody = ({
               <Input
                 type="text"
                 value={message.header}
-                onChange={(e) => handleMessageChange("header", e.target.value)}
+                onChange={(e) => handleMessageChange('header', e.target.value)}
                 className="font-semibold"
                 placeholder="Header"
               />
               <Textarea
                 value={message.body}
-                onChange={(e) => handleMessageChange("body", e.target.value)}
+                onChange={(e) => handleMessageChange('body', e.target.value)}
                 className="whitespace-pre-line"
                 placeholder="Body"
               />
               <Textarea
                 value={message.footer}
-                onChange={(e) => handleMessageChange("footer", e.target.value)}
-                className="mt-4 whitespace-pre-line text-sm text-muted-foreground"
+                onChange={(e) => handleMessageChange('footer', e.target.value)}
+                className="text-muted-foreground mt-4 text-sm whitespace-pre-line"
                 placeholder="Footer"
               />
             </motion.div>
           </CardDescription>
 
           <CardFooter
-            className="border-t p-0 flex justify-between mt-6 pt-6"
+            className="mt-6 flex justify-between border-t p-0 pt-6"
             as={motion.div}
             layout
             transition={{
-              layout: { duration: 0.3, ease: "easeInOut" },
-              type: "spring",
+              layout: { duration: 0.3, ease: 'easeInOut' },
+              type: 'spring',
               stiffness: 300,
               damping: 30,
             }}
@@ -325,8 +328,8 @@ const EmailBody = ({
               layout
               className="flex items-center"
               transition={{
-                layout: { duration: 0.2, ease: "easeInOut" },
-                type: "spring",
+                layout: { duration: 0.2, ease: 'easeInOut' },
+                type: 'spring',
                 stiffness: 300,
                 damping: 30,
               }}

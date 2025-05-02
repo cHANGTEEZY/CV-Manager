@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import {
   CalendarIcon,
-  Check,
   Clock,
   MessageSquare,
   Star,
@@ -49,6 +48,7 @@ import {
   SelectValue,
 } from '../ui/select';
 import { InterviewTypeResults } from '@/constants/EventData';
+import PendingCard from '../Pending';
 
 export default function PendingInterviews() {
   const [date, setDate] = useState<Date>(new Date());
@@ -103,7 +103,9 @@ export default function PendingInterviews() {
         const { error: applicantTableError } = await supabase
           .from('applicant_details')
           .update({
-            applicant_status: interviewResult,
+            applicant_status: interviewResult.toLowerCase().includes('fail')
+              ? 'Rejected'
+              : interviewResult,
             applicant_verdict: interviewResult.includes('Failed') ? 'Fail' : '',
           })
           .eq('id', selectedEvent.applicant_details.id);
@@ -284,20 +286,12 @@ export default function PendingInterviews() {
           ))}
         </div>
       ) : (
-        <Card className="bg-muted/20">
-          <CardContent className="py-16">
-            <div className="text-center">
-              <div className="bg-primary/10 mb-4 inline-flex rounded-full p-3">
-                <Check className="text-primary h-8 w-8" />
-              </div>
-              <h3 className="mb-2 text-xl font-semibold">All caught up!</h3>
-              <p className="text-muted-foreground mx-auto max-w-md">
-                There are no pending interviews for the selected date. Try
-                selecting a different date or check back later.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+        <PendingCard
+          title={'All caught up!'}
+          description={
+            'There are no pending events for the selected date. Try selecting a different date or check back later.'
+          }
+        />
       )}
 
       <Dialog open={reviewDialogOpen} onOpenChange={setReviewDialogOpen}>
