@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { format } from "date-fns";
-import { Calendar } from "@/components/ui/calendar";
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { format } from 'date-fns';
+import { Calendar } from '@/components/ui/calendar';
 import {
   Card,
   CardContent,
@@ -13,10 +13,10 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -25,85 +25,29 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from '@/components/ui/form';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { CalendarIcon, FilePlus } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { toast } from "sonner";
-import { supabase } from "@/utils/supabaseClient";
-
-const interviewers = [
-  { id: "1", name: "Sarah Johnson" },
-  { id: "2", name: "Michael Chen" },
-  { id: "3", name: "Priya Patel" },
-  { id: "4", name: "David Kim" },
-  { id: "5", name: "Lisa Wong" },
-];
-
-const interviewTypes = [
-  {
-    id: "interview1",
-    name: "Interview 1",
-    requiredStatus: "filled",
-    newStatus: "Interview 1 Scheduled",
-  },
-  {
-    id: "interview2",
-    name: "Interview 2",
-    requiredStatus: "Interview 1 Passed",
-    newStatus: "Interview 2 Scheduled",
-  },
-  {
-    id: "interview3",
-    name: "Interview 3",
-    requiredStatus: "Interview 2 Passed",
-    newStatus: "Interview 3 Scheduled",
-  },
-];
-
-interface Applicant {
-  id: number;
-  applicant_name: string;
-  applicant_email: string;
-  applied_position: string;
-  applicant_status: string;
-  tech_stack: string;
-}
-
-const formSchema = z.object({
-  interview_type: z.string({
-    required_error: "Please select an interview type",
-  }),
-  event_name: z
-    .string()
-    .min(3, { message: "Event title must be at least 3 characters" }),
-  event_description: z
-    .string()
-    .min(1, { message: "Event description is required" }),
-  event_date: z.date({
-    required_error: "Event date is required",
-  }),
-  event_time: z.string({
-    required_error: "Event time is required",
-  }),
-  applicant_email: z.string({
-    required_error: "Please select a candidate",
-  }),
-  interviewer_name: z.string({
-    required_error: "Please select an interviewer",
-  }),
-});
+} from '@/components/ui/popover';
+import { CalendarIcon, FilePlus } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
+import { supabase } from '@/utils/supabaseClient';
+import {
+  interviewers,
+  formSchema,
+  Applicant,
+  interviewTypes,
+} from '@/schemas/interviewEventSchema';
 
 type FormValues = z.infer<typeof formSchema>;
 
@@ -119,13 +63,13 @@ const CreateEvent = () => {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      interview_type: "",
-      event_name: "",
-      event_description: "",
+      interview_type: '',
+      event_name: '',
+      event_description: '',
       event_date: undefined,
-      event_time: "",
-      applicant_email: "",
-      interviewer_name: "",
+      event_time: '',
+      applicant_email: '',
+      interviewer_name: '',
     },
   });
 
@@ -133,8 +77,8 @@ const CreateEvent = () => {
     setIsLoading(true);
     try {
       const { data, error } = await supabase
-        .from("applicant_details")
-        .select("*");
+        .from('applicant_details')
+        .select('*');
 
       if (error) {
         throw error;
@@ -142,8 +86,8 @@ const CreateEvent = () => {
 
       setApplicants(data || []);
     } catch (error) {
-      console.error("Error fetching applicants:", error);
-      toast.error("Failed to load applicants");
+      console.error('Error fetching applicants:', error);
+      toast.error('Failed to load applicants');
     } finally {
       setIsLoading(false);
     }
@@ -174,10 +118,10 @@ const CreateEvent = () => {
 
     setFilteredApplicants(filtered);
 
-    form.setValue("applicant_email", "");
+    form.setValue('applicant_email', '');
   }, [selectedInterviewType, applicants, form]);
 
-  const interviewTypeWatch = form.watch("interview_type");
+  const interviewTypeWatch = form.watch('interview_type');
 
   useEffect(() => {
     setSelectedInterviewType(interviewTypeWatch);
@@ -188,11 +132,11 @@ const CreateEvent = () => {
       );
       if (selectedType) {
         form.setValue(
-          "event_name",
+          'event_name',
           `${selectedType.name} - Candidate Assessment`
         );
         form.setValue(
-          "event_description",
+          'event_description',
           `${selectedType.name} for candidate assessment and evaluation`
         );
       }
@@ -201,7 +145,7 @@ const CreateEvent = () => {
 
   const onSubmit = async (data: FormValues) => {
     const eventDateTime = new Date(data.event_date);
-    const [hours, minutes] = data.event_time.split(":").map(Number);
+    const [hours, minutes] = data.event_time.split(':').map(Number);
     eventDateTime.setHours(hours, minutes);
 
     const selectedApplicant = applicants.find(
@@ -213,19 +157,19 @@ const CreateEvent = () => {
     );
 
     if (!interviewType || !selectedApplicant) {
-      toast.error("Invalid interview type or applicant");
+      toast.error('Invalid interview type or applicant');
       return;
     }
 
     try {
-      const { error: eventError } = await supabase.from("events").insert({
+      const { error: eventError } = await supabase.from('events').insert({
         event_name: data.event_name,
         event_description: data.event_description,
         event_date_time: eventDateTime.toISOString(),
         applicant_email: data.applicant_email,
         interviewer_name: data.interviewer_name,
         interview_type: data.interview_type,
-        interview_result: "pending",
+        interview_result: 'pending',
       });
 
       if (eventError) {
@@ -234,9 +178,13 @@ const CreateEvent = () => {
 
       // Update applicant status based on interview type
       const { error: updateError } = await supabase
-        .from("applicant_details")
-        .update({ applicant_status: interviewType.newStatus })
-        .eq("id", selectedApplicant.id);
+        .from('applicant_details')
+        .update({
+          applicant_status: interviewType.newStatus,
+          applicant_timeline: 3,
+          timeline_status: interviewType.newStatus,
+        })
+        .eq('id', selectedApplicant.id);
 
       if (updateError) {
         throw updateError;
@@ -249,14 +197,14 @@ const CreateEvent = () => {
       // Refresh applicants list
       await fetchApplicants();
     } catch (error) {
-      console.error("Error:", error);
-      toast.error("Failed to create event");
+      console.error('Error:', error);
+      toast.error('Failed to create event');
     }
   };
 
   return (
-    <div className="max-w-md mt-10">
-      <h3 className="text-xl font-semibold mb-4 text-primary flex items-center gap-2">
+    <div className="mt-10 max-w-md">
+      <h3 className="text-primary mb-4 flex items-center gap-2 text-xl font-semibold">
         <FilePlus className="h-5 w-5" />
         Create Event
       </h3>
@@ -274,7 +222,7 @@ const CreateEvent = () => {
                 name="interview_type"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-accent-foreground font-normal text-sm">
+                    <FormLabel className="text-accent-foreground text-sm font-normal">
                       Interview Type
                     </FormLabel>
                     <FormControl>
@@ -308,7 +256,7 @@ const CreateEvent = () => {
                 name="event_name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-accent-foreground font-normal text-sm">
+                    <FormLabel className="text-accent-foreground text-sm font-normal">
                       Event Title
                     </FormLabel>
                     <FormControl>
@@ -324,7 +272,7 @@ const CreateEvent = () => {
                 name="event_description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-accent-foreground font-normal text-sm">
+                    <FormLabel className="text-accent-foreground text-sm font-normal">
                       Event Description
                     </FormLabel>
                     <FormControl>
@@ -340,21 +288,21 @@ const CreateEvent = () => {
                 name="event_date"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel className="text-accent-foreground font-normal text-sm">
+                    <FormLabel className="text-accent-foreground text-sm font-normal">
                       Event Date
                     </FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button
-                            variant={"outline"}
+                            variant={'outline'}
                             className={cn(
-                              "w-full pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
+                              'w-full pl-3 text-left font-normal',
+                              !field.value && 'text-muted-foreground'
                             )}
                           >
                             {field.value ? (
-                              format(field.value, "PPP")
+                              format(field.value, 'PPP')
                             ) : (
                               <span>Select date</span>
                             )}
@@ -387,7 +335,7 @@ const CreateEvent = () => {
                 name="event_time"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-accent-foreground font-normal text-sm">
+                    <FormLabel className="text-accent-foreground text-sm font-normal">
                       Event Time
                     </FormLabel>
                     <FormControl>
@@ -403,15 +351,15 @@ const CreateEvent = () => {
                           {Array.from({ length: 24 }).flatMap((_, hour) => [
                             <SelectItem
                               key={`${hour}:00`}
-                              value={`${hour.toString().padStart(2, "0")}:00`}
+                              value={`${hour.toString().padStart(2, '0')}:00`}
                             >
-                              {hour.toString().padStart(2, "0")}:00
+                              {hour.toString().padStart(2, '0')}:00
                             </SelectItem>,
                             <SelectItem
                               key={`${hour}:30`}
-                              value={`${hour.toString().padStart(2, "0")}:30`}
+                              value={`${hour.toString().padStart(2, '0')}:30`}
                             >
-                              {hour.toString().padStart(2, "0")}:30
+                              {hour.toString().padStart(2, '0')}:30
                             </SelectItem>,
                           ])}
                         </SelectContent>
@@ -427,7 +375,7 @@ const CreateEvent = () => {
                 name="applicant_email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-accent-foreground font-normal text-sm">
+                    <FormLabel className="text-accent-foreground text-sm font-normal">
                       Candidate
                     </FormLabel>
                     <FormControl>
@@ -445,12 +393,12 @@ const CreateEvent = () => {
                           <SelectValue
                             placeholder={
                               isLoading
-                                ? "Loading candidates..."
+                                ? 'Loading candidates...'
                                 : !selectedInterviewType
-                                ? "Select interview type first"
-                                : filteredApplicants.length === 0
-                                ? "No eligible candidates"
-                                : "Select candidate"
+                                  ? 'Select interview type first'
+                                  : filteredApplicants.length === 0
+                                    ? 'No eligible candidates'
+                                    : 'Select candidate'
                             }
                           />
                         </SelectTrigger>
@@ -460,7 +408,7 @@ const CreateEvent = () => {
                               key={applicant.id.toString()}
                               value={applicant.applicant_email}
                             >
-                              {applicant.applicant_name} -{" "}
+                              {applicant.applicant_name} -{' '}
                               {applicant.applied_position} (
                               {applicant.tech_stack})
                             </SelectItem>
@@ -475,7 +423,7 @@ const CreateEvent = () => {
                               (t) => t.id === selectedInterviewType
                             )?.name
                           }`
-                        : "Please select an interview type first"}
+                        : 'Please select an interview type first'}
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -487,7 +435,7 @@ const CreateEvent = () => {
                 name="interviewer_name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-accent-foreground font-normal text-sm">
+                    <FormLabel className="text-accent-foreground text-sm font-normal">
                       Interviewer
                     </FormLabel>
                     <FormControl>

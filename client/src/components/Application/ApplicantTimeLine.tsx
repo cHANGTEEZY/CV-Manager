@@ -1,106 +1,67 @@
-import { useState } from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '../ui/card';
-import { Button } from '../ui/button';
+import { cn } from '@/lib/utils';
 
-const ApplicantTimeline = ({ timeline = 2 }) => {
-  const [currentStep, setCurrentStep] = useState(timeline);
+interface TimelineStep {
+  id: number;
+  label: string;
+  description?: string;
+}
 
-  const timelineSteps = [
-    { id: 1, label: 'Application', description: 'Submit your application' },
-    { id: 2, label: 'Review', description: 'Application under review' },
-    { id: 3, label: 'Interview', description: 'Schedule an interview' },
-    { id: 4, label: 'Assessment', description: 'Complete assessments' },
-    { id: 5, label: 'Decision', description: 'Final decision' },
-    { id: 6, label: 'Onboarding', description: 'Welcome onboard!' },
-  ];
+interface StepTimelineProps {
+  currentStep: number;
+  steps: TimelineStep[];
+  className?: string;
+}
 
-  const handleStepClick = (stepId) => {
-    setCurrentStep(stepId);
-  };
-
-  const getStepColor = (stepId: number, currentStep: number) => {
-    if (stepId === currentStep) return 'text-green-500';
-    if (stepId > currentStep) return 'text-foreground';
-    if (stepId < currentStep) return 'text-green-500';
-  };
-
-  const setStepMultiplier = (currentStep: number) => {
-    if (currentStep === 1) return 150;
-    if (currentStep === 2) return 140;
-    if (currentStep === 3) return 120;
-    if (currentStep === 4) return 110;
-    if (currentStep === 5) return 100;
-    if (currentStep === 6) return 100;
-  };
-
+export default function StepTimeline({
+  currentStep,
+  steps,
+  className,
+}: StepTimelineProps) {
   return (
-    <>
-      <h2 className="text-primary mt-7 mb-4 text-xl font-semibold">
-        Manage Timeline
-      </h2>
-      <Card>
-        <CardHeader>
-          <CardTitle>Applicant's Timeline</CardTitle>
-          <CardDescription>Click and manage timeline</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="relative pb-16">
-            <div className="absolute top-5 left-0 h-1 w-full bg-gray-200">
+    <div className={cn('w-full px-4 py-8', className)}>
+      <div className="relative">
+        <div className="absolute top-5 left-0 h-1 w-full rounded-full bg-gray-200">
+          <div
+            className="bg-primary h-full rounded-full transition-all duration-500 ease-in-out"
+            style={{
+              width: `${((currentStep - 1) / (steps.length - 1)) * 100}%`,
+            }}
+          />
+        </div>
+
+        {/* Steps */}
+        <div className="relative flex w-full justify-between">
+          {steps.map((step) => (
+            <div key={step.id} className="flex flex-col items-center">
               <div
-                className="bg-primary h-full transition-all duration-500 ease-in-out"
-                style={{
-                  width: `${
-                    ((currentStep -
-                      parseInt(`${currentStep === 1 ? '0' : '1'}`)) *
-                      parseInt(`${setStepMultiplier(currentStep)}`)) /
-                    (timelineSteps.length -
-                      parseInt(`${currentStep === 1 ? '-10' : '1'}`))
-                  }%`,
-                }}
-              ></div>
+                className={cn(
+                  'z-10 mb-2 flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all duration-300',
+                  step.id <= currentStep
+                    ? 'border-primary bg-primary text-white'
+                    : 'border-gray-300 bg-white text-gray-500'
+                )}
+              >
+                {step.id}
+              </div>
+              <p
+                className={cn(
+                  'text-sm font-medium',
+                  step.id === currentStep && 'text-primary font-semibold',
+                  step.id < currentStep && 'text-primary',
+                  step.id > currentStep && 'text-muted-foreground'
+                )}
+              >
+                {step.label}
+              </p>
+              {step.description && (
+                <p className="text-muted-foreground mt-1 max-w-[100px] text-center text-xs">
+                  {step.description}
+                </p>
+              )}
             </div>
-
-            <div className="relative flex w-full justify-between">
-              {timelineSteps.map((step) => (
-                <div
-                  key={step.id}
-                  className="flex cursor-pointer flex-col items-center"
-                  onClick={() => handleStepClick(step.id)}
-                >
-                  <Button
-                    className={`z-10 mb-2 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full transition-all duration-300 ${
-                      step.id <= currentStep
-                        ? 'bg-primary text-white'
-                        : 'border-2 border-gray-300 bg-white text-gray-500'
-                    }`}
-                  >
-                    {step.id}
-                  </Button>
-                  <p
-                    className={`text-sm font-medium ${getStepColor(
-                      step.id,
-                      currentStep
-                    )}`}
-                  >
-                    {step.label}
-                  </p>
-                  <p className="mt-1 max-w-xs text-center text-xs text-gray-400">
-                    {step.description}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </>
+          ))}
+        </div>
+      </div>
+    </div>
   );
-};
-
-export default ApplicantTimeline;
+}

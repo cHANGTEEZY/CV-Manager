@@ -40,10 +40,12 @@ import {
   PopoverContent,
 } from '@/components/ui/popover';
 import useLogout from '@/hooks/use-logout';
+import { TextHoverEffect } from '@/components/ui/text-hover-effect';
+import { MacbookScroll } from '@/components/ui/macbook-scroll';
 
 const LandingPage = () => {
   return (
-    <section className="h-[3000px] bg-[oklch(0.14_0.02_260)] text-[oklch(0.9_0.01_270)]">
+    <section className="bg-[oklch(0.14_0.02_260)] text-[oklch(0.9_0.01_270)]">
       <Header />
       <Hero />
       <div className="group relative mx-auto my-16 max-w-3xl items-center justify-center overflow-hidden rounded-lg border-[oklch(1_0_0/8%)] py-12">
@@ -66,6 +68,7 @@ const LandingPage = () => {
           </motion.span>
         </motion.div>
       </div>
+      <Macbook />
       <section className="m-auto max-w-3xl">
         <motion.div>
           <Features />
@@ -143,11 +146,11 @@ const Hero = () => {
     <section className="flex h-96 w-full items-center justify-center border-[oklch(1_0_0/8%)]">
       <div className="grid place-items-center gap-6">
         <h1 className="text-center text-8xl font-bold text-[oklch(0.9_0.01_270)]">
-          Manage it <br /> with Framer
+          Manage it <br /> With Framer
         </h1>
-        <p className="text-2xl text-[oklch(0.65_0.02_270)]">
-          The website CRM loved by HR
-        </p>
+
+        <TextHoverEffect text={`The website CRM loved \n by HR`} />
+
         <span className="mt-2 space-x-3">
           <Button className="cursor-pointer bg-[oklch(0.65_0.23_25)] text-[oklch(0.98_0.01_25)] hover:bg-[oklch(0.65_0.23_25/90%)]">
             Get Started
@@ -165,6 +168,14 @@ const Hero = () => {
         </span>
       </div>
     </section>
+  );
+};
+
+const Macbook = () => {
+  return (
+    <div>
+      <MacbookScroll />
+    </div>
   );
 };
 

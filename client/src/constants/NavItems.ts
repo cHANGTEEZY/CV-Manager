@@ -14,6 +14,7 @@ export const navItems = [
     subitems: [
       { title: 'Upload Applications', path: '/dashboard/application-upload' },
       { title: 'Track Applications', path: '/dashboard/application-tracking' },
+      { title: 'Final Review', path: '/dashboard/applications-final-review' },
     ],
   },
   {
@@ -26,7 +27,7 @@ export const navItems = [
       {
         title: 'Manage Interviewer',
         path: '/dashboard/assessment/interviewer',
-      }, // make sure this route exists!
+      },
     ],
   },
   {

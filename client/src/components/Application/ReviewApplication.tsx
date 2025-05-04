@@ -1,21 +1,19 @@
-import { useEffect, useState } from 'react';
-import { Avatar, AvatarFallback } from '../ui/avatar';
-import { Button } from '../ui/button';
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { supabase } from '@/utils/supabaseClient';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
-} from '../ui/card';
-import { Send } from 'lucide-react';
-import { Separator } from '../ui/separator';
-import ApplicantTimeLine from './ApplicantTimeLine';
-import ApplicantRejected from './ApplicantRejected';
-import { useParams } from 'react-router-dom';
-import { supabase } from '@/utils/supabaseClient';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
-import { motion } from 'framer-motion';
+  CardDescription,
+} from '@/components/ui/card';
+import { toast } from 'sonner';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,12 +24,22 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '../ui/alert-dialog';
-import { toast } from 'sonner';
+} from '@/components/ui/alert-dialog';
+import { CheckCircle2, XCircle, Loader2 } from 'lucide-react';
+import HorizontalTimeline from '../horizontal-timeline';
+import { ApplicantProfileCard } from './ApplicationProfileCard';
+import { EventCard } from './event-card';
+import ApplicantRejected from './ApplicantRejected';
+import { userDataSchema } from '@/schemas/applicationReviewSchema';
+import {
+  fallbackDescriptions,
+  defaultDescriptions,
+  labels,
+} from '@/constants/ApplicationReviewPage';
 
-const ReviewApplicationForm = () => {
+export default function ReviewApplicationForm() {
   const { id } = useParams();
-  const [userData, setUserData] = useState<any>({});
+  const [userData, setUserData] = useState<userDataSchema>({});
   const [eventData, setEventData] = useState([]);
   const [assignmentData, setAssignmentData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -66,6 +74,8 @@ const ReviewApplicationForm = () => {
           phoneNo: userData.applicant_phone_number,
           appliedPosition: userData.applied_position,
           cvPath: userData.applicant_file_path,
+          timeline: userData.applicant_timeline,
+          timeline_description: userData.timeline_status,
         });
 
         const sortedEvents = [...allEvents].sort((a, b) => {
@@ -164,272 +174,278 @@ const ReviewApplicationForm = () => {
     }
   };
 
-  const applicantActions = [
-    {
-      title: 'Offer',
-      description: 'This action will accept the applicant',
-      action: handleAccept,
-    },
-    {
-      title: 'Reject',
-      description: 'This action will reject the applicant',
-      action: handleReject,
-    },
-  ];
+  const currentTimeline = userData.timeline || 1;
+
+  const timelineSteps = labels.map((label, index) => {
+    const id = index + 1;
+
+    return {
+      id,
+      label,
+      description:
+        currentTimeline === id && userData.timeline_description
+          ? userData.timeline_description
+          : currentTimeline >= id
+            ? fallbackDescriptions[index]
+            : defaultDescriptions[index],
+    };
+  });
+
+  if (isLoading) {
+    return (
+      <div className="flex h-[60vh] w-full items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="text-primary h-12 w-12 animate-spin" />
+          <p className="text-muted-foreground text-lg">
+            Loading applicant data...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!Object.keys(userData).length) {
+    return (
+      <div className="flex h-[60vh] w-full items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-muted-foreground text-2xl font-bold">
+            No user data found
+          </h1>
+          <p className="text-muted-foreground mt-2">
+            The applicant you're looking for doesn't exist
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <section>
-      {isLoading ? (
-        <div className="text-muted-foreground mt-50 flex w-full items-center justify-center">
-          <h1 className="animate-pulse text-2xl">Loading user data...</h1>
+    <section className="container mx-auto py-6">
+      <div className="grid gap-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          <div className="lg:col-span-2">
+            <ApplicantProfileCard
+              name={userData.name || 'N/A'}
+              email={userData.email || 'N/A'}
+              phone={userData.phoneNo || 'N/A'}
+              position={userData.appliedPosition || 'N/A'}
+              timeline={userData.timeline || 1}
+            />
+          </div>
+
+          <div className="flex flex-col gap-4 lg:col-span-1">
+            <Card>
+              <CardHeader>
+                <CardTitle>Actions</CardTitle>
+                <CardDescription>Manage this application</CardDescription>
+              </CardHeader>
+              <CardContent className="flex flex-col gap-3">
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      className="w-full cursor-pointer gap-2"
+                      variant="default"
+                    >
+                      <CheckCircle2 className="h-4 w-4" /> Accept Applicant
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        Accept this applicant?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This will move the applicant to the onboarding process.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleAccept}>
+                        Accept
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      className="w-full cursor-pointer gap-2"
+                      variant="outline"
+                    >
+                      <XCircle className="h-4 w-4" /> Reject Applicant
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        Reject this applicant?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This action cannot be undone. The applicant will be
+                        notified.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleReject}>
+                        Reject
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </CardContent>
+            </Card>
+          </div>
         </div>
-      ) : Object.keys(userData).length > 0 ? (
-        <div>
-          <Card>
-            <CardContent>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <Avatar className="h-17 w-17">
-                    <AvatarFallback>
-                      {userData.name
-                        ?.split(' ')
-                        .map((n: string) => n[0])
-                        .join('')}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <h2 className="text-xl font-semibold">
-                      {userData.name || 'NA'}
-                    </h2>
-                    <p className="text-muted-foreground text-sm">
-                      {userData.email || 'NA'}
-                    </p>
-                    <p className="text-muted-foreground text-sm">
-                      {userData.phoneNo || 'NA'}
-                    </p>
-                    <p className="text-muted-foreground text-sm">
-                      {userData.appliedPosition || 'NA'}
-                    </p>
-                  </div>
-                </div>
+
+        {/* Timeline below the cards */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle>Application Timeline</CardTitle>
+            <CardDescription>Current progress</CardDescription>
+          </CardHeader>
+          <CardContent className="pt-2 pb-4">
+            <HorizontalTimeline
+              steps={timelineSteps}
+              currentStep={userData.timeline || 1}
+            />
+          </CardContent>
+        </Card>
+
+        {applicantStatus === 'rejected' ? (
+          <ApplicantRejected applicantName={userData.name} />
+        ) : (
+          <Tabs defaultValue="events" className="w-full">
+            <TabsList className="bg-background w-full justify-start rounded-lg border p-1">
+              <TabsTrigger
+                value="events"
+                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-md"
+              >
+                Events & Assessments
+              </TabsTrigger>
+              <TabsTrigger
+                value="documents"
+                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-md"
+              >
+                Documents
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="events" asChild>
+              <motion.div
+                variants={motionVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                transition={{ duration: 0.3 }}
+                className="mt-6 grid gap-8"
+              >
+                {/* Interview Events */}
                 <div>
-                  {applicantActions.map((action) => (
-                    <AlertDialog key={action.title}>
-                      <AlertDialogTrigger>
-                        <Button
-                          variant="outline"
-                          className="flex cursor-pointer items-center gap-2 text-red-400 hover:text-red-500"
-                        >
-                          <Send size={16} /> {action.title}
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>
-                            Are you absolutely sure?
-                          </AlertDialogTitle>
-                          <AlertDialogDescription>
-                            {action.description}
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={action.action}>
-                            {action.title}
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  ))}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Separator className="mt-7" />
-
-          {applicantStatus === 'rejected' ? (
-            <ApplicantRejected applicantName={userData.name} />
-          ) : (
-            <Tabs defaultValue="timeline" className="mt-5 w-full">
-              <TabsList className="bg-muted rounded-full p-1">
-                <TabsTrigger
-                  value="timeline"
-                  className="data-[state=active]:bg-primary cursor-pointer rounded-full transition data-[state=active]:text-white"
-                >
-                  Applicant's Timeline
-                </TabsTrigger>
-                <TabsTrigger
-                  value="info"
-                  className="data-[state=active]:bg-primary cursor-pointer rounded-full transition data-[state=active]:text-white"
-                >
-                  Applicant's Info
-                </TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="timeline" asChild>
-                <motion.div
-                  variants={motionVariants}
-                  initial="hidden"
-                  animate="visible"
-                  exit="exit"
-                  transition={{ duration: 0.3 }}
-                  className="mt-6"
-                >
-                  <ApplicantTimeLine timeline={2} />
-                  <Separator className="mt-7" />
+                  <h2 className="mb-4 text-xl font-semibold">
+                    Interview Events
+                  </h2>
                   {eventData.length > 0 ? (
-                    <div className="mt-5">
-                      <h2 className="text-primary mb-4 text-xl font-semibold">
-                        View Applicant's Events
-                      </h2>
-                      <Card className="mb-10">
-                        <CardHeader className="border-b">
-                          <CardTitle>Interview Events</CardTitle>
-                          <CardDescription>
-                            Monitor applicant events
-                          </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="space-y-4">
-                            {eventData.map((event, index) => (
-                              <div
-                                key={index}
-                                className="flex items-center justify-between rounded-2xl border p-5"
-                              >
-                                <div>
-                                  <h4 className="text-gradient-destructive font-extrabold">
-                                    {event.title}
-                                  </h4>
-                                  <p className="text-sm text-slate-500">
-                                    {event.interviewDate}
-                                  </p>
-                                </div>
-                                <span
-                                  className={`rounded-sm px-3 py-1 text-sm ${
-                                    event.status === 'Passed'
-                                      ? 'bg-green-300 text-green-600'
-                                      : event.status === 'Scheduled'
-                                        ? 'bg-amber-200 text-amber-600'
-                                        : 'bg-red-300 text-red-500'
-                                  }`}
-                                >
-                                  {event.status}
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-                        </CardContent>
-                      </Card>
+                    <div className="grid gap-4">
+                      {eventData.map((event, index) => (
+                        <EventCard
+                          key={index}
+                          title={event.title}
+                          date={event.interviewDate}
+                          status={event.status}
+                          type="interview"
+                        />
+                      ))}
                     </div>
                   ) : (
-                    <div className="text-muted-foreground text-center">
-                      No Interview data found
-                    </div>
-                  )}
-                  <div>
-                    <Card className="mb-10">
-                      <CardHeader className="border-b">
-                        <CardTitle>Assessment Events</CardTitle>
-                        <CardDescription>
-                          Monitor applicant assessments
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        {assignmentData.length > 0 ? (
-                          <div className="space-y-4">
-                            {assignmentData.map((assessment) => (
-                              <div
-                                key={assessment.id}
-                                className="flex items-center justify-between rounded-2xl border p-5"
-                              >
-                                <div>
-                                  <h4 className="text-gradient-destructive font-extrabold">
-                                    {assessment.assessment_title}
-                                  </h4>
-                                  <div className="space-y-1">
-                                    <p className="text-sm text-slate-500">
-                                      Due Date:{' '}
-                                      {new Date(
-                                        assessment.due_date
-                                      ).toLocaleDateString('en-US', {
-                                        month: 'short',
-                                        day: 'numeric',
-                                        year: 'numeric',
-                                      })}
-                                    </p>
-                                    {assessment.assessment_remarks && (
-                                      <p className="text-sm text-slate-600">
-                                        Remarks: {assessment.assessment_remarks}
-                                      </p>
-                                    )}
-                                  </div>
-                                </div>
-                                <span
-                                  className={`rounded-sm px-3 py-1 text-sm ${
-                                    assessment.assessment_result === 'Passed'
-                                      ? 'bg-green-300 text-green-600'
-                                      : assessment.assessment_remarks ===
-                                          'Failed'
-                                        ? 'bg-red-300 text-red-600'
-                                        : 'bg-slate-300 text-slate-600'
-                                  }`}
-                                >
-                                  {assessment.assessment_result
-                                    ? assessment.assessment_result
-                                    : 'Pending'}
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-                        ) : (
-                          <div className="text-muted-foreground text-center">
-                            No Assessment data found
-                          </div>
-                        )}
+                    <Card>
+                      <CardContent className="flex flex-col items-center justify-center py-8">
+                        <p className="text-muted-foreground">
+                          No interview events found
+                        </p>
                       </CardContent>
                     </Card>
-                  </div>
-                </motion.div>
-              </TabsContent>
+                  )}
+                </div>
 
-              <TabsContent value="info" asChild>
-                <motion.div
-                  variants={motionVariants}
-                  initial="hidden"
-                  animate="visible"
-                  exit="exit"
-                  transition={{ duration: 0.3 }}
-                  className="mt-6"
-                >
-                  <h2 className="text-primary mb-4 text-xl font-semibold">
-                    View Applicant's CV
+                {/* Assessment Events */}
+                <div>
+                  <h2 className="mb-4 text-xl font-semibold">
+                    Assessment Events
                   </h2>
-                  {userData.cvPath ? (
-                    <div className="overflow-hidden rounded-lg border">
-                      <iframe
-                        src={`${import.meta.env.VITE_SUPABASE_BUCKET_URL}/${userData.cvPath}`}
-                        className="h-[700px] w-full"
-                        title="Applicant CV"
-                      ></iframe>
+                  {assignmentData.length > 0 ? (
+                    <div className="grid gap-4">
+                      {assignmentData.map((assessment) => (
+                        <EventCard
+                          key={assessment.id}
+                          title={assessment.assessment_title}
+                          date={`Due: ${new Date(
+                            assessment.due_date
+                          ).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric',
+                          })}`}
+                          status={assessment.assessment_result || 'Pending'}
+                          remarks={assessment.assessment_remarks}
+                          type="assessment"
+                        />
+                      ))}
                     </div>
                   ) : (
-                    <div className="text-muted-foreground text-center">
-                      CV Not uploaded
-                    </div>
+                    <Card>
+                      <CardContent className="flex flex-col items-center justify-center py-8">
+                        <p className="text-muted-foreground">
+                          No assessment events found
+                        </p>
+                      </CardContent>
+                    </Card>
                   )}
-                </motion.div>
-              </TabsContent>
-            </Tabs>
-          )}
-        </div>
-      ) : (
-        <div className="text-muted-foreground mt-50 flex w-full items-center justify-center">
-          <h1 className="text-2xl">No user data found for the given user</h1>
-        </div>
-      )}
+                </div>
+              </motion.div>
+            </TabsContent>
+
+            <TabsContent value="documents" asChild>
+              <motion.div
+                variants={motionVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                transition={{ duration: 0.3 }}
+                className="mt-6"
+              >
+                <h2 className="mb-4 text-xl font-semibold">
+                  Applicant Documents
+                </h2>
+                <Card className="overflow-hidden">
+                  <CardHeader>
+                    <CardTitle>Curriculum Vitae</CardTitle>
+                    <CardDescription>
+                      Applicant's resume and qualifications
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {userData.cvPath ? (
+                      <div className="overflow-hidden rounded-lg border">
+                        <iframe
+                          src={`${import.meta.env.VITE_SUPABASE_BUCKET_URL}/${userData.cvPath}`}
+                          className="h-[700px] w-full"
+                          title="Applicant CV"
+                        ></iframe>
+                      </div>
+                    ) : (
+                      <div className="flex h-40 items-center justify-center">
+                        <p className="text-muted-foreground">No CV uploaded</p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </TabsContent>
+          </Tabs>
+        )}
+      </div>
     </section>
   );
-};
-
-export default ReviewApplicationForm;
+}

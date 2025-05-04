@@ -107,6 +107,7 @@ export default function PendingInterviews() {
               ? 'Rejected'
               : interviewResult,
             applicant_verdict: interviewResult.includes('Failed') ? 'Fail' : '',
+            timeline_status: interviewResult,
           })
           .eq('id', selectedEvent.applicant_details.id);
 

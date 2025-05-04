@@ -21,6 +21,7 @@ import LandingPage from '@/pages/LandinPage'; // corrected typo from LandinPage 
 import AssessmentPage from '@/pages/Events/AssessmentPage';
 import ReviewEvent from '@/pages/Events/ReviewEvent';
 import AssessmentReview from '@/pages/Events/AssessmentReview';
+import FinalReview from '@/pages/Application/FinalReview';
 
 export const router = createBrowserRouter([
   {
@@ -119,6 +120,15 @@ export const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
+      {
+        path: 'applications-final-review',
+        element: (
+          <ProtectedRoute>
+            <FinalReview />
+          </ProtectedRoute>
+        ),
+      },
+
       {
         path: 'mail',
         element: (

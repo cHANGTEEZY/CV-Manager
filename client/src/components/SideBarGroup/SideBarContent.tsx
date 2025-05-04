@@ -1,7 +1,5 @@
 import { Link } from 'react-router-dom';
-import { supabase } from '@/utils/supabaseClient';
-import { toast } from 'sonner';
-import { FileText, Framer } from 'lucide-react';
+import { Framer } from 'lucide-react';
 
 import {
   Sidebar,

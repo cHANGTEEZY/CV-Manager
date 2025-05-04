@@ -83,3 +83,15 @@ export const applicantFormFields = [
     options: ['0-1', '1-3', '3-5', '5-10', '10+'],
   },
 ];
+
+export const RoleFilter = [
+  'Full Stack Engineer',
+  'Frontend Engineer',
+  'Backend Engineer',
+  'Devops Engineer',
+  'UI/UX Designeer',
+  'AI/ML Engineer',
+  'Data Scientist',
+];
+
+export const LevelFilter = ['Intern', 'Junior', 'Intermediate', 'Senior'];

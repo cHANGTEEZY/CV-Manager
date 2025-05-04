@@ -237,10 +237,8 @@ const ListedAssessment = () => {
       let candidatesToAssign = [];
 
       if (assignTo === 'individual') {
-        // For individual assignments, we use the direct email input
         candidatesToAssign = [{ applicant_email: email.trim() }];
       } else {
-        // For group assignments, we filter candidates based on criteria
         candidatesToAssign = filterCandidatesByAssessment(
           assessment,
           selectedGroup
@@ -301,7 +299,11 @@ const ListedAssessment = () => {
         if (candidateEmail) {
           const { error: updateError } = await supabase
             .from('applicant_details')
-            .update({ applicant_status: newApplicantStatus })
+            .update({
+              applicant_status: newApplicantStatus,
+              timeline_status: newApplicantStatus,
+              applicant_timeline: 4,
+            })
             .eq('applicant_email', candidateEmail);
 
           if (updateError) {

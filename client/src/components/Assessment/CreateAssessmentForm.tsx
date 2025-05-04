@@ -26,25 +26,95 @@ import {
 } from '../ui/select';
 import { PopoverContent, Popover, PopoverTrigger } from '../ui/popover';
 import { Calendar } from '../ui/calendar';
-import { CalendarIcon, FilePlus } from 'lucide-react';
+import { CalendarIcon, FilePlus, AlertCircle } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/utils/supabaseClient';
 import { toast } from 'sonner';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { z } from 'zod';
 import { AssessmentProps } from '@/schemas/assessmentSchema';
-import { assessmentSchema } from '@/schemas/assessmentSchema';
 import {
   assessmentTitle,
   assessmentType,
   assessmentLevel,
 } from '@/constants/Assessments';
+import { Alert, AlertDescription } from '../ui/alert';
+
+// Enhanced schema with cross-field validation
+const enhancedAssessmentSchema = z
+  .object({
+    title: z.enum(
+      [
+        'Full Stack Assessment Round 1',
+        'Full Stack Assessment Round 2',
+        'Frontend Assessment Round 1',
+        'Frontend Assessment Round 2',
+        'Backend Assessment Round 1',
+        'Backend Assessment Round 2',
+        'AI/ML Assessment Round 1',
+        'AI/ML Assessment Round 2',
+        'Devops Assessment Round 1',
+        'Devops Assessment Round 2',
+        'UI/UX Assessment Round 1',
+        'UI/UX Assessment Round 2',
+      ],
+      {
+        required_error: 'Please select the assessment title',
+      }
+    ),
+    type: z.enum(
+      [
+        'Full Stack Engineer',
+        'Frontend Engineer',
+        'Backend Engineer',
+        'AI/ML Engineer',
+        'Devops Engineer',
+        'UI/UX Designer',
+      ],
+      {
+        required_error: 'Please select the assessment type',
+      }
+    ),
+    level: z.enum(['Intern', 'Junior', 'Intermediate', 'Senior'], {
+      required_error: 'Please select the assessment level',
+    }),
+    formLink: z.string().min(1, {
+      message: 'Assessment Link is required',
+    }),
+    submissionDate: z.date({
+      required_error: 'Please specify the submission deadline',
+    }),
+    requirements: z
+      .string()
+      .nonempty({ message: 'Requirements cannot be empty' }),
+  })
+  .refine(
+    (data) => {
+      // Check if title and type are compatible
+      const titlePrefix = data.title.split(' ')[0]; // Get "Full Stack", "Frontend", etc.
+      const typePrefix = data.type.split(' ')[0]; // Get "Full", "Frontend", etc.
+
+      // Special case for "Full Stack" title and "Full Stack Engineer" type
+      if (titlePrefix === 'Full' && typePrefix === 'Full') {
+        return true;
+      }
+
+      // For all other cases, title prefix should match type prefix
+      return titlePrefix === typePrefix;
+    },
+    {
+      message: 'Assessment title and type must match',
+      path: ['type'], // Show error on the type field
+    }
+  );
 
 const CreateAssessmentForm = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   const form = useForm<AssessmentProps>({
-    resolver: zodResolver(assessmentSchema),
+    resolver: zodResolver(enhancedAssessmentSchema),
     defaultValues: {
       formLink: '',
       requirements: '',
@@ -52,9 +122,59 @@ const CreateAssessmentForm = () => {
     mode: 'onBlur',
   });
 
+  // Watch for changes in title and type to provide real-time validation feedback
+  const selectedTitle = form.watch('title');
+  const selectedType = form.watch('type');
+
+  useEffect(() => {
+    if (selectedTitle && selectedType) {
+      const titlePrefix = selectedTitle.split(' ')[0]; // "Full Stack", "Frontend", etc.
+      const typePrefix = selectedType.split(' ')[0]; // "Full", "Frontend", etc.
+
+      // Check if title and type match
+      let hasError = false;
+
+      // Special case for "Full Stack" title and "Full Stack Engineer" type
+      if (titlePrefix === 'Full' && typePrefix === 'Full') {
+        hasError = false;
+      } else if (titlePrefix !== typePrefix) {
+        hasError = true;
+      }
+
+      if (hasError) {
+        setValidationError(
+          `${selectedTitle} cannot be used with ${selectedType}`
+        );
+      } else {
+        setValidationError(null);
+      }
+    }
+  }, [selectedTitle, selectedType]);
+
   const onSubmit = async (data: AssessmentProps) => {
     try {
       setIsLoading(true);
+
+      // Check for title and type compatibility again before submission
+      const titlePrefix = data.title.split(' ')[0];
+      const typePrefix = data.type.split(' ')[0];
+
+      const isValid =
+        (titlePrefix === 'Full' && typePrefix === 'Full') ||
+        titlePrefix === typePrefix;
+
+      if (!isValid) {
+        setValidationError(`${data.title} cannot be used with ${data.type}`);
+        setIsLoading(false);
+        return;
+      }
+
+      // Fix for timezone issue: ensure the date is stored correctly by formatting it to ISO
+      // and setting the time to noon to avoid any timezone-related shifts
+      const selectedDate = new Date(data.submissionDate);
+      // Set the time to 12:00:00 to avoid timezone shifts
+      selectedDate.setHours(12, 0, 0, 0);
+
       const { error: assessmentError } = await supabase
         .from('assessment_table')
         .insert({
@@ -62,7 +182,7 @@ const CreateAssessmentForm = () => {
           type: data.type,
           level: data.level,
           formLink: data.formLink,
-          submissionDate: new Date(data.submissionDate),
+          submissionDate: selectedDate.toISOString(),
           requirements: data.requirements,
         });
 
@@ -71,11 +191,23 @@ const CreateAssessmentForm = () => {
       }
 
       toast.success('Assessment created successfully');
-      form.reset();
+
+      // Reset form completely
+      form.reset({
+        title: '',
+        type: '',
+        level: '',
+        formLink: '',
+        submissionDate: undefined,
+        requirements: '',
+      });
+
+      setValidationError(null);
       setIsLoading(false);
     } catch (error: any) {
-      console.error(error);
-      toast.error(error);
+      console.error('Error creating assessment:', error);
+      toast.error(error.message || 'Failed to create assessment');
+      setIsLoading(false);
     }
   };
 
@@ -95,6 +227,13 @@ const CreateAssessmentForm = () => {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <CardContent className="space-y-6">
+              {validationError && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{validationError}</AlertDescription>
+                </Alert>
+              )}
+
               <FormField
                 name="title"
                 control={form.control}
@@ -102,8 +241,13 @@ const CreateAssessmentForm = () => {
                   <FormItem>
                     <FormLabel>Assessment Title</FormLabel>
                     <Select
-                      onValueChange={field.onChange}
+                      onValueChange={(value) => {
+                        field.onChange(value);
+                        // Clear validation error when changing selection
+                        if (validationError) setValidationError(null);
+                      }}
                       defaultValue={field.value}
+                      value={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>
@@ -129,8 +273,13 @@ const CreateAssessmentForm = () => {
                   <FormItem>
                     <FormLabel>Assessment Type</FormLabel>
                     <Select
-                      onValueChange={field.onChange}
+                      onValueChange={(value) => {
+                        field.onChange(value);
+                        // Clear validation error when changing selection
+                        if (validationError) setValidationError(null);
+                      }}
                       defaultValue={field.value}
+                      value={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>
@@ -158,6 +307,7 @@ const CreateAssessmentForm = () => {
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
+                      value={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>
@@ -246,8 +396,14 @@ const CreateAssessmentForm = () => {
                   </FormItem>
                 )}
               />
-              <Button type="submit" disabled={isLoading}>
-                Submit
+              <Button
+                type="submit"
+                disabled={isLoading || !!validationError}
+                className={cn(
+                  validationError && 'cursor-not-allowed opacity-50'
+                )}
+              >
+                {isLoading ? 'Submitting...' : 'Submit'}
               </Button>
             </CardContent>
           </form>

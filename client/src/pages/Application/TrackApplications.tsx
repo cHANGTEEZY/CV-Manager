@@ -28,6 +28,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import useTableData from '@/hooks/use-table-data';
+import { Separator } from '@/components/ui/separator';
 
 interface Task {
   id: string;
@@ -377,8 +378,10 @@ export default function KanbanBoard() {
           </Alert>
         )}
 
+        <Separator />
+
         <div className="mb-8">
-          <h2 className="text-primary mb-4 text-xl font-semibold">
+          <h2 className="text-primary my-4 text-xl font-semibold">
             Applicant Management
           </h2>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">

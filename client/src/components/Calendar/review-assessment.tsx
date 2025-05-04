@@ -90,6 +90,12 @@ const ReviewAssessment = () => {
           applicant_verdict: assessmentResult.toLowerCase().includes('fail')
             ? 'Fail'
             : '',
+          timeline_status:
+            assessmentResult === 'Assessment 2 Passed'
+              ? 'Final Decision'
+              : assessmentResult,
+          applicant_timeline:
+            assessmentResult === 'Assessment 2 Passed' ? 5 : 4,
         })
         .eq('applicant_email', selectedAssessment.candidate_email);
 
