@@ -1,7 +1,7 @@
 import { Card, CardContent } from './ui/card';
 import { Check } from 'lucide-react';
 
-const PendingCard = ({ icon: Icon = Check, title, description }) => {
+const PendingCard = ({ icon: Icon = Check }) => {
   return (
     <Card className="bg-muted/20">
       <CardContent className="py-16">
@@ -9,12 +9,10 @@ const PendingCard = ({ icon: Icon = Check, title, description }) => {
           <div className="bg-primary/10 mb-4 inline-flex rounded-full p-3">
             <Icon className="text-primary h-8 w-8" />
           </div>
-          <h3 className="mb-2 text-xl font-semibold">
-            {title || 'All caught up!'}
-          </h3>
+          <h3 className="mb-2 text-xl font-semibold">All caught up!</h3>
           <p className="text-muted-foreground mx-auto max-w-md">
-            {description ||
-              'There are no pending assessments for the selected date. Try selecting a different date or check back later.'}
+            There are no pending assessments for the selected date. Try
+            selecting a different date or check back later.
           </p>
         </div>
       </CardContent>

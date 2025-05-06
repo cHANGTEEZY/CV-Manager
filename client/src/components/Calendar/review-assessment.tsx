@@ -1,10 +1,4 @@
-import {
-  CalendarIcon,
-  Check,
-  Clock,
-  MessageSquare,
-  ThumbsUp,
-} from 'lucide-react';
+import { CalendarIcon, Clock, MessageSquare, ThumbsUp } from 'lucide-react';
 import { Badge } from '../ui/badge';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Button } from '../ui/button';
@@ -48,12 +42,12 @@ const ReviewAssessment = () => {
   const { assessmentsData, isLoading, formatAssessmentDate } =
     useAssessmentData(date);
   const [assessmentDialogOpen, setAssessmentDialogOpen] = useState(false);
-  const [selectedAssessment, setSelectedAssessment] = useState(null);
+  const [selectedAssessment, setSelectedAssessment] = useState<any>(null);
   const [assessmentResult, setAssessmentResult] = useState('');
-  const [rating, setRating] = useState();
+  const [rating, setRating] = useState<any>(0);
   const [assessmentReview, setAssessmentReview] = useState('');
 
-  const openReviewDialog = (assessment) => {
+  const openReviewDialog = (assessment: any) => {
     setSelectedAssessment(assessment);
     setAssessmentDialogOpen(true);
   };
@@ -113,7 +107,7 @@ const ReviewAssessment = () => {
       setAssessmentReview('');
       setSelectedAssessment(null);
       setTimeout(() => window.location.reload(), 1000);
-    } catch (error) {
+    } catch (error: any) {
       toast.error(`An error occurred: ${error.message}`);
     }
   };
@@ -257,12 +251,7 @@ const ReviewAssessment = () => {
           ))}
         </div>
       ) : (
-        <PendingCard
-          title={'All caught up!'}
-          description={
-            'There are no pending assessments for the selected date. Try selecting a different date or check back later.'
-          }
-        />
+        <PendingCard />
       )}
       <Dialog
         open={assessmentDialogOpen}

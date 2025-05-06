@@ -1,10 +1,10 @@
 export type userDataSchema = {
-  name: string;
-  email: string;
-  phoneNo: string;
-  appliedPosition: string;
-  cvPath: string;
-  timeline: number;
-  timeline_description: string;
-  applicant_status: string;
+  name: string | null | undefined;
+  email: string | null | undefined;
+  phoneNo: string | null | undefined;
+  appliedPosition: string | null | undefined;
+  cvPath: string | null | undefined;
+  timeline: number | null | undefined;
+  timeline_description: string | null | undefined;
+  applicant_status: string | null | undefined;
 };

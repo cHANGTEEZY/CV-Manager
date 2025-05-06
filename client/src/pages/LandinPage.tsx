@@ -40,8 +40,6 @@ import {
   PopoverContent,
 } from '@/components/ui/popover';
 import useLogout from '@/hooks/use-logout';
-import { TextHoverEffect } from '@/components/ui/text-hover-effect';
-import { MacbookScroll } from '@/components/ui/macbook-scroll';
 
 const LandingPage = () => {
   return (
@@ -68,7 +66,6 @@ const LandingPage = () => {
           </motion.span>
         </motion.div>
       </div>
-      <Macbook />
       <section className="m-auto max-w-3xl">
         <motion.div>
           <Features />
@@ -149,8 +146,6 @@ const Hero = () => {
           Manage it <br /> With Framer
         </h1>
 
-        <TextHoverEffect text={`The website CRM loved \n by HR`} />
-
         <span className="mt-2 space-x-3">
           <Button className="cursor-pointer bg-[oklch(0.65_0.23_25)] text-[oklch(0.98_0.01_25)] hover:bg-[oklch(0.65_0.23_25/90%)]">
             Get Started
@@ -168,14 +163,6 @@ const Hero = () => {
         </span>
       </div>
     </section>
-  );
-};
-
-const Macbook = () => {
-  return (
-    <div>
-      <MacbookScroll />
-    </div>
   );
 };
 

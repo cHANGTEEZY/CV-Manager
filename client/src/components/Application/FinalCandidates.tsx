@@ -187,6 +187,14 @@ const FinalReviewCandidates = () => {
       throw userDetailsTableError;
     }
 
+    if (selectedCandidate) {
+      setDecisions((prev) => ({
+        ...prev,
+        [selectedCandidate.id]: decision,
+      }));
+    }
+
+    setDecisionDialogOpen(false);
     toast.info(toastMessage);
   };
 

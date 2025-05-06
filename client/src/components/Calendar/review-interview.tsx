@@ -1,5 +1,3 @@
-'use client';
-
 import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { CalendarIcon, Clock, MessageSquare, ThumbsUp } from 'lucide-react';
@@ -45,6 +43,21 @@ import { InterviewTypeResults } from '@/constants/EventData';
 import PendingCard from '../Pending';
 import StarRating from '../Rating';
 
+interface EventType {
+  id: string;
+  interview_type: string;
+  interview_result: string;
+  event_date_time: string;
+  event_name: string;
+  event_description?: string;
+  interviewer_name: string;
+  applicant_details?: {
+    id: string;
+    applicant_name?: string;
+    applied_position?: string;
+  };
+}
+
 export default function PendingInterviews() {
   const [date, setDate] = useState<Date>(new Date());
   const {
@@ -53,8 +66,8 @@ export default function PendingInterviews() {
     formatEventTime,
     formatEventDate,
   } = useEvents(date);
-  const [pendingEvents, setPendingEvents] = useState([]);
-  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [pendingEvents, setPendingEvents] = useState<any[]>([]);
+  const [selectedEvent, setSelectedEvent] = useState<any | null>(null);
   const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
   const [interviewResult, setInterviewResult] = useState('');
   const [candidateReview, setCandidateReview] = useState('');
@@ -71,7 +84,7 @@ export default function PendingInterviews() {
     }
   }, [allEvents]);
 
-  const openReviewDialog = (event) => {
+  const openReviewDialog = (event: EventType) => {
     setSelectedEvent(event);
     setCandidateReview('');
     setRating(0);
@@ -106,7 +119,7 @@ export default function PendingInterviews() {
           })
           .eq('id', selectedEvent.applicant_details.id);
 
-        if (error) {
+        if (applicantTableError) {
           throw applicantTableError;
         }
       }
@@ -116,7 +129,6 @@ export default function PendingInterviews() {
       );
 
       toast.success('Interview state updated successfully');
-
       setReviewDialogOpen(false);
     } catch (error) {
       console.error('Error updating interview:', error);
@@ -168,7 +180,7 @@ export default function PendingInterviews() {
         </div>
       ) : pendingEvents.length > 0 ? (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          {pendingEvents.map((event) => (
+          {pendingEvents.map((event: any) => (
             <Card
               key={event.id}
               className={cn(
@@ -263,12 +275,7 @@ export default function PendingInterviews() {
           ))}
         </div>
       ) : (
-        <PendingCard
-          title={'All caught up!'}
-          description={
-            'There are no pending events for the selected date. Try selecting a different date or check back later.'
-          }
-        />
+        <PendingCard />
       )}
 
       <Dialog open={reviewDialogOpen} onOpenChange={setReviewDialogOpen}>

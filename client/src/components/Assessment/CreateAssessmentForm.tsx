@@ -194,9 +194,9 @@ const CreateAssessmentForm = () => {
 
       // Reset form completely
       form.reset({
-        title: '',
-        type: '',
-        level: '',
+        title: undefined,
+        type: undefined,
+        level: undefined,
         formLink: '',
         submissionDate: undefined,
         requirements: '',

@@ -4,9 +4,9 @@ import {
   useEffect,
   useState,
   ReactNode,
-} from "react";
-import { User } from "@supabase/supabase-js";
-import { supabase } from "../utils/supabaseClient";
+} from 'react';
+import { User } from '@supabase/supabase-js';
+import { supabase } from '../utils/supabaseClient';
 
 type AuthContextType = {
   user: User | null;
@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         } = await supabase.auth.getSession();
         setUser(session?.user || null);
       } catch (error) {
-        console.error("Error fetching user:", error);
+        console.error('Error fetching user:', error);
         setUser(null);
       } finally {
         setLoading(false);
@@ -47,7 +47,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user || null);
       setLoading(false);
     });

@@ -9,28 +9,18 @@ import useTableData from '@/hooks/use-table-data';
 import Spinner from '@/components/Loading/Spinner';
 import { useDashboardData } from '@/hooks/use-dashboar';
 import ApplicationTable from '@/components/Application/ApplicationTable';
-import { toast } from 'sonner';
 import { AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 export default function Dashboard() {
-  const { tableData, loading: tableLoading } = useTableData();
-  const {
-    metrics,
-    chartData,
-    statusData,
-    timelineData,
-    applicantData,
-    loading,
-    error,
-  } = useDashboardData();
+  const { tableData } = useTableData();
+  const { metrics, chartData, statusData, timelineData, loading, error } =
+    useDashboardData();
 
-  // Show loading spinner if any data is still loading
-  if (loading || tableLoading) {
+  if (loading) {
     return <Spinner />;
   }
 
-  // Show error message if there was an error fetching data
   if (error) {
     return (
       <div className="mx-auto my-10 max-w-[1140px]">
@@ -52,10 +42,8 @@ export default function Dashboard() {
           Applicant Dashboard
         </h1>
 
-        {/* Metrics Cards */}
         <MetricsCards metrics={metrics} />
 
-        {/* Charts */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
           <div className="md:col-span-1 lg:col-span-4">
             <ApplicationChart chartData={chartData} />
@@ -65,11 +53,9 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Timeline */}
         <ApplicationTimeline timelineData={timelineData} />
 
-        {/* Applications Table */}
-        <ApplicationTable tableData={tableData} />
+        {tableData && <ApplicationTable tableData={tableData} />}
       </div>
     </section>
   );

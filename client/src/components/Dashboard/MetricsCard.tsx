@@ -10,7 +10,7 @@ import {
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-export function MetricsCards({ metrics }) {
+export function MetricsCards({ metrics }: { metrics: any }) {
   const {
     totalApplicants,
     hiredApplicants,

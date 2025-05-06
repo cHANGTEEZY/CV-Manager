@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import {
   Table,
   TableBody,
@@ -31,7 +31,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import type { tableDefinition } from '@/schemas/tableDefinition';
+import { tableDefinition } from '@/schemas/tableDefinition';
 import {
   Card,
   CardContent,
@@ -43,7 +43,7 @@ import { useNavigate } from 'react-router-dom';
 
 const columnHelper = createColumnHelper<tableDefinition>();
 
-const globalFilterFn: FilterFn<any> = (row, columnId, filterValue) => {
+const globalFilterFn: FilterFn<any> = (row, filterValue) => {
   const searchTerm = filterValue.toLowerCase();
 
   return Object.values(row.original).some(
@@ -77,8 +77,8 @@ const getStatusColor = (status: string) => {
   return 'bg-slate-500';
 };
 
-const ApplicationTable = ({ tableData }) => {
-  const [data, setData] = useState(tableData);
+const ApplicationTable = ({ tableData }: { tableData: tableDefinition[] }) => {
+  const [data] = useState(tableData);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState('');
   const [pageIndex, setPageIndex] = useState(0);

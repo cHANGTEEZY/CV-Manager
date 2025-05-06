@@ -1,8 +1,8 @@
-import { Search } from "lucide-react";
-import { Card, CardContent, CardHeader } from "../ui/card";
-import { Avatar, AvatarFallback } from "../ui/avatar";
-import { Input } from "../ui/input";
-import { useState } from "react";
+import { Search } from 'lucide-react';
+import { Card, CardContent, CardHeader } from '../ui/card';
+import { Avatar, AvatarFallback } from '../ui/avatar';
+import { Input } from '../ui/input';
+import { useState } from 'react';
 import {
   Select,
   SelectContent,
@@ -10,24 +10,24 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
+} from '../ui/select';
 
 const data = [
-  { email: "sushankgurung30@gmail.com" },
-  { email: "alexmaharjan30@gmail.com" },
-  { email: "soemthing@gmail.com" },
+  { email: 'sushankgurung30@gmail.com' },
+  { email: 'alexmaharjan30@gmail.com' },
+  { email: 'soemthing@gmail.com' },
 ];
 
 const EmailControls = () => {
-  const [applicantName, setApplicantName] = useState("");
-  const [applicantResults, setApplicantResults] = useState(data);
+  const [applicantName, setApplicantName] = useState('');
+  const [applicantResults] = useState(data);
 
   const filteredApplicants = applicantResults.filter((applicant) =>
-    applicant.email.toLowerCase().includes(applicantName.toLowerCase()),
+    applicant.email.toLowerCase().includes(applicantName.toLowerCase())
   );
 
   return (
-    <section className="w-full  mt-11 space-y-10">
+    <section className="mt-11 w-full space-y-10">
       <Card>
         <CardHeader className="flex items-center border-b">
           <Search />
@@ -41,13 +41,13 @@ const EmailControls = () => {
         <CardContent>
           <ul>
             {filteredApplicants.map((applicant) => (
-              <li className="flex items-center gap-2 mb-2">
+              <li className="mb-2 flex items-center gap-2">
                 <Avatar className="h-10 w-10">
                   <AvatarFallback className="">
                     {applicant.email
-                      .split(" ")
+                      .split(' ')
                       .map((n) => n[0])
-                      .join("")}
+                      .join('')}
                   </AvatarFallback>
                 </Avatar>
                 {applicant.email}
@@ -59,12 +59,12 @@ const EmailControls = () => {
       <Card>
         <CardHeader>Typography</CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-y-5 gap-x-4 ">
+          <div className="grid grid-cols-1 gap-x-4 gap-y-5 md:grid-cols-2">
             <div>
               <h3>Select Font</h3>
               <Select>
                 <SelectTrigger>
-                  <SelectValue placeholder={"Select font you like"} />
+                  <SelectValue placeholder={'Select font you like'} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
@@ -80,7 +80,7 @@ const EmailControls = () => {
               <h3>Select Weight</h3>
               <Select>
                 <SelectTrigger>
-                  <SelectValue placeholder={"Select font you like"} />
+                  <SelectValue placeholder={'Select font you like'} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
@@ -97,7 +97,7 @@ const EmailControls = () => {
               <h3>Spacing</h3>
               <Select>
                 <SelectTrigger>
-                  <SelectValue placeholder={"Select spacing size "} />
+                  <SelectValue placeholder={'Select spacing size '} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
@@ -117,7 +117,7 @@ const EmailControls = () => {
               <h3>Letter Spacing</h3>
               <Select>
                 <SelectTrigger>
-                  <SelectValue placeholder={"Select spacing "} />
+                  <SelectValue placeholder={'Select spacing '} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>

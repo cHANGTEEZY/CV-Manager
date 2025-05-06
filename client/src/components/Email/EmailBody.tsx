@@ -1,6 +1,6 @@
 import { Paperclip, Send, X } from 'lucide-react';
 import { Avatar, AvatarFallback } from '../ui/avatar';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardDescription, CardFooter, CardHeader } from '../ui/card';
 import { Button } from '../ui/button';
 import { toast } from 'sonner';
@@ -30,6 +30,9 @@ const emailTemplates = {
   AssignmentMail,
 };
 
+// Create motion-wrapped CardFooter component
+const MotionCardFooter = motion(CardFooter);
+
 const EmailBody = ({
   setCandidateStatus,
   matchingCandidates,
@@ -37,11 +40,11 @@ const EmailBody = ({
   setCandidateStatus: (type: string) => void;
   matchingCandidates: any[];
 }) => {
-  const [recepients, setRecepients] = useState([]);
+  const [recepients, setRecepients] = useState<any[]>([]);
   const [emailType, setEmailType] = useState('SuccessMail');
   const [subject, setSubject] = useState('');
   const [toggleFileDrop, setToggleFileDrop] = useState(false);
-  const [file, setFile] = useState();
+  const [file, setFile] = useState<File | undefined>();
   const [message, setMessage] = useState({
     header: '',
     body: '',
@@ -62,7 +65,7 @@ const EmailBody = ({
   }, [emailType, setCandidateStatus]);
 
   useEffect(() => {
-    const selected = emailTemplates[emailType];
+    const selected = emailTemplates[emailType as keyof typeof emailTemplates];
     if (selected) {
       setMessage({
         header: selected.header,
@@ -73,10 +76,10 @@ const EmailBody = ({
   }, [emailType]);
 
   const handleRemoveApplicant = (email: string) => {
-    setRecepients((prev) => prev.filter((r) => r.email !== email));
+    setRecepients((prev: any[]) => prev.filter((r: any) => r.email !== email));
   };
 
-  const handleSubjectChange = (e) => {
+  const handleSubjectChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     if (newValue.length > 200) {
       return toast.error('Subject length limit');
@@ -91,7 +94,7 @@ const EmailBody = ({
     }));
   };
 
-  const handleFileChange = (file) => {
+  const handleFileChange = (file: File) => {
     setFile(file);
   };
 
@@ -107,7 +110,9 @@ const EmailBody = ({
       return toast.error('You have not uploaded file');
     }
 
-    const invalidEmails = recepients.filter((r) => !r.email || !r.email.trim());
+    const invalidEmails = recepients.filter(
+      (r: any) => !r.email || !r.email.trim()
+    );
     if (invalidEmails.length > 0) {
       return toast.error('Some recipients have invalid email addresses');
     }
@@ -117,7 +122,7 @@ const EmailBody = ({
     try {
       const emailContent = `${message.header}\n\n${message.body}\n\n${message.footer}`;
 
-      const sendPromises = recepients.map((recipient) => {
+      const sendPromises = recepients.map((recipient: any) => {
         if (!recipient.email || !recipient.email.trim()) {
           throw new Error(
             `Invalid email for recipient: ${recipient.name || 'Unknown'}`
@@ -131,8 +136,6 @@ const EmailBody = ({
           message: emailContent,
           reply_to: recipient.email.trim(),
         };
-
-        console.log('Sending email to:', recipient.email);
 
         return emailjs.send(
           import.meta.env.VITE_EMAILJS_SERVICE_ID,
@@ -151,7 +154,7 @@ const EmailBody = ({
 
       if (statusObj) {
         const applicantIds = recepients
-          .map((recipient) => recipient.id)
+          .map((recipient: any) => recipient.id)
           .filter(Boolean);
 
         if (applicantIds.length > 0) {
@@ -170,20 +173,14 @@ const EmailBody = ({
               applicantDetailError
             );
             toast.error('Failed to update applicant status in database');
-          } else {
-            console.log(
-              `Updated ${applicantIds.length} applicants to status: ${statusObj.verdict}`
-            );
           }
         }
       }
 
-      const results = await Promise.all(sendPromises);
-      console.log('Email results:', results);
-
+      await Promise.all(sendPromises);
       toast.success('Emails sent successfully!');
       setSubject('');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error sending email:', error);
 
       if (error.status === 422) {
@@ -228,7 +225,7 @@ const EmailBody = ({
               </div>
               <div className="flex flex-1 flex-wrap gap-2">
                 {recepients.length > 0 ? (
-                  recepients.map((recepient) => (
+                  recepients.map((recepient: any) => (
                     <span
                       key={recepient.email}
                       className="bg-muted/50 flex items-center gap-1 rounded-full p-1 pr-2 pl-1 shadow-sm"
@@ -238,7 +235,7 @@ const EmailBody = ({
                           {recepient.name
                             ? recepient.name
                                 .split(' ')
-                                .map((n) => n[0])
+                                .map((n: string) => n[0])
                                 .join('')
                             : '??'}
                         </AvatarFallback>
@@ -311,9 +308,8 @@ const EmailBody = ({
             </motion.div>
           </CardDescription>
 
-          <CardFooter
+          <MotionCardFooter
             className="mt-6 flex justify-between border-t p-0 pt-6"
-            as={motion.div}
             layout
             transition={{
               layout: { duration: 0.3, ease: 'easeInOut' },
@@ -384,7 +380,7 @@ const EmailBody = ({
                 </Button>
               </motion.div>
             </motion.div>
-          </CardFooter>
+          </MotionCardFooter>
         </Card>
       </div>
     </section>

@@ -44,7 +44,6 @@ import {
   Select,
   SelectContent,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '../ui/select';
@@ -61,6 +60,16 @@ import {
   assessmentTitle,
   assessmentType,
 } from '@/constants/Assessments';
+
+// Define interfaces for candidate type
+interface Candidate {
+  applicant_email?: string;
+  email?: string;
+  applicant_name?: string;
+  tech_stack?: string;
+  applicant_experience_level?: string;
+  applied_position?: string;
+}
 
 const ListedAssessment = () => {
   const [listedAssessments, setListedAssessments] = useState<AssessmentProps[]>(
@@ -79,7 +88,7 @@ const ListedAssessment = () => {
   const [email, setEmail] = useState('');
   const [selectedGroup, setSelectedGroup] = useState('');
   const [isAssigning, setIsAssigning] = useState(false);
-  const [filteredCandidates, setFilteredCandidates] = useState([]);
+  const [filteredCandidates, setFilteredCandidates] = useState<Candidate[]>([]);
   const [selectedType, setSelectedType] = useState(assessmentFilter[0]);
 
   useEffect(() => {
@@ -90,8 +99,8 @@ const ListedAssessment = () => {
           .from('assessment_table')
           .select();
         if (error) throw error;
-        setListedAssessments(data);
-        setFilteredAssessments(data);
+        setListedAssessments(data || []);
+        setFilteredAssessments(data || []);
       } catch (error) {
         console.error(error);
       } finally {
@@ -127,37 +136,57 @@ const ListedAssessment = () => {
   const handleSave = async () => {
     if (!selectedAssessment) return;
     try {
-      const { id, ...updatedData } = selectedAssessment;
-      const { error } = await supabase
-        .from('assessment_table')
-        .update(updatedData)
-        .eq('id', id);
-      if (error) throw error;
+      // Ensure the selectedAssessment has an id property
+      if ('id' in selectedAssessment) {
+        const { id, ...updatedData } = selectedAssessment as AssessmentProps & {
+          id: string;
+        };
 
-      setListedAssessments((prev) =>
-        prev.map((item) => (item.id === id ? selectedAssessment : item))
-      );
+        const { error } = await supabase
+          .from('assessment_table')
+          .update(updatedData)
+          .eq('id', id);
 
-      toast.success('Assessment updated successfully');
+        if (error) throw error;
+
+        setListedAssessments((prev) =>
+          prev.map((item) => {
+            if (
+              'id' in item &&
+              'id' in selectedAssessment &&
+              item.id === selectedAssessment.id
+            ) {
+              return selectedAssessment;
+            }
+            return item;
+          })
+        );
+
+        toast.success('Assessment updated successfully');
+      } else {
+        toast.error('Assessment ID is missing');
+      }
     } catch (error) {
       toast.error('Failed to update assessment');
       console.error(error);
     }
   };
 
-  const filterCandidatesByAssessment = (assessment, candidateGroup) => {
-    // Select the appropriate candidate group based on the dropdown selection
-    let candidates;
+  const filterCandidatesByAssessment = (
+    assessment: AssessmentProps,
+    candidateGroup: string
+  ) => {
+    let candidates: Candidate[] = [];
 
     switch (candidateGroup) {
       case 'interview2':
-        candidates = secondInterviewPassed;
+        candidates = secondInterviewPassed || [];
         break;
       case 'interview3':
-        candidates = thirdInterviewPassed;
+        candidates = thirdInterviewPassed || [];
         break;
       case 'assessment1':
-        candidates = firstAssessmentPassed;
+        candidates = firstAssessmentPassed || [];
         break;
       default:
         candidates = [];
@@ -167,7 +196,7 @@ const ListedAssessment = () => {
       return [];
     }
 
-    return candidates.filter((candidate) => {
+    return candidates.filter((candidate: Candidate) => {
       const levelMatch =
         candidate.applicant_experience_level === assessment.level;
 
@@ -215,7 +244,7 @@ const ListedAssessment = () => {
     });
   };
 
-  const handleAssign = async (assessment) => {
+  const handleAssign = async (assessment: AssessmentProps) => {
     if (!assessment) {
       toast.error('No assessment selected');
       return;
@@ -234,7 +263,7 @@ const ListedAssessment = () => {
     try {
       setIsAssigning(true);
 
-      let candidatesToAssign = [];
+      let candidatesToAssign: Candidate[] = [];
 
       if (assignTo === 'individual') {
         candidatesToAssign = [{ applicant_email: email.trim() }];
@@ -253,7 +282,7 @@ const ListedAssessment = () => {
         }
       }
 
-      const assignmentData = candidatesToAssign.map((candidate) => {
+      const assignmentData = candidatesToAssign.map((candidate: Candidate) => {
         const candidateEmail =
           candidate.applicant_email ||
           candidate.email ||
@@ -264,7 +293,7 @@ const ListedAssessment = () => {
         }
 
         return {
-          assessment_id: assessment.id,
+          assessment_id: 'id' in assessment ? assessment.id : '',
           assessment_title: assessment.title,
           candidate_email: candidateEmail,
           assigned_date: new Date().toISOString(),
@@ -290,33 +319,35 @@ const ListedAssessment = () => {
         newApplicantStatus = 'Assessment 1 Assigned';
       }
 
-      const updatePromises = candidatesToAssign.map(async (candidate) => {
-        const candidateEmail =
-          candidate.applicant_email ||
-          candidate.email ||
-          (assignTo === 'individual' ? email.trim() : null);
+      const updatePromises = candidatesToAssign.map(
+        async (candidate: Candidate) => {
+          const candidateEmail =
+            candidate.applicant_email ||
+            candidate.email ||
+            (assignTo === 'individual' ? email.trim() : null);
 
-        if (candidateEmail) {
-          const { error: updateError } = await supabase
-            .from('applicant_details')
-            .update({
-              applicant_status: newApplicantStatus,
-              timeline_status: newApplicantStatus,
-              applicant_timeline: 4,
-            })
-            .eq('applicant_email', candidateEmail);
+          if (candidateEmail) {
+            const { error: updateError } = await supabase
+              .from('applicant_details')
+              .update({
+                applicant_status: newApplicantStatus,
+                timeline_status: newApplicantStatus,
+                applicant_timeline: 4,
+              })
+              .eq('applicant_email', candidateEmail);
 
-          if (updateError) {
-            console.error(
-              `Error updating status for ${candidateEmail}:`,
-              updateError
-            );
-            return false;
+            if (updateError) {
+              console.error(
+                `Error updating status for ${candidateEmail}:`,
+                updateError
+              );
+              return false;
+            }
+            return true;
           }
-          return true;
+          return false;
         }
-        return false;
-      });
+      );
 
       const updateResults = await Promise.all(updatePromises);
 
@@ -328,7 +359,7 @@ const ListedAssessment = () => {
     } catch (error) {
       console.error('Error assigning assessment:', error);
       toast.error(
-        `Failed to assign assessment: ${error.message || 'Unknown error'}`
+        `Failed to assign assessment: ${(error as Error)?.message || 'Unknown error'}`
       );
     } finally {
       setIsAssigning(false);
@@ -343,7 +374,10 @@ const ListedAssessment = () => {
     setFilteredCandidates([]);
   };
 
-  const handleGroupSelection = (group, assessment) => {
+  const handleGroupSelection = (
+    group: string,
+    assessment: AssessmentProps | null
+  ) => {
     setSelectedGroup(group);
     if (assessment) {
       const matchingCandidates = filterCandidatesByAssessment(
@@ -382,7 +416,7 @@ const ListedAssessment = () => {
 
       {filteredAssessments.length ? (
         <div className="grid grid-cols-1 gap-3">
-          {filteredAssessments.map((assessment) => (
+          {filteredAssessments.map((assessment: any) => (
             <Card
               key={assessment.id}
               className="border shadow-sm transition-all hover:shadow-md"
@@ -771,13 +805,14 @@ const ListedAssessment = () => {
                                               </p>
                                               <div className="max-h-32 space-y-1 overflow-y-auto">
                                                 {(selectedGroup === 'interview2'
-                                                  ? secondInterviewPassed
+                                                  ? secondInterviewPassed || []
                                                   : selectedGroup ===
                                                       'interview3'
-                                                    ? thirdInterviewPassed
+                                                    ? thirdInterviewPassed || []
                                                     : selectedGroup ===
                                                         'assessment1'
-                                                      ? firstAssessmentPassed
+                                                      ? firstAssessmentPassed ||
+                                                        []
                                                       : []
                                                 ).map((candidate, index) => (
                                                   <div
@@ -824,7 +859,11 @@ const ListedAssessment = () => {
                           </div>
                           <DrawerFooter>
                             <Button
-                              onClick={() => handleAssign(selectedAssessment)}
+                              onClick={() => {
+                                if (selectedAssessment) {
+                                  handleAssign(selectedAssessment);
+                                }
+                              }}
                               className="w-full"
                               disabled={
                                 isAssigning ||

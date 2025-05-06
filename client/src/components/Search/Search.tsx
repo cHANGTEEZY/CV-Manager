@@ -7,13 +7,18 @@ import { useEvents, EventType } from '@/hooks/use-event-data';
 import useTableData from '@/hooks/use-table-data';
 import { Link } from 'react-router-dom';
 
+// Updated Applicant type to match your backend data structure
 type Applicant = {
-  id: string;
+  id: number;
   applicant_name: string;
   applied_position: string;
-  experience?: string;
-  email: string;
-  technology?: string;
+  applicant_email: string; // renamed from email to match backend
+  tech_stack?: string; // renamed from technology to match backend
+  applicant_experience?: string; // renamed from experience to match backend
+  applicant_experience_level?: string;
+  // Include other fields that might be needed
+  applicant_status?: string;
+  applicant_verdict?: string;
 };
 
 const Search = () => {
@@ -32,10 +37,16 @@ const Search = () => {
 
   const { fetchAllEvents, formatEventDate } = useEvents();
 
+  // Updated keys to match the new Applicant type
   const applicantFuse = new Fuse(tableData || [], {
     includeScore: true,
     threshold: 0.4,
-    keys: ['applicant_name', 'applied_position', 'email'],
+    keys: [
+      'applicant_name',
+      'applied_position',
+      'applicant_email',
+      'tech_stack',
+    ],
   });
 
   const eventFuse = new Fuse(allEvents, {
@@ -274,11 +285,11 @@ const Search = () => {
                       <div className="text-muted-foreground flex justify-between text-sm">
                         <span>
                           {applicant.applied_position}{' '}
-                          {applicant.technology
-                            ? `• ${applicant.technology}`
+                          {applicant.tech_stack
+                            ? `• ${applicant.tech_stack}`
                             : ''}
                         </span>
-                        <span>{applicant.experience || ''}</span>
+                        <span>{applicant.applicant_experience || ''}</span>
                       </div>
                     </motion.div>
                   </Link>

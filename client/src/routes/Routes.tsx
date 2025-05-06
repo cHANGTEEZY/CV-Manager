@@ -12,12 +12,11 @@ import EventPage from '@/pages/Events/EventPage';
 import PublicRoute from '@/routes/PublicRoute';
 import ProtectedRoute from '@/routes/ProtectedRoute';
 import ProfilePage from '@/pages/ProfilePage';
-import Applications from '@/pages/Application/Applications';
 import ApplicationUpload from '@/pages/Application/ApplicationUpload';
 import TrackApplications from '@/pages/Application/TrackApplications';
 import ReviewApplications from '@/pages/Application/ReviewApplications';
 import Email from '@/pages/Email/Email';
-import LandingPage from '@/pages/LandinPage'; // corrected typo from LandinPage -> LandingPage
+import LandingPage from '@/pages/LandinPage';
 import AssessmentPage from '@/pages/Events/AssessmentPage';
 import ReviewEvent from '@/pages/Events/ReviewEvent';
 import AssessmentReview from '@/pages/Events/AssessmentReview';

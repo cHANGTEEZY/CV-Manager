@@ -1,13 +1,11 @@
 import { XCircle } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 
-interface ApplicantRejectedProps {
-  applicantName: string;
-}
-
 export default function ApplicantRejected({
   applicantName,
-}: ApplicantRejectedProps) {
+}: {
+  applicantName: string | null | undefined;
+}) {
   return (
     <Card className="border-red-200 bg-red-50">
       <CardContent className="flex flex-col items-center py-12 text-center">

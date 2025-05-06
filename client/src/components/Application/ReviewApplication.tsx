@@ -30,7 +30,6 @@ import HorizontalTimeline from '../horizontal-timeline';
 import { ApplicantProfileCard } from './ApplicationProfileCard';
 import { EventCard } from './event-card';
 import ApplicantRejected from './ApplicantRejected';
-import { userDataSchema } from '@/schemas/applicationReviewSchema';
 import {
   fallbackDescriptions,
   defaultDescriptions,
@@ -39,9 +38,9 @@ import {
 
 export default function ReviewApplicationForm() {
   const { id } = useParams();
-  const [userData, setUserData] = useState<userDataSchema>({});
-  const [eventData, setEventData] = useState([]);
-  const [assignmentData, setAssignmentData] = useState([]);
+  const [userData, setUserData] = useState<any>();
+  const [eventData, setEventData] = useState<any>([]);
+  const [assignmentData, setAssignmentData] = useState<any>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [applicantStatus, setApplicantStatus] = useState(
     userData?.applicant_status
@@ -161,7 +160,7 @@ export default function ReviewApplicationForm() {
           applicant_timeline: 7,
           timeline_status: 'accepted',
         })
-        .eq('applicant_email', userData.email);
+        .eq('applicant_email', userData?.email);
 
       if (error) throw error;
 
@@ -181,7 +180,7 @@ export default function ReviewApplicationForm() {
           applicant_verdict: 'Fail',
           timeline_status: 'rejected',
         })
-        .eq('applicant_email', userData.email);
+        .eq('applicant_email', userData?.email);
 
       if (error) throw error;
 
@@ -192,7 +191,7 @@ export default function ReviewApplicationForm() {
     }
   };
 
-  const currentTimeline = userData.timeline || 1;
+  const currentTimeline = userData?.timeline || 1;
 
   const timelineSteps = labels.map((label, index) => {
     const id = index + 1;
@@ -201,7 +200,7 @@ export default function ReviewApplicationForm() {
       id,
       label,
       description:
-        currentTimeline === id && userData.timeline_description
+        currentTimeline === id && userData?.timeline_description
           ? userData.timeline_description
           : currentTimeline >= id
             ? fallbackDescriptions[index]
@@ -251,11 +250,11 @@ export default function ReviewApplicationForm() {
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <div className="lg:col-span-2">
             <ApplicantProfileCard
-              name={userData.name || 'N/A'}
-              email={userData.email || 'N/A'}
-              phone={userData.phoneNo || 'N/A'}
-              position={userData.appliedPosition || 'N/A'}
-              timeline={userData.timeline || 1}
+              name={userData?.name || 'N/A'}
+              email={userData?.email || 'N/A'}
+              phone={userData?.phoneNo || 'N/A'}
+              position={userData?.appliedPosition || 'N/A'}
+              timeline={userData?.timeline || 1}
             />
           </div>
 
@@ -343,7 +342,7 @@ export default function ReviewApplicationForm() {
           <CardContent className="pt-2 pb-4">
             <HorizontalTimeline
               steps={timelineSteps}
-              currentStep={userData.timeline || 1}
+              currentStep={userData?.timeline || 1}
               status={applicantStatus} // Pass the applicant status to the component
             />
           </CardContent>
@@ -351,7 +350,7 @@ export default function ReviewApplicationForm() {
 
         {applicantStatus === 'rejected' ||
         applicantStatus === 'Pending Email Rejection' ? (
-          <ApplicantRejected applicantName={userData.name} />
+          <ApplicantRejected applicantName={userData?.name} />
         ) : (
           <Tabs defaultValue="events" className="w-full">
             <TabsList className="bg-background w-full justify-start rounded-lg border p-1">
@@ -385,7 +384,7 @@ export default function ReviewApplicationForm() {
                   </h2>
                   {eventData.length > 0 ? (
                     <div className="grid gap-4">
-                      {eventData.map((event, index) => (
+                      {eventData.map((event: any, index: any) => (
                         <EventCard
                           key={index}
                           title={event.title}
@@ -412,7 +411,7 @@ export default function ReviewApplicationForm() {
                   </h2>
                   {assignmentData.length > 0 ? (
                     <div className="grid gap-4">
-                      {assignmentData.map((assessment) => (
+                      {assignmentData.map((assessment: any) => (
                         <EventCard
                           key={assessment.id}
                           title={assessment.assessment_title}
@@ -462,7 +461,7 @@ export default function ReviewApplicationForm() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    {userData.cvPath ? (
+                    {userData?.cvPath ? (
                       <div className="overflow-hidden rounded-lg border">
                         <iframe
                           src={`${import.meta.env.VITE_SUPABASE_BUCKET_URL}/${userData.cvPath}`}

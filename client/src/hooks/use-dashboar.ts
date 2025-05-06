@@ -1,19 +1,26 @@
 import { supabase } from '@/utils/supabaseClient';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import {
+  Applicant,
+  InterviewEvent,
+  AssessmentEvent,
+  DashboardMetrics,
+  TechStackChartData,
+  StatusChartData,
+  TimelineEvent,
+  DashboardData,
+} from '@/types/ApplicantDashboard';
 
-export const useDashboardData = () => {
-  // State for each data type
-  const [applicantData, setApplicantData] = useState([]);
-  const [interviewData, setInterviewData] = useState([]);
-  const [assessmentData, setAssessmentData] = useState([]);
+export const useDashboardData = (): DashboardData => {
+  const [applicantData, setApplicantData] = useState<Applicant[]>([]);
+  const [interviewData, setInterviewData] = useState<InterviewEvent[]>([]);
+  const [assessmentData, setAssessmentData] = useState<AssessmentEvent[]>([]);
 
-  // Loading and error states
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Metrics data derived from applicant data
-  const [metrics, setMetrics] = useState({
+  const [metrics, setMetrics] = useState<DashboardMetrics>({
     totalApplicants: 0,
     hiredApplicants: 0,
     rejectedApplicants: 0,
@@ -24,7 +31,7 @@ export const useDashboardData = () => {
   });
 
   // Process the data after fetching
-  const processData = (data) => {
+  const processData = (data: Applicant[]): void => {
     if (!data || data.length === 0) return;
 
     // Calculate metrics
@@ -56,36 +63,35 @@ export const useDashboardData = () => {
 
   // Fetch all data needed for the dashboard
   useEffect(() => {
-    const fetchDashboardData = async () => {
+    const fetchDashboardData = async (): Promise<void> => {
       setLoading(true);
       setError(null);
 
       try {
-        // Fetch applicant data
         const { data: applicants, error: applicantsError } = await supabase
           .from('applicant_details')
           .select('*');
 
         if (applicantsError) throw applicantsError;
-        setApplicantData(applicants || []);
-        processData(applicants);
+        setApplicantData((applicants as Applicant[]) || []);
+        processData((applicants as Applicant[]) || []);
+        console.log('applicants', applicants);
 
-        // Fetch interview data
         const { data: interviews, error: interviewsError } = await supabase
           .from('events')
           .select('*');
-
+        console.log('interviews', interviews);
         if (interviewsError) throw interviewsError;
-        setInterviewData(interviews || []);
+        setInterviewData((interviews as InterviewEvent[]) || []);
 
-        // Fetch assessment data
         const { data: assessments, error: assessmentsError } = await supabase
           .from('assessment_event')
           .select('*');
 
+        console.log('assessments', assessments);
         if (assessmentsError) throw assessmentsError;
-        setAssessmentData(assessments || []);
-      } catch (error) {
+        setAssessmentData((assessments as AssessmentEvent[]) || []);
+      } catch (error: any) {
         console.error('Error fetching dashboard data:', error);
         setError(error.message || 'Failed to fetch dashboard data');
         toast.error('Failed to load dashboard data');
@@ -97,12 +103,10 @@ export const useDashboardData = () => {
     fetchDashboardData();
   }, []);
 
-  // Process applicant data for charts
-  const getChartData = () => {
+  const getChartData = (): TechStackChartData[] => {
     if (!applicantData.length) return [];
 
-    // Group by tech stack
-    const techStackData = {};
+    const techStackData: Record<string, TechStackChartData> = {};
     applicantData.forEach((app) => {
       if (!techStackData[app.tech_stack]) {
         techStackData[app.tech_stack] = {
@@ -131,10 +135,10 @@ export const useDashboardData = () => {
   };
 
   // Process applicant data for status chart
-  const getStatusData = () => {
+  const getStatusData = (): StatusChartData[] => {
     if (!applicantData.length) return [];
 
-    const statusCounts = {};
+    const statusCounts: Record<string, number> = {};
     applicantData.forEach((app) => {
       if (!statusCounts[app.applicant_status]) {
         statusCounts[app.applicant_status] = 0;
@@ -149,8 +153,8 @@ export const useDashboardData = () => {
   };
 
   // Process timeline data by combining interviews and assessments
-  const getTimelineData = () => {
-    const timelineEvents = [];
+  const getTimelineData = (): TimelineEvent[] => {
+    const timelineEvents: TimelineEvent[] = [];
 
     // Process interview events
     interviewData.forEach((event) => {
@@ -185,7 +189,7 @@ export const useDashboardData = () => {
     });
 
     // Sort by date (newest first)
-    return timelineEvents.sort((a, b) => b.date - a.date);
+    return timelineEvents.sort((a, b) => b.date.getTime() - a.date.getTime());
   };
 
   return {

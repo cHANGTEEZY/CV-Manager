@@ -4,9 +4,15 @@ import { MailPlus } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/utils/supabaseClient';
 
+type Candidate = {
+  id: string | number;
+  email: string;
+  name: string;
+};
+
 const EmailDraft = () => {
   const [candidateStatus, setCandidateStatus] = useState('');
-  const [matchingCandidates, setMatchingCandidates] = useState([]);
+  const [matchingCandidates, setMatchingCandidates] = useState<Candidate[]>([]);
 
   useEffect(() => {
     if (!candidateStatus) return;

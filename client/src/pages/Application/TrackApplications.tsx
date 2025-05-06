@@ -175,7 +175,7 @@ export default function KanbanBoard() {
     taskId: string;
   } | null>(null);
 
-  const handleDragEnd = (event) => {
+  const handleDragEnd = (event: any) => {
     const { active, over } = event;
 
     if (!over) return;
@@ -241,7 +241,7 @@ export default function KanbanBoard() {
     setConfirmDialog(null);
   };
 
-  const moveTask = (sourceColumn, destinationColumn, taskId) => {
+  const moveTask = (sourceColumn: any, destinationColumn: any, taskId: any) => {
     setTasks((prev) => {
       const taskToMove = prev[sourceColumn].find((task) => task.id === taskId);
 
@@ -274,10 +274,10 @@ export default function KanbanBoard() {
         assessment2: ['Assessment 2 Assigned', 'Assessment 2 Passed'],
       };
 
-      const formatContent = (applicant) =>
+      const formatContent = (applicant: any) =>
         `Name: ${applicant.applicant_name}\nEmail: ${applicant.applicant_email}\nStatus: ${applicant.applicant_status}`;
 
-      const getList = (statuses, listIdPrefix) =>
+      const getList = (statuses: any, listIdPrefix: any) =>
         tableData
           .filter((item) => statuses.includes(item.applicant_status))
           .map((applicant, index) => ({

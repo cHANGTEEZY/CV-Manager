@@ -22,8 +22,19 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { ChartContainer } from '@/components/ui/chart';
+import {
+  StatusChartData,
+  TechStackChartData,
+} from '@/types/ApplicantDashboard';
 
-// Array of colors for pie chart segments
+interface AppllicationChartProps {
+  chartData: TechStackChartData[];
+}
+
+interface ApplicationStatusChartProps {
+  statusData: StatusChartData[];
+}
+
 const COLORS = [
   '#0088FE',
   '#00C49F',
@@ -35,7 +46,7 @@ const COLORS = [
   '#8dd1e1',
 ];
 
-export function ApplicationChart({ chartData }) {
+export function ApplicationChart({ chartData }: AppllicationChartProps) {
   return (
     <Card className="col-span-4">
       <CardHeader>
@@ -98,7 +109,9 @@ export function ApplicationChart({ chartData }) {
   );
 }
 
-export function ApplicationStatusChart({ statusData }) {
+export function ApplicationStatusChart({
+  statusData,
+}: ApplicationStatusChartProps) {
   return (
     <Card className="col-span-3">
       <CardHeader>
@@ -123,7 +136,7 @@ export function ApplicationStatusChart({ statusData }) {
                   `${name}: ${(percent * 100).toFixed(0)}%`
                 }
               >
-                {statusData.map((entry, index) => (
+                {statusData.map((_entry: StatusChartData, index: number) => (
                   <Cell
                     key={`cell-${index}`}
                     fill={COLORS[index % COLORS.length]}

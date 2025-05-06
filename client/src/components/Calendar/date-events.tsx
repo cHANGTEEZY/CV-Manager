@@ -107,7 +107,11 @@ export function DateEvents() {
                     <Calendar
                       mode="single"
                       selected={date}
-                      onSelect={(newDate: Date) => newDate && setDate(newDate)}
+                      onSelect={(newDate: Date | undefined) => {
+                        if (newDate) {
+                          setDate(newDate);
+                        }
+                      }}
                       initialFocus
                     />
                   </PopoverContent>

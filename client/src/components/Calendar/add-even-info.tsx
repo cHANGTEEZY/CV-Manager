@@ -52,7 +52,7 @@ import {
 type FormValues = z.infer<typeof formSchema>;
 
 const CreateEvent = () => {
-  const [date, setDate] = useState<Date>();
+  const [_date, setDate] = useState<Date>();
   const [applicants, setApplicants] = useState<Applicant[]>([]);
   const [filteredApplicants, setFilteredApplicants] = useState<Applicant[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -216,7 +216,6 @@ const CreateEvent = () => {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <CardContent className="space-y-6">
-              {/* Interview Type Dropdown */}
               <FormField
                 control={form.control}
                 name="interview_type"
@@ -229,7 +228,6 @@ const CreateEvent = () => {
                       <Select
                         value={field.value}
                         onValueChange={field.onChange}
-                        onBlur={field.onBlur}
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Select interview type" />
@@ -342,7 +340,6 @@ const CreateEvent = () => {
                       <Select
                         value={field.value}
                         onValueChange={field.onChange}
-                        onBlur={field.onBlur}
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Select time" />
@@ -382,7 +379,6 @@ const CreateEvent = () => {
                       <Select
                         value={field.value}
                         onValueChange={field.onChange}
-                        onBlur={field.onBlur}
                         disabled={
                           isLoading ||
                           !selectedInterviewType ||
@@ -442,7 +438,6 @@ const CreateEvent = () => {
                       <Select
                         value={field.value}
                         onValueChange={field.onChange}
-                        onBlur={field.onBlur}
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Select interviewer" />
