@@ -1,4 +1,6 @@
 export type tableDefinition = {
+  id: number;
+  created_at: string;
   applicant_name: string;
   applied_position: string;
   applicant_status: string;
@@ -11,4 +13,6 @@ export type tableDefinition = {
   references: string;
   applicant_file_path: string;
   applicant_verdict: string;
+  timeline_status: string;
+  applicant_timeline: number;
 };

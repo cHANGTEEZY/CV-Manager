@@ -40,16 +40,17 @@ import { assessmentReviewResults } from '@/constants/Assessments';
 import { Textarea } from '../ui/textarea';
 import PendingCard from '../Pending';
 import { supabase } from '@/utils/supabaseClient';
+import StarRating from '../Rating';
 import { toast } from 'sonner';
 
 const ReviewAssessment = () => {
   const [date, setDate] = useState<Date>(new Date());
   const { assessmentsData, isLoading, formatAssessmentDate } =
     useAssessmentData(date);
-
   const [assessmentDialogOpen, setAssessmentDialogOpen] = useState(false);
   const [selectedAssessment, setSelectedAssessment] = useState(null);
   const [assessmentResult, setAssessmentResult] = useState('');
+  const [rating, setRating] = useState();
   const [assessmentReview, setAssessmentReview] = useState('');
 
   const openReviewDialog = (assessment) => {
@@ -72,6 +73,7 @@ const ReviewAssessment = () => {
           assessment_result: assessmentResult.includes('Pass')
             ? 'Passed'
             : 'Failed',
+          assessment_rating: rating,
         })
         .eq('id', selectedAssessment.id);
 
@@ -82,7 +84,6 @@ const ReviewAssessment = () => {
         return;
       }
 
-      // Update applicant_details table - FIX: Using correct update syntax
       const { error: applicantTableUpdateError } = await supabase
         .from('applicant_details')
         .update({
@@ -108,10 +109,10 @@ const ReviewAssessment = () => {
 
       toast.success('Assessment reviewed successfully');
       setAssessmentDialogOpen(false);
-
       setAssessmentResult('');
       setAssessmentReview('');
       setSelectedAssessment(null);
+      setTimeout(() => window.location.reload(), 1000);
     } catch (error) {
       toast.error(`An error occurred: ${error.message}`);
     }
@@ -303,6 +304,18 @@ const ReviewAssessment = () => {
                     )}
               </SelectContent>
             </Select>
+          </div>
+
+          <div>
+            <div className="mb-2 flex items-center justify-between">
+              <p className="text-sm font-medium">Candidate Rating</p>
+              <span className="text-muted-foreground text-xs">
+                {rating > 0 ? `${rating} of 5 stars` : 'Not rated yet'}
+              </span>
+            </div>
+            <div className="mt-2">
+              <StarRating rating={rating} onRatingChange={setRating} />
+            </div>
           </div>
 
           <div>

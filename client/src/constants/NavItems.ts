@@ -12,7 +12,7 @@ export const navItems = [
     path: '/dashboard/applications',
     badge: '3',
     subitems: [
-      { title: 'Upload Applications', path: '/dashboard/application-upload' },
+      { title: 'Upload Applications', path: '/dashboard/applications' },
       { title: 'Track Applications', path: '/dashboard/application-tracking' },
       { title: 'Final Review', path: '/dashboard/applications-final-review' },
     ],

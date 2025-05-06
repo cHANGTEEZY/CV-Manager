@@ -43,7 +43,17 @@ export default function ReviewApplicationForm() {
   const [eventData, setEventData] = useState([]);
   const [assignmentData, setAssignmentData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [applicantStatus, setApplicantStatus] = useState('in-progress');
+  const [applicantStatus, setApplicantStatus] = useState(
+    userData?.applicant_status
+  );
+
+  const isHired =
+    applicantStatus === 'Hired' ||
+    applicantStatus === 'Applicant Eligble for Offer';
+  const isRejected =
+    applicantStatus === 'rejected' ||
+    applicantStatus === 'Pending Email Rejection';
+  const disableButtons = isHired || isRejected;
 
   useEffect(() => {
     const getData = async () => {
@@ -75,8 +85,12 @@ export default function ReviewApplicationForm() {
           appliedPosition: userData.applied_position,
           cvPath: userData.applicant_file_path,
           timeline: userData.applicant_timeline,
+          applicant_status: userData.applicant_status,
           timeline_description: userData.timeline_status,
         });
+
+        setApplicantStatus(userData.applicant_status);
+        console.log('Here', userData.applicant_status);
 
         const sortedEvents = [...allEvents].sort((a, b) => {
           const dateA = new Date(a.event_date_time);
@@ -141,12 +155,16 @@ export default function ReviewApplicationForm() {
     try {
       const { error } = await supabase
         .from('applicant_details')
-        .update({ applicant_status: 'onboarding' })
+        .update({
+          applicant_status: 'Applicant Eligble for Offer',
+          applicant_verdict: 'Offer',
+          applicant_timeline: 7,
+          timeline_status: 'accepted',
+        })
         .eq('applicant_email', userData.email);
 
       if (error) throw error;
 
-      setApplicantStatus('onboarding');
       toast.success('Applicant moved to onboarding');
     } catch (error) {
       console.error('Error updating status:', error);
@@ -159,14 +177,14 @@ export default function ReviewApplicationForm() {
       const { error } = await supabase
         .from('applicant_details')
         .update({
-          applicant_status: 'rejected',
-          applicant_verdict: 'Failed',
+          applicant_status: 'Pending Email Rejection',
+          applicant_verdict: 'Fail',
+          timeline_status: 'rejected',
         })
         .eq('applicant_email', userData.email);
 
       if (error) throw error;
 
-      setApplicantStatus('rejected');
       toast.error('Applicant has been rejected');
     } catch (error) {
       console.error('Error updating status:', error);
@@ -219,6 +237,14 @@ export default function ReviewApplicationForm() {
     );
   }
 
+  const getStatusMessage = () => {
+    if (isHired) return 'Applicant has been accepted';
+    if (isRejected) return 'Applicant has been rejected';
+    return null;
+  };
+
+  const statusMessage = getStatusMessage();
+
   return (
     <section className="container mx-auto py-6">
       <div className="grid gap-6">
@@ -240,11 +266,20 @@ export default function ReviewApplicationForm() {
                 <CardDescription>Manage this application</CardDescription>
               </CardHeader>
               <CardContent className="flex flex-col gap-3">
+                {statusMessage && (
+                  <div
+                    className={`mb-2 rounded p-2 text-sm font-medium ${isHired ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
+                  >
+                    {statusMessage}
+                  </div>
+                )}
+
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button
                       className="w-full cursor-pointer gap-2"
                       variant="default"
+                      disabled={disableButtons}
                     >
                       <CheckCircle2 className="h-4 w-4" /> Accept Applicant
                     </Button>
@@ -272,6 +307,7 @@ export default function ReviewApplicationForm() {
                     <Button
                       className="w-full cursor-pointer gap-2"
                       variant="outline"
+                      disabled={disableButtons}
                     >
                       <XCircle className="h-4 w-4" /> Reject Applicant
                     </Button>
@@ -299,7 +335,6 @@ export default function ReviewApplicationForm() {
           </div>
         </div>
 
-        {/* Timeline below the cards */}
         <Card>
           <CardHeader className="pb-2">
             <CardTitle>Application Timeline</CardTitle>
@@ -309,11 +344,13 @@ export default function ReviewApplicationForm() {
             <HorizontalTimeline
               steps={timelineSteps}
               currentStep={userData.timeline || 1}
+              status={applicantStatus} // Pass the applicant status to the component
             />
           </CardContent>
         </Card>
 
-        {applicantStatus === 'rejected' ? (
+        {applicantStatus === 'rejected' ||
+        applicantStatus === 'Pending Email Rejection' ? (
           <ApplicantRejected applicantName={userData.name} />
         ) : (
           <Tabs defaultValue="events" className="w-full">
@@ -369,7 +406,6 @@ export default function ReviewApplicationForm() {
                   )}
                 </div>
 
-                {/* Assessment Events */}
                 <div>
                   <h2 className="mb-4 text-xl font-semibold">
                     Assessment Events

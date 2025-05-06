@@ -6,4 +6,5 @@ export type userDataSchema = {
   cvPath: string;
   timeline: number;
   timeline_description: string;
+  applicant_status: string;
 };

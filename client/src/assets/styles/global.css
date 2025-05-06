@@ -280,6 +280,8 @@
   
   .bg-gradient-royal {
     background-image: linear-gradient(to right, oklch(0.8 0.2 80), oklch(0.95 0.15 90));
+  }.bg-gradient-royal-opposite {
+    background-image: linear-gradient(to left, oklch(0.8 0.2 80), oklch(0.95 0.15 90));
   }
   
   .bg-gradient-cyber {
@@ -304,6 +306,8 @@
   
   .bg-gradient-galaxy {
     background-image: linear-gradient(to right, oklch(0.6 0.3 320), oklch(0.8 0.25 240));
+  }.bg-gradient-galaxy-opposite {
+    background-image: linear-gradient(to left, oklch(0.6 0.3 320), oklch(0.8 0.25 240));
   }
   
   .bg-gradient-jungle {

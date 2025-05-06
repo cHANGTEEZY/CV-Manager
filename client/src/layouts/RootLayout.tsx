@@ -10,6 +10,7 @@ import { ModeToggle } from '@/components/mode-toggle';
 import Search from '@/components/Search/Search';
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import EnhancedFooter from '@/components/Footer/AppFooter';
 
 export default function RootLayout() {
   const [isMounted, setIsMounted] = useState(false);
@@ -24,7 +25,7 @@ export default function RootLayout() {
       <AppSidebar />
       <SidebarInset>
         <motion.header
-          className="bg-background flex h-16 items-center justify-between gap-4 border-b p-3"
+          className="bg-background sticky top-0 z-20 flex h-16 items-center justify-between gap-4 border-b p-3"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: isMounted ? 1 : 0, y: isMounted ? 0 : -20 }}
           transition={{ duration: 0.3, delay: 0.1 }}
@@ -52,6 +53,7 @@ export default function RootLayout() {
         >
           <Outlet />
         </motion.main>
+        <EnhancedFooter />
       </SidebarInset>
     </SidebarProvider>
   );

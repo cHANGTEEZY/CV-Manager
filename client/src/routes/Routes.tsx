@@ -92,14 +92,7 @@ export const router = createBrowserRouter([
         path: 'applications',
         element: (
           <ProtectedRoute>
-            <Applications />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: 'application-upload',
-        element: (
-          <ProtectedRoute>
+            {/* <Applications /> */}
             <ApplicationUpload />
           </ProtectedRoute>
         ),

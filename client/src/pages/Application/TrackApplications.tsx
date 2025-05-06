@@ -56,42 +56,13 @@ interface ColumnProps {
 }
 
 const initialTasks: TasksState = {
-  'Applicant-List': [
-    { id: 'task-1', content: 'Review resume: John Doe' },
-    { id: 'task-2', content: 'Screen application: Jane Smith' },
-    { id: 'task-3', content: 'Verify portfolio: Alex Johnson' },
-    { id: 'task-4', content: 'Check LinkedIn profile: Sara Khan' },
-  ],
-  Assessment1: [
-    { id: 'task-5', content: 'Send coding assessment to John Doe' },
-    { id: 'task-6', content: 'Evaluate JavaScript test: Jane Smith' },
-    { id: 'task-7', content: 'Send reminder for pending test: Alex Johnson' },
-  ],
-  Assessment2: [
-    { id: 'task-8', content: 'Design aptitude test for Sara Khan' },
-    { id: 'task-9', content: 'Check assessment results: Jane Smith' },
-    { id: 'task-10', content: 'Schedule follow-up test for John Doe' },
-  ],
-  'Final-interview': [
-    { id: 'task-11', content: 'Conduct final HR interview: Jane Smith' },
-    { id: 'task-12', content: 'Collect feedback from HR panel' },
-    { id: 'task-13', content: 'Finalize candidate decision: John Doe' },
-  ],
-  'technical-interview': [
-    { id: 'task-14', content: 'Schedule technical interview: Alex Johnson' },
-    { id: 'task-15', content: 'Prepare technical questions set' },
-    { id: 'task-16', content: 'Evaluate coding interview: Sara Khan' },
-  ],
-  Offer: [
-    { id: 'task-17', content: 'Create offer letter: Jane Smith' },
-    { id: 'task-18', content: 'Send offer via email: John Doe' },
-    { id: 'task-19', content: 'Confirm acceptance: Alex Johnson' },
-  ],
-  Rejected: [
-    { id: 'task-20', content: 'Send rejection email: Sara Khan' },
-    { id: 'task-21', content: 'Mark candidate inactive: Mark Lee' },
-    { id: 'task-22', content: 'Update rejection reason: Tim Baker' },
-  ],
+  'Applicant-List': [],
+  Assessment1: [],
+  Assessment2: [],
+  'Final-interview': [],
+  'technical-interview': [],
+  Offer: [],
+  Rejected: [],
 };
 
 function Task({ id, content, className = '', columnType }: TaskProps) {
@@ -293,11 +264,12 @@ export default function KanbanBoard() {
   useEffect(() => {
     if (tableData && Array.isArray(tableData)) {
       const statusMap = {
-        rejected: ['Failed'],
+        rejected: ['Failed', 'Rejected', 'rejected', 'Fail'],
+        offer: ['Offer', 'Hired', 'Applicant Eligble for Offer', 'Hire'],
         applicantList: ['filled'],
-        firstInterview: ['Interview 1 Schedule', 'Interview 1 Passed'],
-        secondInterview: ['Interview 2 Schedule', 'Interview 2 Passed'],
-        thirdInterview: ['Interview 3 Schedule', 'Interview 3 Passed'],
+        firstInterview: ['Interview 1 Scheduled', 'Interview 1 Passed'],
+        secondInterview: ['Interview 2 Scheduled', 'Interview 2 Passed'],
+        thirdInterview: ['Interview 3 Scheduled', 'Interview 3 Passed'],
         assessment1: ['Assessment 1 Assigned', 'Assessment 1 Passed'],
         assessment2: ['Assessment 2 Assigned', 'Assessment 2 Passed'],
       };
@@ -320,6 +292,13 @@ export default function KanbanBoard() {
           content: formatContent(applicant),
         }));
 
+      const offerList = tableData
+        .filter((r) => statusMap.offer.includes(r.applicant_verdict))
+        .map((applicant, index) => ({
+          id: `offer-${index}`,
+          content: formatContent(applicant),
+        }));
+
       setTasks((prevData) => ({
         ...prevData,
         'Applicant-List': getList(statusMap.applicantList, 'applicant'),
@@ -335,6 +314,7 @@ export default function KanbanBoard() {
         Assessment1: getList(statusMap.assessment1, 'assessment1'),
         Assessment2: getList(statusMap.assessment2, 'assessment2'),
         Rejected: rejectedList,
+        Offer: offerList,
       }));
     }
   }, [tableData]);

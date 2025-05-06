@@ -49,8 +49,6 @@ const EmailBody = ({
   });
   const [sendingMessage, setSendingMessage] = useState(false);
 
-  const formRef = useRef();
-
   useEffect(() => {
     emailjs.init(import.meta.env.VITE_EMAILJS_PUBLIC_KEY);
   }, []);
@@ -143,16 +141,15 @@ const EmailBody = ({
         );
       });
 
-      let newStatus;
-      if (emailType === 'RejectionMail') {
-        newStatus = 'Failed';
-      } else if (emailType === 'SuccessMail') {
-        newStatus = 'Hired';
-      } else if (emailType === 'AssignmentMail') {
-        newStatus = 'Task';
-      }
+      const statusMap: Record<string, { verdict: string; status: string }> = {
+        RejectionMail: { verdict: 'Failed', status: 'Rejected' },
+        SuccessMail: { verdict: 'Hired', status: 'Hired' },
+        AssignmentMail: { verdict: 'Task', status: 'Assigned' },
+      };
 
-      if (newStatus) {
+      const statusObj = statusMap[emailType];
+
+      if (statusObj) {
         const applicantIds = recepients
           .map((recipient) => recipient.id)
           .filter(Boolean);
@@ -161,8 +158,9 @@ const EmailBody = ({
           const { error: applicantDetailError } = await supabase
             .from('applicant_details')
             .update({
-              applicant_verdict: newStatus,
-              applicant_status: 'Rejected',
+              applicant_verdict: statusObj.verdict,
+              applicant_status: statusObj.status,
+              applicant_timeline: 7,
             })
             .in('id', applicantIds);
 
@@ -174,7 +172,7 @@ const EmailBody = ({
             toast.error('Failed to update applicant status in database');
           } else {
             console.log(
-              `Updated ${applicantIds.length} applicants to status: ${newStatus}`
+              `Updated ${applicantIds.length} applicants to status: ${statusObj.verdict}`
             );
           }
         }

@@ -2,13 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
-import {
-  CalendarIcon,
-  Clock,
-  MessageSquare,
-  Star,
-  ThumbsUp,
-} from 'lucide-react';
+import { CalendarIcon, Clock, MessageSquare, ThumbsUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import {
@@ -49,6 +43,7 @@ import {
 } from '../ui/select';
 import { InterviewTypeResults } from '@/constants/EventData';
 import PendingCard from '../Pending';
+import StarRating from '../Rating';
 
 export default function PendingInterviews() {
   const [date, setDate] = useState<Date>(new Date());
@@ -127,25 +122,6 @@ export default function PendingInterviews() {
       console.error('Error updating interview:', error);
       toast.error('There was an error');
     }
-  };
-
-  const renderRatingStars = () => {
-    return (
-      <div className="mt-2 flex items-center space-x-1">
-        {[1, 2, 3, 4, 5].map((star) => (
-          <Star
-            key={star}
-            size={24}
-            className={`cursor-pointer ${
-              star <= rating
-                ? 'fill-yellow-400 text-yellow-400'
-                : 'text-gray-300'
-            }`}
-            onClick={() => setRating(star)}
-          />
-        ))}
-      </div>
-    );
   };
 
   return (
@@ -341,7 +317,9 @@ export default function PendingInterviews() {
                   {rating > 0 ? `${rating} of 5 stars` : 'Not rated yet'}
                 </span>
               </div>
-              {renderRatingStars()}
+              <div className="mt-2">
+                <StarRating rating={rating} onRatingChange={setRating} />
+              </div>
             </div>
 
             <div>
