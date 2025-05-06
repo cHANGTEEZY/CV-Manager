@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { supabase } from "@/utils/supabaseClient";
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/utils/supabaseClient';
 
 const AuthCallback = () => {
   const navigate = useNavigate();
@@ -9,16 +9,14 @@ const AuthCallback = () => {
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
-        const { error } = await supabase.auth.getSession();
+        const { error } = await supabase.auth.getSessionFromUrl();
 
-        if (error) {
-          throw error;
-        }
+        if (error) throw error;
 
-        navigate("/", { replace: true });
+        navigate('/', { replace: true });
       } catch (err: any) {
-        console.error("Error during auth callback:", err);
-        setError(err.message || "Authentication failed");
+        console.error('Error during auth callback:', err);
+        setError(err.message || 'Authentication failed');
       }
     };
 
@@ -27,14 +25,14 @@ const AuthCallback = () => {
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen p-4">
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+      <div className="flex min-h-screen flex-col items-center justify-center p-4">
+        <div className="rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700">
           <p className="font-bold">Authentication Error</p>
           <p>{error}</p>
         </div>
         <button
-          onClick={() => navigate("/auth/signin")}
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          onClick={() => navigate('/auth/signin')}
+          className="mt-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
         >
           Back to Sign In
         </button>
@@ -43,9 +41,9 @@ const AuthCallback = () => {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen">
+    <div className="flex min-h-screen items-center justify-center">
       <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+        <div className="border-primary mx-auto h-12 w-12 animate-spin rounded-full border-b-2"></div>
         <p className="mt-4 text-xl">Completing authentication...</p>
       </div>
     </div>
