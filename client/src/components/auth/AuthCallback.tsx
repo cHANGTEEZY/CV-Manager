@@ -9,9 +9,11 @@ const AuthCallback = () => {
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
-        const { error } = await supabase.auth.getSessionFromUrl();
+        const { error } = await supabase.auth.getSession();
 
-        if (error) throw error;
+        if (error) {
+          throw error;
+        }
 
         navigate('/', { replace: true });
       } catch (err: any) {
