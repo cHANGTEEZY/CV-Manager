@@ -60,6 +60,7 @@ import {
   assessmentTitle,
   assessmentType,
 } from '@/constants/Assessments';
+import { Badge } from '../ui/badge';
 
 interface Candidate {
   applicant_email?: string;
@@ -469,14 +470,17 @@ const ListedAssessment = () => {
 
               <CardContent className="space-y-3">
                 <div className="flex gap-2">
-                  <span className="flex items-center gap-1 rounded-md bg-blue-100 px-2 py-1 text-xs text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
+                  <Badge
+                    variant={'destructive'}
+                    className="flex items-center gap-1 rounded-md bg-blue-100 px-2 py-1 text-xs text-slate-600 dark:bg-blue-900/30 dark:text-blue-300"
+                  >
                     <Layers className="h-3 w-3" />
                     {assessment.type}
-                  </span>
-                  <span className="flex items-center gap-1 rounded-md bg-purple-100 px-2 py-1 text-xs text-purple-800 dark:bg-purple-900/30 dark:text-purple-300">
+                  </Badge>
+                  <Badge className="flex items-center gap-1 rounded-md bg-purple-100 px-2 py-1 text-xs text-slate-600 dark:bg-purple-900/30 dark:text-purple-300">
                     <BarChart3 className="h-3 w-3" />
                     {assessment.level}
-                  </span>
+                  </Badge>
                 </div>
 
                 <p className="text-muted-foreground line-clamp-3 text-sm">

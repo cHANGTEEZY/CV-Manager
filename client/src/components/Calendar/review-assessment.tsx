@@ -125,13 +125,13 @@ const ReviewAssessment = () => {
         </div>
 
         <div className="flex items-center gap-3">
-          <Badge variant="outline" className="flex items-center gap-1">
+          <Button variant="outline" className="flex items-center gap-1">
             <Clock size={14} />
             <span>
               Pending:{' '}
               {assessmentsData?.length > 0 ? assessmentsData.length : '0'}
             </span>
-          </Badge>
+          </Button>
           <Popover>
             <PopoverTrigger asChild>
               <Button variant="outline" size="sm" className="flex h-9 gap-1">
