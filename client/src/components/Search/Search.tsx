@@ -1,22 +1,20 @@
 import { Search as SearchIcon, X, User, Calendar } from 'lucide-react';
 import { Input } from '../ui/input';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import Fuse from 'fuse.js';
 import { useEvents, EventType } from '@/hooks/use-event-data';
 import useTableData from '@/hooks/use-table-data';
 import { Link } from 'react-router-dom';
 
-// Updated Applicant type to match your backend data structure
 type Applicant = {
   id: number;
   applicant_name: string;
   applied_position: string;
-  applicant_email: string; // renamed from email to match backend
-  tech_stack?: string; // renamed from technology to match backend
-  applicant_experience?: string; // renamed from experience to match backend
+  applicant_email: string;
+  tech_stack?: string;
+  applicant_experience?: string;
   applicant_experience_level?: string;
-  // Include other fields that might be needed
   applicant_status?: string;
   applicant_verdict?: string;
 };
@@ -30,44 +28,40 @@ const Search = () => {
   >([]);
   const [eventSearchResults, setEventSearchResults] = useState<EventType[]>([]);
   const [showResults, setShowResults] = useState(false);
-  const [allEvents, setAllEvents] = useState<EventType[]>([]);
   const searchRef = useRef<HTMLDivElement | null>(null);
 
   const { tableData } = useTableData();
+  const { events, formatEventDate } = useEvents();
 
-  const { fetchAllEvents, formatEventDate } = useEvents();
+  const applicantFuse = useMemo(
+    () =>
+      new Fuse(tableData || [], {
+        includeScore: true,
+        threshold: 0.4,
+        keys: [
+          'applicant_name',
+          'applied_position',
+          'applicant_email',
+          'tech_stack',
+        ],
+      }),
+    [tableData]
+  );
 
-  // Updated keys to match the new Applicant type
-  const applicantFuse = new Fuse(tableData || [], {
-    includeScore: true,
-    threshold: 0.4,
-    keys: [
-      'applicant_name',
-      'applied_position',
-      'applicant_email',
-      'tech_stack',
-    ],
-  });
-
-  const eventFuse = new Fuse(allEvents, {
-    includeScore: true,
-    threshold: 0.4,
-    keys: [
-      'event_name',
-      'interviewer_name',
-      'event_date_time',
-      'applicant_details.applicant_name',
-    ],
-  });
-
-  useEffect(() => {
-    const loadEvents = async () => {
-      const events = await fetchAllEvents();
-      setAllEvents(events);
-    };
-
-    loadEvents();
-  }, []);
+  const eventFuse = useMemo(
+    () =>
+      new Fuse(events || [], {
+        includeScore: true,
+        threshold: 0.4,
+        keys: [
+          'event_name',
+          'interviewer_name',
+          'event_date_time',
+          'applicant_details.applicant_name',
+        ],
+      }),
+    [events]
+  );
 
   useEffect(() => {
     if (searchText.trim()) {
@@ -81,13 +75,13 @@ const Search = () => {
 
       setApplicantSearchResults(applicantResults);
       setEventSearchResults(eventResults);
-      setShowResults(true);
+      setShowResults(applicantResults.length > 0 || eventResults.length > 0);
     } else {
       setApplicantSearchResults([]);
       setEventSearchResults([]);
       setShowResults(false);
     }
-  }, [searchText, tableData, allEvents]);
+  }, [searchText, applicantFuse, eventFuse]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -170,6 +164,7 @@ const Search = () => {
                 >
                   <SearchIcon size={18} />
                 </motion.span>
+
                 {searchText && (
                   <motion.button
                     initial={{ opacity: 0 }}
@@ -233,6 +228,7 @@ const Search = () => {
               }
             }}
           />
+
           <AnimatePresence>
             {searchText && (
               <motion.button
@@ -310,7 +306,7 @@ const Search = () => {
                 </div>
                 {eventSearchResults.map((event) => (
                   <Link
-                    to={`/application-review/${event?.applicant_details?.id}`}
+                    to={`/dashboard/application-review/${event?.applicant_details?.id}`}
                     key={`${event.id}`}
                   >
                     <motion.div
@@ -338,12 +334,6 @@ const Search = () => {
                     </motion.div>
                   </Link>
                 ))}
-              </div>
-            )}
-
-            {!hasResults && searchText && (
-              <div className="text-muted-foreground p-4 text-center">
-                No results found for "{searchText}"
               </div>
             )}
           </motion.div>

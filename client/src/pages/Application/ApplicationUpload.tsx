@@ -1,40 +1,40 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { toast } from "sonner";
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { toast } from 'sonner';
 
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Card, CardContent } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import FileUpload from "@/components/Application/FileUpload";
-import { applicantFormFields } from "@/constants/ApplicantForm";
-import FormSuccessMessage from "@/components/Application/FormSuccess";
-import { supabase } from "@/utils/supabaseClient";
-import { FileIcon } from "lucide-react";
+} from '@/components/ui/select';
+import { Card, CardContent } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
+import FileUpload from '@/components/Application/FileUpload';
+import { applicantFormFields } from '@/constants/ApplicantForm';
+import FormSuccessMessage from '@/components/Application/FormSuccess';
+import { supabase } from '@/utils/supabaseClient';
+import { FileIcon } from 'lucide-react';
 
 const formSchema = z.object({
-  username: z.string().min(2, "Username must be at least 2 characters"),
-  phoneNo: z.string().min(10, "Phone number must be at least 10 digits"),
-  email: z.string().email("Please enter a valid email address"),
+  username: z.string().min(2, 'Username must be at least 2 characters'),
+  phoneNo: z.string().min(10, 'Phone number must be at least 10 digits'),
+  email: z.string().email('Please enter a valid email address'),
   references: z.string().optional(),
-  position: z.string().min(1, "Please select a position"),
-  technology: z.string().min(1, "Please select a technology"),
-  salary: z.string().min(1, "Please enter your salary expectation"),
-  level: z.string().min(1, "Please select your experience level"),
-  experience: z.string().min(1, "Please select your years of experience"),
+  position: z.string().min(1, 'Please select a position'),
+  technology: z.string().min(1, 'Please select a technology'),
+  salary: z.string().min(1, 'Please enter your salary expectation'),
+  level: z.string().min(1, 'Please select your experience level'),
+  experience: z.string().min(1, 'Please select your years of experience'),
 });
 
 type ApplicationFormData = z.infer<typeof formSchema>;
@@ -69,22 +69,22 @@ export default function ApplicationForm() {
       const file_path = `applications/${Date.now()}_${resumeFile.name}`;
 
       const { data: storageData, error: storageError } = await supabase.storage
-        .from("cv-file-storage")
+        .from('cv-file-storage')
         .upload(file_path, resumeFile);
 
       if (storageError) {
-        console.error("Storage error:", storageError);
-        toast.error("Error uploading resume file");
+        console.error('Storage error:', storageError);
+        toast.error('Error uploading resume file');
         return;
       }
 
       const applicant_file_path = storageData.path;
 
-      const { error } = await supabase.from("applicant_details").insert([
+      const { error } = await supabase.from('applicant_details').insert([
         {
           applicant_name: data.username,
           applied_position: data.position,
-          applicant_status: "filled",
+          applicant_status: 'filled',
           tech_stack: data.technology,
           applicant_email: data.email,
           applicant_phone_number: data.phoneNo,
@@ -97,15 +97,15 @@ export default function ApplicationForm() {
       ]);
 
       if (error) {
-        toast.error("Error uploading applicant details: " + error.message);
+        toast.error('Error uploading applicant details: ' + error.message);
         return;
       }
 
-      toast.success("Application submitted successfully!");
+      toast.success('Application submitted successfully!');
       setIsSubmitted(true);
     } catch (error) {
-      console.error("Error submitting application:", error);
-      toast.error("Failed to submit application. Please try again.");
+      console.error('Error submitting application:', error);
+      toast.error('Failed to submit application. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -122,11 +122,11 @@ export default function ApplicationForm() {
 
   return (
     <section className="mx-auto mt-5 max-w-[800px]">
-      <div className="space-y-2 mb-6">
+      <div className="mb-6 space-y-2">
         <motion.h1
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="font-bold text-3xl"
+          className="text-3xl font-bold"
         >
           Upload Application
         </motion.h1>
@@ -145,7 +145,7 @@ export default function ApplicationForm() {
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0, transition: { delay: 0.2 } }}
-          className="flex justify-center items-start"
+          className="flex items-start justify-center"
         >
           <FileUpload onFileChange={handleFileChange} showButton={false} />
         </motion.div>
@@ -156,21 +156,21 @@ export default function ApplicationForm() {
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0, transition: { delay: 0.3 } }}
           onSubmit={handleSubmit(onSubmit)}
-          className="space-y-6 max-w-[800px] mt-3 mb-10"
+          className="mt-3 mb-10 max-w-[800px] space-y-6"
         >
-          <h2 className="text-xl font-semibold mb-4  mt-5 text-primary flex items-center gap-2">
+          <h2 className="text-primary mt-5 mb-4 flex items-center gap-2 text-xl font-semibold">
             <FileIcon className="h-5 w-5" /> Applicant Details
           </h2>
           <Card className="m-0">
             <CardContent>
-              <div className="grid  grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 {applicantFormFields.map((field) => (
-                  <div key={field.id} className="space-y-2 ">
+                  <div key={field.id} className="space-y-2">
                     <Label htmlFor={field.id} className="font-medium">
                       {field.label}
                     </Label>
 
-                    {field.type === "select" ? (
+                    {field.type === 'select' ? (
                       <div>
                         <Controller
                           name={field.htmlFor as keyof ApplicationFormData}
@@ -178,7 +178,7 @@ export default function ApplicationForm() {
                           render={({ field: controllerField }) => (
                             <Select
                               onValueChange={controllerField.onChange}
-                              value={controllerField.value || ""}
+                              value={controllerField.value || ''}
                             >
                               <SelectTrigger id={field.id}>
                                 <SelectValue placeholder={field.placeholder} />
@@ -194,7 +194,7 @@ export default function ApplicationForm() {
                           )}
                         />
                         {errors[field.htmlFor as keyof ApplicationFormData] && (
-                          <p className="text-red-500 text-sm mt-1">
+                          <p className="mt-1 text-sm text-red-500">
                             {
                               errors[field.htmlFor as keyof ApplicationFormData]
                                 ?.message
@@ -213,7 +213,7 @@ export default function ApplicationForm() {
                           placeholder={field.placeholder}
                         />
                         {errors[field.htmlFor as keyof ApplicationFormData] && (
-                          <p className="text-red-500 text-sm mt-1">
+                          <p className="mt-1 text-sm text-red-500">
                             {
                               errors[field.htmlFor as keyof ApplicationFormData]
                                 ?.message
@@ -228,14 +228,14 @@ export default function ApplicationForm() {
             </CardContent>
           </Card>
 
-          <div className="flex justify-end mt-3">
+          <div className="mt-3 flex justify-end">
             <Button
               type="submit"
               size="lg"
               disabled={isSubmitting}
               className="min-w-[150px]"
             >
-              {isSubmitting ? "Submitting..." : "Submit Application"}
+              {isSubmitting ? 'Submitting...' : 'Submit Application'}
             </Button>
           </div>
         </motion.form>

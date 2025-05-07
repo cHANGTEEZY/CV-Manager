@@ -18,31 +18,82 @@ const useTableData = () => {
     tableDefinition[] | null
   >([]);
 
-  useEffect(() => {
-    const getTableData = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('applicant_details')
-          .select();
+  const fetchTableData = async () => {
+    try {
+      const { data, error } = await supabase.from('applicant_details').select();
 
-        if (error) {
-          throw new Error(error.message || 'Error retrieving table data');
-        }
+      if (error) {
+        throw new Error(error.message || 'Error retrieving table data');
+      }
 
-        if (Array.isArray(data)) {
-          setTableData(data);
-        } else {
-          console.error('Data returned is not an array:', data);
-          setTableData([]);
-        }
-      } catch (error: any) {
-        console.error('Error fetching table data:', error);
-        toast.error(error.message || 'Something went wrong');
+      if (Array.isArray(data)) {
+        setTableData(data);
+      } else {
+        console.error('Data returned is not an array:', data);
         setTableData([]);
       }
-    };
+    } catch (error: any) {
+      console.error('Error fetching table data:', error);
+      toast.error(error.message || 'Something went wrong');
+      setTableData([]);
+    }
+  };
 
-    getTableData();
+  useEffect(() => {
+    fetchTableData();
+
+    const subscription = supabase
+      .channel('applicant_details_channel')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'applicant_details',
+        },
+        (payload) => {
+          try {
+            if (payload.eventType === 'INSERT') {
+              setTableData((prev) => {
+                if (!prev) return [payload.new as tableDefinition];
+                // Prevent duplicates by checking id
+                if (prev.some((item) => item.id === payload.new.id)) {
+                  return prev;
+                }
+                return [...prev, payload.new as tableDefinition];
+              });
+            } else if (payload.eventType === 'UPDATE') {
+              setTableData((prev) => {
+                if (!prev) return null;
+                return prev.map((item) =>
+                  item.id === payload.new.id
+                    ? (payload.new as tableDefinition)
+                    : item
+                );
+              });
+            } else if (payload.eventType === 'DELETE') {
+              setTableData((prev) => {
+                if (!prev) return null;
+                return prev.filter((item) => item.id !== payload.old.id);
+              });
+            }
+          } catch (error) {
+            console.error('Error processing real-time update:', error);
+            toast.error('Failed to process applicant data update');
+          }
+        }
+      )
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          console.log('Real-time subscription active for applicant_details');
+        } else if (status === 'CLOSED' || status === 'CHANNEL_ERROR') {
+          console.error('Real-time subscription error or closed:', status);
+        }
+      });
+
+    return () => {
+      supabase.removeChannel(subscription);
+    };
   }, []);
 
   useEffect(() => {

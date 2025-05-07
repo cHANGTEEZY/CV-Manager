@@ -29,7 +29,6 @@ import {
 } from '@/components/ui/popover';
 import { Separator } from '@/components/ui/separator';
 import { Link } from 'react-router-dom';
-import { useEvents } from '@/hooks/use-event-data';
 import { cn } from '@/lib/utils';
 import {
   Select,
@@ -38,6 +37,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { EventType } from '@/hooks/use-event-data';
+
+interface DateEventsProps {
+  date: Date;
+  setDate: (date: Date) => void;
+  events: EventType[];
+  isLoading: boolean;
+  formatEventTime: (dateTimeString: string) => string;
+}
 
 const generateIcon = (status: string) => {
   const statusCheck = status.toLowerCase();
@@ -51,10 +59,14 @@ const generateIcon = (status: string) => {
   }
 };
 
-export function DateEvents() {
-  const [date, setDate] = useState<Date>(new Date());
+export function DateEvents({
+  date,
+  setDate,
+  events,
+  isLoading,
+  formatEventTime,
+}: DateEventsProps) {
   const [statusFilter, setStatusFilter] = useState<string>('all');
-  const { events, isLoading, formatEventTime } = useEvents(date);
 
   const filteredEvents = events.filter((event) => {
     if (statusFilter === 'all') return true;
@@ -150,7 +162,7 @@ export function DateEvents() {
                         </p>
                       </div>
 
-                      <div className="bg mt-3 border-t pt-3">
+                      <div className="mt-3 border-t pt-3">
                         <div className="flex justify-between gap-2">
                           <div className="flex items-center gap-1.5">
                             <User />

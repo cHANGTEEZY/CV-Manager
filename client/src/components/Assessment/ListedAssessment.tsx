@@ -61,7 +61,6 @@ import {
   assessmentType,
 } from '@/constants/Assessments';
 
-// Define interfaces for candidate type
 interface Candidate {
   applicant_email?: string;
   email?: string;
@@ -80,7 +79,6 @@ const ListedAssessment = () => {
   >([]);
   const { secondInterviewPassed, thirdInterviewPassed, firstAssessmentPassed } =
     useTableData();
-
   const [isLoading, setIsLoading] = useState(false);
   const [selectedAssessment, setSelectedAssessment] =
     useState<AssessmentProps | null>(null);
@@ -91,27 +89,81 @@ const ListedAssessment = () => {
   const [filteredCandidates, setFilteredCandidates] = useState<Candidate[]>([]);
   const [selectedType, setSelectedType] = useState(assessmentFilter[0]);
 
+  const fetchAssessments = async () => {
+    try {
+      setIsLoading(true);
+      const { data, error } = await supabase.from('assessment_table').select();
+      if (error) throw error;
+      setListedAssessments(data || []);
+      setFilteredAssessments(data || []);
+    } catch (error) {
+      console.error('Error fetching assessments:', error);
+      toast.error('Failed to fetch assessments');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const getListedAssessment = async () => {
-      try {
-        setIsLoading(true);
-        const { data, error } = await supabase
-          .from('assessment_table')
-          .select();
-        if (error) throw error;
-        setListedAssessments(data || []);
-        setFilteredAssessments(data || []);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
+    fetchAssessments();
+
+    const subscription = supabase
+      .channel('assessment_table_channel')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'assessment_table',
+        },
+        (payload) => {
+          try {
+            if (payload.eventType === 'INSERT') {
+              setListedAssessments((prev: any) => {
+                if (!prev) return [payload.new as AssessmentProps];
+                if (prev.some((item: any) => item.id === payload.new.id)) {
+                  return prev;
+                }
+                return [...prev, payload.new as AssessmentProps];
+              });
+            } else if (payload.eventType === 'UPDATE') {
+              setListedAssessments((prev: any) => {
+                if (!prev) return null;
+                return prev.map((item: any) =>
+                  item.id === payload.new.id
+                    ? (payload.new as AssessmentProps)
+                    : item
+                );
+              });
+            } else if (payload.eventType === 'DELETE') {
+              setListedAssessments((prev: any) => {
+                if (!prev) return null;
+                return prev.filter((item: any) => item.id !== payload.old.id);
+              });
+            }
+          } catch (error) {
+            console.error('Error processing real-time update:', error);
+          }
+        }
+      )
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          console.log('Real-time subscription active for assessment_table');
+        } else if (status === 'CLOSED' || status === 'CHANNEL_ERROR') {
+          console.error('Real-time subscription error or closed:', status);
+        }
+      });
+
+    return () => {
+      supabase.removeChannel(subscription);
     };
-    getListedAssessment();
   }, []);
 
   useEffect(() => {
-    if (!listedAssessments.length) return;
+    if (!listedAssessments.length) {
+      setFilteredAssessments([]);
+      return;
+    }
 
     let filtered = [...listedAssessments];
 
@@ -136,31 +188,16 @@ const ListedAssessment = () => {
   const handleSave = async () => {
     if (!selectedAssessment) return;
     try {
-      // Ensure the selectedAssessment has an id property
       if ('id' in selectedAssessment) {
         const { id, ...updatedData } = selectedAssessment as AssessmentProps & {
           id: string;
         };
-
         const { error } = await supabase
           .from('assessment_table')
           .update(updatedData)
           .eq('id', id);
 
         if (error) throw error;
-
-        setListedAssessments((prev) =>
-          prev.map((item) => {
-            if (
-              'id' in item &&
-              'id' in selectedAssessment &&
-              item.id === selectedAssessment.id
-            ) {
-              return selectedAssessment;
-            }
-            return item;
-          })
-        );
 
         toast.success('Assessment updated successfully');
       } else {
@@ -350,7 +387,6 @@ const ListedAssessment = () => {
       );
 
       const updateResults = await Promise.all(updatePromises);
-
       const successfulUpdates = updateResults.filter((result) => result).length;
 
       toast.success(
@@ -491,7 +527,7 @@ const ListedAssessment = () => {
                                 onValueChange={(value) =>
                                   setSelectedAssessment((prev) => ({
                                     ...prev!,
-                                    type: value as any,
+                                    title: value as any,
                                   }))
                                 }
                               >
@@ -500,7 +536,7 @@ const ListedAssessment = () => {
                                 </SelectTrigger>
                                 <SelectContent>
                                   {assessmentTitle.map((title) => (
-                                    <SelectItem value={title}>
+                                    <SelectItem key={title} value={title}>
                                       {title}
                                     </SelectItem>
                                   ))}
@@ -525,7 +561,7 @@ const ListedAssessment = () => {
                                   </SelectTrigger>
                                   <SelectContent>
                                     {assessmentType.map((type) => (
-                                      <SelectItem value={type}>
+                                      <SelectItem key={type} value={type}>
                                         {type}
                                       </SelectItem>
                                     ))}
@@ -549,7 +585,7 @@ const ListedAssessment = () => {
                                   </SelectTrigger>
                                   <SelectContent>
                                     {assessmentLevel.map((level) => (
-                                      <SelectItem value={level}>
+                                      <SelectItem key={level} value={level}>
                                         {level}
                                       </SelectItem>
                                     ))}
@@ -782,63 +818,52 @@ const ListedAssessment = () => {
 
                                 {selectedGroup &&
                                   filteredCandidates.length === 0 && (
-                                    <div className="flex items-center gap-2 rounded-md bg-amber-50 p-3 text-amber-700 dark:bg-amber-900/20 dark:text-amber-200">
-                                      <AlertTriangle className="h-4 w-4" />
-                                      {selectedGroup &&
-                                        filteredCandidates.length === 0 && (
-                                          <div className="space-y-3">
-                                            <div className="flex items-center gap-2 rounded-md bg-amber-50 p-3 text-amber-700 dark:bg-amber-900/20 dark:text-amber-200">
-                                              <AlertTriangle className="h-4 w-4" />
-                                              <span className="text-sm">
-                                                No candidates match the
-                                                assessment criteria in this
-                                                group. Consider selecting a
-                                                different group or changing the
-                                                assessment requirements.
+                                    <div className="space-y-3">
+                                      <div className="flex items-center gap-2 rounded-md bg-amber-50 p-3 text-amber-700 dark:bg-amber-900/20 dark:text-amber-200">
+                                        <AlertTriangle className="h-4 w-4" />
+                                        <span className="text-sm">
+                                          No candidates match the assessment
+                                          criteria in this group. Consider
+                                          selecting a different group or
+                                          changing the assessment requirements.
+                                        </span>
+                                      </div>
+
+                                      <div className="mt-2 space-y-2 rounded-md border border-amber-200 bg-amber-50/50 p-3">
+                                        <p className="text-sm font-medium text-amber-800">
+                                          Unmatched Candidates:
+                                        </p>
+                                        <div className="max-h-32 space-y-1 overflow-y-auto">
+                                          {(selectedGroup === 'interview2'
+                                            ? secondInterviewPassed || []
+                                            : selectedGroup === 'interview3'
+                                              ? thirdInterviewPassed || []
+                                              : selectedGroup === 'assessment1'
+                                                ? firstAssessmentPassed || []
+                                                : []
+                                          ).map((candidate, index) => (
+                                            <div
+                                              key={index}
+                                              className="text-sm text-amber-700"
+                                            >
+                                              <span className="font-medium">
+                                                {candidate.applicant_name}
+                                              </span>
+                                              <span className="text-amber-600">
+                                                {' '}
+                                                -{' '}
+                                              </span>
+                                              <span className="text-amber-600/80">
+                                                {candidate.tech_stack} (
+                                                {
+                                                  candidate.applicant_experience_level
+                                                }
+                                                )
                                               </span>
                                             </div>
-
-                                            {/* Show unmatched candidates */}
-                                            <div className="mt-2 space-y-2 rounded-md border border-amber-200 bg-amber-50/50 p-3">
-                                              <p className="text-sm font-medium text-amber-800">
-                                                Unmatched Candidates:
-                                              </p>
-                                              <div className="max-h-32 space-y-1 overflow-y-auto">
-                                                {(selectedGroup === 'interview2'
-                                                  ? secondInterviewPassed || []
-                                                  : selectedGroup ===
-                                                      'interview3'
-                                                    ? thirdInterviewPassed || []
-                                                    : selectedGroup ===
-                                                        'assessment1'
-                                                      ? firstAssessmentPassed ||
-                                                        []
-                                                      : []
-                                                ).map((candidate, index) => (
-                                                  <div
-                                                    key={index}
-                                                    className="text-sm text-amber-700"
-                                                  >
-                                                    <span className="font-medium">
-                                                      {candidate.applicant_name}
-                                                    </span>
-                                                    <span className="text-amber-600">
-                                                      {' '}
-                                                      -{' '}
-                                                    </span>
-                                                    <span className="text-amber-600/80">
-                                                      {candidate.tech_stack} (
-                                                      {
-                                                        candidate.applicant_experience_level
-                                                      }
-                                                      )
-                                                    </span>
-                                                  </div>
-                                                ))}
-                                              </div>
-                                            </div>
-                                          </div>
-                                        )}
+                                          ))}
+                                        </div>
+                                      </div>
                                     </div>
                                   )}
                               </div>

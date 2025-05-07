@@ -20,7 +20,6 @@ const EmailDraft = () => {
     let condition = '';
     if (candidateStatus === 'SuccessMail') condition = 'Offer';
     else if (candidateStatus === 'RejectionMail') condition = 'Fail';
-    else if (candidateStatus === 'AssignmentMail') condition = 'Task';
     else return;
 
     const getMatchingCandidates = async () => {

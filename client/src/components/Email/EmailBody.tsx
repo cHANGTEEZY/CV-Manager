@@ -13,11 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/select';
-import {
-  SuccessMail,
-  RejectionMail,
-  AssignmentMail,
-} from '@/constants/EmailDraft';
+import { SuccessMail, RejectionMail } from '@/constants/EmailDraft';
 import { Textarea } from '../ui/textarea';
 import FileUpload from '../Application/FileUpload';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -27,7 +23,6 @@ import { supabase } from '@/utils/supabaseClient';
 const emailTemplates = {
   SuccessMail,
   RejectionMail,
-  AssignmentMail,
 };
 
 // Create motion-wrapped CardFooter component
@@ -147,7 +142,6 @@ const EmailBody = ({
       const statusMap: Record<string, { verdict: string; status: string }> = {
         RejectionMail: { verdict: 'Failed', status: 'Rejected' },
         SuccessMail: { verdict: 'Hired', status: 'Hired' },
-        AssignmentMail: { verdict: 'Task', status: 'Assigned' },
       };
 
       const statusObj = statusMap[emailType];
@@ -208,7 +202,6 @@ const EmailBody = ({
             <SelectContent>
               <SelectItem value="SuccessMail">Success Email</SelectItem>
               <SelectItem value="RejectionMail">Rejection Email</SelectItem>
-              <SelectItem value="AssignmentMail">Assignment Email</SelectItem>
             </SelectContent>
           </Select>
         </div>

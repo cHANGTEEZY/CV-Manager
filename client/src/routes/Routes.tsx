@@ -6,7 +6,7 @@ import AuthCallback from '@/components/auth/AuthCallback';
 import ErrorPage from '@/components/Error/ErrorPage';
 import AuthenticationLayout from '@/layouts/AuthenticationLayout';
 import RootLayout from '@/layouts/RootLayout';
-import HomePage from '@/pages/HomePage';
+import Dashboard from '@/pages/Dashboard';
 import SettingPage from '@/pages/SettingPage';
 import EventPage from '@/pages/Events/EventPage';
 import PublicRoute from '@/routes/PublicRoute';
@@ -35,7 +35,7 @@ export const router = createBrowserRouter([
         index: true,
         element: (
           <ProtectedRoute>
-            <HomePage />
+            <Dashboard />
           </ProtectedRoute>
         ),
       },

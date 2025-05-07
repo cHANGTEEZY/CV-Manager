@@ -51,8 +51,12 @@ import {
 
 type FormValues = z.infer<typeof formSchema>;
 
-const CreateEvent = () => {
-  const [_date, setDate] = useState<Date>();
+interface CreateEventProps {
+  setDate?: (date: Date) => void;
+}
+
+const CreateEvent = ({ setDate }: CreateEventProps) => {
+  const [_date, setLocalDate] = useState<Date>();
   const [applicants, setApplicants] = useState<Applicant[]>([]);
   const [filteredApplicants, setFilteredApplicants] = useState<Applicant[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -192,8 +196,11 @@ const CreateEvent = () => {
 
       toast.success(`${interviewType.name} scheduled successfully`);
       form.reset();
-      setDate(undefined);
-
+      setLocalDate(undefined);
+      // Update the selected date in DateEvents
+      if (setDate) {
+        setDate(new Date(data.event_date));
+      }
       // Refresh applicants list
       await fetchApplicants();
     } catch (error) {
@@ -314,7 +321,7 @@ const CreateEvent = () => {
                           selected={field.value}
                           onSelect={(date) => {
                             field.onChange(date);
-                            setDate(date || undefined);
+                            setLocalDate(date || undefined);
                           }}
                           disabled={(date) =>
                             date < new Date(new Date().setHours(0, 0, 0, 0))
