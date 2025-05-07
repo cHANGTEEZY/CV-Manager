@@ -7,6 +7,7 @@ import { Features } from '@/components/Landing/Features';
 import Testimonials from '@/components/Landing/Testimonials';
 import CarouselFeatures from '@/components/Landing/CarouselFeatures';
 import AppFooter from '@/components/Footer/AppFooter';
+import Faq from '@/components/Landing/Faq';
 
 const LandingPage = () => {
   return (
@@ -50,6 +51,9 @@ const LandingPage = () => {
       </section>
       <div className="my-20">
         <Testimonials />
+      </div>
+      <div className="my-20">
+        <Faq />
       </div>
       <AppFooter />
     </section>

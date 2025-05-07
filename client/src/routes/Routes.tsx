@@ -21,6 +21,8 @@ import AssessmentPage from '@/pages/Events/AssessmentPage';
 import ReviewEvent from '@/pages/Events/ReviewEvent';
 import AssessmentReview from '@/pages/Events/AssessmentReview';
 import FinalReview from '@/pages/Application/FinalReview';
+import ForgotPassword from '@/components/auth/ForgotPassword';
+import ResetPassword from '@/components/auth/ResetPassword';
 
 export const router = createBrowserRouter([
   {
@@ -154,6 +156,14 @@ export const router = createBrowserRouter([
       {
         path: 'callback',
         element: <AuthCallback />,
+      },
+      {
+        path: 'forgot-password',
+        element: <ForgotPassword />,
+      },
+      {
+        path: 'reset-password',
+        element: <ResetPassword />,
       },
     ],
   },

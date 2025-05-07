@@ -22,7 +22,7 @@ export const Header = () => {
 
   return (
     <header className="border-b border-[oklch(1_0_0/8%)] bg-transparent">
-      <nav className="mx-auto flex max-w-6xl items-center justify-between p-4">
+      <nav className="mx-auto flex max-w-7xl items-center justify-between">
         <span className="flex items-center gap-1 text-lg font-medium text-[oklch(0.9_0.01_270)]">
           <img src={framerWhite} alt="framer company logo" className="h-10" />
         </span>

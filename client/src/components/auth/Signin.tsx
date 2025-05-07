@@ -106,9 +106,11 @@ const Signin = () => {
                   <label htmlFor="password" className="text-sm font-medium">
                     Password
                   </label>
-                  <a href="#" className="text-primary text-sm hover:underline">
-                    Forgot password?
-                  </a>
+                  <Link to={'/auth/forgot-password'}>
+                    <span className="text-primary text-sm hover:underline">
+                      Forgot password?
+                    </span>
+                  </Link>
                 </div>
                 <div className="relative">
                   <LockIcon className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
@@ -126,7 +128,11 @@ const Signin = () => {
                   </span>
                 )}
               </div>
-              <Button type="submit" className="w-full" disabled={isLoggingIn}>
+              <Button
+                type="submit"
+                className="w-full cursor-pointer"
+                disabled={isLoggingIn}
+              >
                 {isLoggingIn ? 'Signing in...' : 'Sign in'}
               </Button>
             </form>
@@ -137,7 +143,7 @@ const Signin = () => {
           <CardFooter>
             <Button
               variant="outline"
-              className="w-full"
+              className="w-full cursor-pointer"
               onClick={handleGoogleSignIn}
             >
               <svg

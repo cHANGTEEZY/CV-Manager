@@ -116,7 +116,7 @@ export function AppSidebar() {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>
                     <Button variant={'ghost'} className="w-full cursor-pointer">
-                      <Link to={'/profile'}>Profile</Link>
+                      <Link to={'/dashboard/profile'}>Profile</Link>
                     </Button>
                   </DropdownMenuItem>
                   <DropdownMenuItem className="bg-destructive">

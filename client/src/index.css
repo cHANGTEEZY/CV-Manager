@@ -146,3 +146,20 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Remove spinner in all browsers */
+input[type='number'] {
+  -moz-appearance: textfield; /* Firefox */
+  -webkit-appearance: none; /* Chrome, Safari */
+  appearance: none; /* Standard */
+}
+
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  appearance: none; /* Chrome, Safari */
+  margin: 0; /* Remove margin for better spacing */
+}
+
+input[type='number']:focus {
+  outline: none; /* Optional: remove outline on focus */
+}

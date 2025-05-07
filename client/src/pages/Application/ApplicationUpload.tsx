@@ -211,6 +211,7 @@ export default function ApplicationForm() {
                           id={field.id}
                           type={field.type}
                           placeholder={field.placeholder}
+                          className=""
                         />
                         {errors[field.htmlFor as keyof ApplicationFormData] && (
                           <p className="mt-1 text-sm text-red-500">

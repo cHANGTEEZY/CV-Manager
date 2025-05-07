@@ -7,6 +7,7 @@ import { Pricing } from './Pricing';
 import UseRedirect from '@/hooks/use-redirect';
 import { bgauth, heroProuct } from '@/assets/images';
 import { motion } from 'framer-motion';
+import { WordRotate } from '../magicui/word-rotate';
 
 export const Hero = () => {
   return (
@@ -33,12 +34,13 @@ export const Hero = () => {
           </motion.h1>
 
           <motion.p
-            className="mt-4 max-w-md text-lg font-medium text-slate-50 md:text-2xl"
+            className="mt-4 max-w-md text-lg font-medium text-pink-900 md:text-3xl"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: 'easeOut' }}
           >
-            The HR management tool
+            The HR management tool for{' '}
+            <WordRotate words={['Employees', 'Teams', 'Success']} />
           </motion.p>
 
           <motion.div

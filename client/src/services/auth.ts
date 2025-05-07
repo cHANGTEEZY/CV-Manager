@@ -26,6 +26,23 @@ export const AuthService = {
     return data;
   },
 
+  async forgotPassword(email: string) {
+    const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/reset-password`,
+    });
+
+    if (error) throw error;
+    return data;
+  },
+
+  async resetPassword(password: string) {
+    const { error } = await supabase.auth.updateUser({
+      password,
+    });
+
+    if (error) throw error;
+  },
+
   async signInWithGoogle() {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
