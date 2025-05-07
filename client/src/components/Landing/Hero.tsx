@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog';
 import { BanknoteIcon as BanknoteArrowUp } from 'lucide-react';
 import { Pricing } from './Pricing';
 import UseRedirect from '@/hooks/use-redirect';
-import { heroBlob, heroProuct } from '@/assets/images';
+import { bgauth, heroProuct } from '@/assets/images';
 import { motion } from 'framer-motion';
 
 export const Hero = () => {
@@ -13,7 +13,7 @@ export const Hero = () => {
     <section className="relative w-full overflow-hidden pt-24 pb-32 md:pt-32 md:pb-48">
       <div className="absolute inset-0 z-0">
         <img
-          src={heroBlob || '/placeholder.svg'}
+          src={bgauth || '/placeholder.svg'}
           alt=""
           className="h-full w-full object-cover"
         />
@@ -27,7 +27,7 @@ export const Hero = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: 'easeOut' }}
           >
-            <span className="inline-block bg-gradient-to-r from-[oklch(0.7_0.25_273)] via-[oklch(0.65_0.3_320)] to-[oklch(0.6_0.28_240)] bg-clip-text text-transparent">
+            <span className="inline-block bg-gradient-to-r from-[oklch(0.7_0.4_25)] via-[oklch(0.65_0.35_320)] to-[oklch(0.6_0.3_280)] bg-clip-text text-transparent">
               Manage it <br /> With Framer
             </span>
           </motion.h1>

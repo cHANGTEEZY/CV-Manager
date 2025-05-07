@@ -12,8 +12,10 @@ import monitorSingleApplicants from './monitorSingleApplicant.png';
 import trackAllApplicants from './trackAllApplicants.png';
 import sendEmail from './sendEmail.png';
 import assessment from './assessment.png';
+import bgauth from './bgauth.jpg';
 
 export {
+  bgauth,
   assessment,
   sendEmail,
   trackAllApplicants,

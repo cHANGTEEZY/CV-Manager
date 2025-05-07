@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Card,
   CardHeader,
@@ -15,7 +17,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { AuthService } from '@/services/auth';
 import { toast } from 'sonner';
-import { SignUpSchemaProps, signUpSchema } from '@/schemas/authSchema';
+import { type SignUpSchemaProps, signUpSchema } from '@/schemas/authSchema';
+import { bgauth } from '@/assets/images';
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -61,8 +64,16 @@ const Signup = () => {
 
   return (
     <>
-      <section className="flex h-screen w-screen items-center justify-center">
-        <Card className="m-3 w-full max-w-md shadow-lg">
+      <section className="relative flex h-screen w-screen items-center justify-center overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <img
+            src={bgauth || '/placeholder.svg'}
+            alt=""
+            className="h-full w-full object-cover"
+          />
+        </div>
+
+        <Card className="relative z-10 m-3 w-full max-w-md shadow-[0_0_15px_rgba(128,0,255,0.5),0_0_25px_rgba(0,128,255,0.3)]">
           <CardHeader className="space-y-1">
             <CardTitle className="text-center text-2xl font-semibold">
               Sign up
@@ -84,9 +95,7 @@ const Signup = () => {
               <div className="space-y-2">
                 <label
                   htmlFor="username"
-                  className={`text-sm font-medium ${
-                    errors && errors.username ? 'text-red-500' : ''
-                  }`}
+                  className={`text-sm font-medium ${errors && errors.username ? 'text-red-500' : ''}`}
                 >
                   Username
                 </label>
@@ -115,9 +124,7 @@ const Signup = () => {
               <div className="space-y-2">
                 <label
                   htmlFor="email"
-                  className={`text-sm font-medium ${
-                    errors && errors.email ? 'text-red-500' : ''
-                  }`}
+                  className={`text-sm font-medium ${errors && errors.email ? 'text-red-500' : ''}`}
                 >
                   Email
                 </label>
@@ -145,9 +152,7 @@ const Signup = () => {
               <div className="space-y-2">
                 <label
                   htmlFor="password"
-                  className={`text-sm font-medium ${
-                    errors && errors.password ? 'text-red-500' : ''
-                  }`}
+                  className={`text-sm font-medium ${errors && errors.password ? 'text-red-500' : ''}`}
                 >
                   Password
                 </label>
@@ -175,9 +180,7 @@ const Signup = () => {
               <div className="space-y-2">
                 <label
                   htmlFor="confirmPassword"
-                  className={`text-sm font-medium ${
-                    errors && errors.confirmPassword ? 'text-red-500' : ''
-                  }`}
+                  className={`text-sm font-medium ${errors && errors.confirmPassword ? 'text-red-500' : ''}`}
                 >
                   Confirm Password
                 </label>
