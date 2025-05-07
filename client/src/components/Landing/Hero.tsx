@@ -1,104 +1,91 @@
+'use client';
+
 import { Button } from '../ui/button';
 import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog';
-import { BanknoteArrowUp } from 'lucide-react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '../ui/card';
-import { cn } from '@/lib/utils';
-import { pricingPlans } from '@/constants/LandingPage';
-import { Check } from 'lucide-react';
+import { BanknoteIcon as BanknoteArrowUp } from 'lucide-react';
+import { Pricing } from './Pricing';
 import UseRedirect from '@/hooks/use-redirect';
+import { heroBlob, heroProuct } from '@/assets/images';
+import { motion } from 'framer-motion';
 
 export const Hero = () => {
   return (
-    <section className="flex h-96 w-full items-center justify-center border-[oklch(1_0_0/8%)]">
-      <div className="grid place-items-center gap-6">
-        <h1 className="text-center text-8xl font-bold text-[oklch(0.9_0.01_270)]">
-          Manage it <br /> With Framer
-        </h1>
+    <section className="relative w-full overflow-hidden pt-24 pb-32 md:pt-32 md:pb-48">
+      <div className="absolute inset-0 z-0">
+        <img
+          src={heroBlob || '/placeholder.svg'}
+          alt=""
+          className="h-full w-full object-cover"
+        />
+      </div>
 
-        <span className="mt-2 space-x-3">
-          <Button
-            onClick={UseRedirect('/dashboard')}
-            className="cursor-pointer bg-[oklch(0.65_0.23_25)] text-[oklch(0.98_0.01_25)] hover:bg-[oklch(0.65_0.23_25/90%)]"
+      <div className="relative z-10 container mx-auto px-4">
+        <div className="flex flex-col items-center justify-center text-center">
+          <motion.h1
+            className="text-5xl leading-tight font-bold sm:text-6xl md:text-6xl lg:text-7xl xl:text-8xl"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: 'easeOut' }}
           >
-            Get Started
-          </Button>
-          <Dialog>
-            <DialogTrigger>
-              <Button className="cursor-pointer bg-[oklch(0.28_0.02_260)] text-[oklch(0.92_0.01_270)] hover:bg-[oklch(0.28_0.02_260/80%)]">
-                Find your plan <BanknoteArrowUp />
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="w-[max-content] border-none bg-black p-0">
-              <Pricing />
-            </DialogContent>
-          </Dialog>
-        </span>
-      </div>
-    </section>
-  );
-};
+            <span className="inline-block bg-gradient-to-r from-[oklch(0.7_0.25_273)] via-[oklch(0.65_0.3_320)] to-[oklch(0.6_0.28_240)] bg-clip-text text-transparent">
+              Manage it <br /> With Framer
+            </span>
+          </motion.h1>
 
-const Pricing = () => {
-  const getTitleColor = (title: string) => {
-    if (title === 'Starter') {
-      return 'text-yellow-500';
-    } else if (title === 'Pro') {
-      return 'text-primary';
-    } else {
-      return 'text-purple-500';
-    }
-  };
+          <motion.p
+            className="mt-4 max-w-md text-lg font-medium text-slate-50 md:text-2xl"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2, ease: 'easeOut' }}
+          >
+            The HR management tool
+          </motion.p>
 
-  return (
-    <div>
-      <h1 className="text-gradient-blaze mb-14 pt-15 text-center text-4xl font-bold">
-        Find The Model which suits you best.
-      </h1>
-      <div className="mx-auto grid w-[1200px] grid-cols-1 gap-4 md:grid-cols-3">
-        {pricingPlans.map((plan) => (
-          <Card className="border-black bg-black shadow-slate-600">
-            <CardHeader>
-              <CardTitle
-                className={cn(
-                  'text-3xl font-light text-white',
-                  getTitleColor(plan.title)
-                )}
-              >
-                {plan.title}
-              </CardTitle>
-              <CardDescription className="max-w-[200px]">
-                {plan.description}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-white">
-                <h3 className={cn('mt-2 mb-5 text-5xl')}>{plan.price}</h3>
-                <Button className="w-full bg-white text-black transition-all delay-50 ease-in hover:text-white">
-                  {plan.buttonText}
+          <motion.div
+            className="mt-12 flex flex-wrap items-center justify-center gap-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4, ease: 'easeOut' }}
+          >
+            <Button
+              onClick={UseRedirect('/dashboard')}
+              className="cursor-pointer bg-[oklch(0.65_0.23_25)] text-[oklch(0.98_0.01_25)] hover:bg-[oklch(0.65_0.23_25/90%)]"
+              size="lg"
+            >
+              Get Started
+            </Button>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button
+                  className="cursor-pointer bg-[oklch(0.28_0.02_260)] text-[oklch(0.92_0.01_270)] hover:bg-[oklch(0.28_0.02_260/80%)]"
+                  size="lg"
+                >
+                  Find your plan <BanknoteArrowUp className="ml-2 h-4 w-4" />
                 </Button>
-                <div>
-                  <ul className="mt-4 space-y-2">
-                    {plan.features.map((feature) => (
-                      <li className="flex items-center gap-3">
-                        <span className="bg-primary flex items-center justify-center rounded-full p-0.5">
-                          <Check size={20} />
-                        </span>{' '}
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+              </DialogTrigger>
+              <DialogContent className="w-[max-content] border-none bg-black p-0">
+                <Pricing />
+              </DialogContent>
+            </Dialog>
+          </motion.div>
+        </div>
       </div>
-    </div>
+
+      <motion.div
+        className="relative z-10 mt-24 flex h-[600px] w-full items-center justify-center"
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1, delay: 0.6, ease: 'easeOut' }}
+      >
+        <div className="relative">
+          <div className="absolute -inset-1 rounded-xl bg-gradient-to-r from-purple-600 via-blue-500 to-purple-600 opacity-70 blur-lg"></div>
+          <img
+            src={heroProuct || '/placeholder.svg'}
+            alt="Product dashboard"
+            className="relative z-10 max-h-full max-w-full rounded-lg shadow-2xl md:max-w-[85%] lg:max-w-[1200px]"
+          />
+        </div>
+      </motion.div>
+    </section>
   );
 };

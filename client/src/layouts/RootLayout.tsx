@@ -10,7 +10,6 @@ import { ModeToggle } from '@/components/mode-toggle';
 import Search from '@/components/Search/Search';
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import EnhancedFooter from '@/components/Footer/AppFooter';
 
 export default function RootLayout() {
   const [isMounted, setIsMounted] = useState(false);
@@ -53,7 +52,6 @@ export default function RootLayout() {
         >
           <Outlet />
         </motion.main>
-        <EnhancedFooter />
       </SidebarInset>
     </SidebarProvider>
   );

@@ -1,3 +1,5 @@
+'use client';
+
 import { motion } from 'framer-motion';
 import {
   Bird,
@@ -11,26 +13,34 @@ import {
 } from 'lucide-react';
 
 export const Customer = () => {
+  const logos = [
+    Dribbble,
+    Bird,
+    Linkedin,
+    Youtube,
+    Slack,
+    Trello,
+    Instagram,
+    Facebook,
+  ];
+
   return (
-    <motion.div className="grid w-full grid-cols-2 place-items-center gap-10 py-8 sm:grid-cols-4">
-      {[
-        Dribbble,
-        Bird,
-        Linkedin,
-        Youtube,
-        Slack,
-        Trello,
-        Instagram,
-        Facebook,
-      ].map((Icon, index) => (
-        <motion.div
-          key={index}
-          whileHover={{ scale: 0.9 }}
-          className="text-[oklch(0.9_0.01_270)] opacity-70 transition-opacity duration-300 hover:opacity-100"
-        >
-          <Icon size={30} strokeWidth={1.5} />
-        </motion.div>
-      ))}
-    </motion.div>
+    <div className="px-4">
+      <div className="grid grid-cols-2 gap-12 sm:grid-cols-4">
+        {logos.map((Icon, index) => (
+          <motion.div
+            key={index}
+            whileHover={{ scale: 1.1 }}
+            className="flex items-center justify-center"
+          >
+            <Icon
+              size={32}
+              strokeWidth={1.5}
+              className="text-[oklch(0.9_0.01_270)] opacity-70 transition-opacity duration-300 hover:opacity-100"
+            />
+          </motion.div>
+        ))}
+      </div>
+    </div>
   );
 };

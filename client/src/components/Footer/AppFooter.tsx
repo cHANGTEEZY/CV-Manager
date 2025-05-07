@@ -46,7 +46,7 @@ export default function AppFooter() {
 
   return (
     <motion.footer
-      className="bg-background px-6 py-20 dark:border-slate-800"
+      className="bg-black px-6 py-20 dark:border-slate-800"
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true }}
@@ -73,7 +73,7 @@ export default function AppFooter() {
                   <input
                     type="email"
                     placeholder="Your email address"
-                    className="bg-background focus:ring-primary w-full rounded-l border border-r-0 px-3 py-2 text-sm focus:ring-1 focus:outline-none"
+                    className="focus:ring-primary w-full rounded-l border border-r-0 bg-black px-3 py-2 text-sm focus:ring-1 focus:outline-none"
                     required
                   />
                   <button
