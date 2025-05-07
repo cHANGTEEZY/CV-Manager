@@ -43,12 +43,22 @@ import { useNavigate } from 'react-router-dom';
 
 const columnHelper = createColumnHelper<tableDefinition>();
 
-const globalFilterFn: FilterFn<any> = (row, filterValue) => {
-  const searchTerm = filterValue.toLowerCase();
+const globalFilterFn: FilterFn<any> = (row, columnId, value, addMeta) => {
+  // If no search term, show all rows
+  if (!value) return true;
 
-  return Object.values(row.original).some(
-    (value) => value && value.toString().toLowerCase().includes(searchTerm)
-  );
+  const searchTerm = String(value).toLowerCase();
+
+  // Search through all values in the row
+  return Object.values(row.original).some((cellValue) => {
+    // Handle null or undefined values
+    if (cellValue === null || cellValue === undefined) {
+      return false;
+    }
+
+    // Convert value to string and search
+    return String(cellValue).toLowerCase().includes(searchTerm);
+  });
 };
 
 const getStatusColor = (status: string) => {
@@ -70,6 +80,9 @@ const getStatusColor = (status: string) => {
 
   if (status.includes('interview') || status.includes('reviewing'))
     return 'bg-yellow-400 text-black';
+
+  if (status.includes('eligible for offer'))
+    return 'bg-lime-200 text-slate-400';
 
   if (status.includes('pending') || status.includes('waiting'))
     return 'bg-gray-400 text-white';
@@ -236,7 +249,10 @@ const ApplicationTable = ({ tableData }: { tableData: tableDefinition[] }) => {
     getFilteredRowModel: getFilteredRowModel(),
     onSortingChange: setSorting,
     onGlobalFilterChange: setGlobalFilter,
-    globalFilterFn,
+    filterFns: {
+      fuzzy: globalFilterFn,
+    },
+    globalFilterFn: globalFilterFn,
     manualPagination: false,
     state: {
       sorting,
@@ -376,7 +392,7 @@ const ApplicationTable = ({ tableData }: { tableData: tableDefinition[] }) => {
           </Table>
         </div>
 
-        <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
+        <div className="mt-4 flex flex-col items-center justify-between gap-4 sm:flex-row">
           <div className="flex items-center space-x-2">
             <Button
               variant="outline"
