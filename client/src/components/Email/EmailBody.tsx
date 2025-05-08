@@ -19,6 +19,7 @@ import FileUpload from '../Application/FileUpload';
 import { AnimatePresence, motion } from 'framer-motion';
 import emailjs from '@emailjs/browser';
 import { supabase } from '@/utils/supabaseClient';
+import { reload } from '@/utils/reload';
 
 const emailTemplates = {
   SuccessMail,
@@ -173,6 +174,7 @@ const EmailBody = ({
 
       await Promise.all(sendPromises);
       toast.success('Emails sent successfully!');
+      reload();
       setSubject('');
     } catch (error: any) {
       console.error('Error sending email:', error);
