@@ -52,10 +52,9 @@ export default function Dashboard() {
             <ApplicationStatusChart statusData={statusData} />
           </div>
         </div>
+        {tableData && <ApplicationTable tableData={tableData} />}
 
         <ApplicationTimeline timelineData={timelineData} />
-
-        {tableData && <ApplicationTable tableData={tableData} />}
       </div>
     </section>
   );

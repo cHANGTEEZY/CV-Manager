@@ -54,16 +54,14 @@ const CreateAssessmentForm = () => {
     mode: 'onBlur',
   });
 
-  // Watch for changes in title and type to provide real-time validation feedback
   const selectedTitle = form.watch('title');
   const selectedType = form.watch('type');
 
   useEffect(() => {
     if (selectedTitle && selectedType) {
-      const titlePrefix = selectedTitle.split(' ')[0]; // "Full Stack", "Frontend", etc.
-      const typePrefix = selectedType.split(' ')[0]; // "Full", "Frontend", etc.
+      const titlePrefix = selectedTitle.split(' ')[0];
+      const typePrefix = selectedType.split(' ')[0];
 
-      // Check if title and type match
       let hasError = false;
 
       // Special case for "Full Stack" title and "Full Stack Engineer" type
@@ -181,7 +179,7 @@ const CreateAssessmentForm = () => {
                       defaultValue={field.value}
                       value={field.value}
                     >
-                      <FormControl>
+                      <FormControl className="w-full">
                         <SelectTrigger>
                           <SelectValue placeholder="Select The Assessment Round" />
                         </SelectTrigger>
@@ -207,13 +205,12 @@ const CreateAssessmentForm = () => {
                     <Select
                       onValueChange={(value) => {
                         field.onChange(value);
-                        // Clear validation error when changing selection
                         if (validationError) setValidationError(null);
                       }}
                       defaultValue={field.value}
                       value={field.value}
                     >
-                      <FormControl>
+                      <FormControl className="w-full">
                         <SelectTrigger>
                           <SelectValue placeholder="Select the Assessment type" />
                         </SelectTrigger>
@@ -241,7 +238,7 @@ const CreateAssessmentForm = () => {
                       defaultValue={field.value}
                       value={field.value}
                     >
-                      <FormControl>
+                      <FormControl className="w-full">
                         <SelectTrigger>
                           <SelectValue placeholder="Select level" />
                         </SelectTrigger>
