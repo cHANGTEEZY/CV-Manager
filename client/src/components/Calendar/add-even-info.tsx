@@ -43,10 +43,10 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { supabase } from '@/utils/supabaseClient';
 import {
-  interviewers,
   formSchema,
   Applicant,
   interviewTypes,
+  Interviewer,
 } from '@/schemas/interviewEventSchema';
 
 type FormValues = z.infer<typeof formSchema>;
@@ -60,6 +60,7 @@ const CreateEvent = ({ setDate }: CreateEventProps) => {
   const [applicants, setApplicants] = useState<Applicant[]>([]);
   const [filteredApplicants, setFilteredApplicants] = useState<Applicant[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [interviewers, setInterviewers] = useState<Interviewer[]>([]);
   const [selectedInterviewType, setSelectedInterviewType] = useState<
     string | null
   >(null);
@@ -147,6 +148,22 @@ const CreateEvent = ({ setDate }: CreateEventProps) => {
     }
   }, [interviewTypeWatch, form]);
 
+  //geting interviewers
+  useEffect(() => {
+    const getInterviewers = async () => {
+      try {
+        const { data: interviewersData, error: interviewerTableError } =
+          await supabase.from('Interviewer_table').select('*');
+        if (interviewerTableError) throw interviewerTableError;
+        setInterviewers(interviewersData as Interviewer[]);
+      } catch (error: any) {
+        toast.error(error);
+      }
+    };
+
+    getInterviewers();
+  }, []);
+
   const onSubmit = async (data: FormValues) => {
     const eventDateTime = new Date(data.event_date);
     const [hours, minutes] = data.event_time.split(':').map(Number);
@@ -180,7 +197,6 @@ const CreateEvent = ({ setDate }: CreateEventProps) => {
         throw eventError;
       }
 
-      // Update applicant status based on interview type
       const { error: updateError } = await supabase
         .from('applicant_details')
         .update({
@@ -453,9 +469,10 @@ const CreateEvent = ({ setDate }: CreateEventProps) => {
                           {interviewers.map((interviewer) => (
                             <SelectItem
                               key={interviewer.id}
-                              value={interviewer.name}
+                              value={interviewer.interviewer_name}
+                              className="capitalize"
                             >
-                              {interviewer.name}
+                              {interviewer.interviewer_name}
                             </SelectItem>
                           ))}
                         </SelectContent>
