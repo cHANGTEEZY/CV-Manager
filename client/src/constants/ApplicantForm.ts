@@ -5,6 +5,7 @@ export const applicantFormFields = [
     label: 'Full Name',
     type: 'text',
     placeholder: 'Enter your full name',
+    star: true,
   },
   {
     id: 'phoneNo',
@@ -12,6 +13,7 @@ export const applicantFormFields = [
     label: 'Phone Number',
     type: 'number',
     placeholder: 'Enter your phone number',
+    star: true,
   },
   {
     id: 'email',
@@ -19,6 +21,7 @@ export const applicantFormFields = [
     label: 'Email Address',
     type: 'email',
     placeholder: 'Enter your email address',
+    star: true,
   },
   {
     id: 'references',
@@ -26,6 +29,7 @@ export const applicantFormFields = [
     label: 'References (Optional)',
     type: 'text',
     placeholder: 'Enter any references',
+    star: false,
   },
   {
     id: 'technology',
@@ -43,6 +47,7 @@ export const applicantFormFields = [
       'Java',
       'Other',
     ],
+    star: true,
   },
   {
     id: 'position',
@@ -58,6 +63,7 @@ export const applicantFormFields = [
       'Devops Engineer',
       'UI/UX Designer',
     ],
+    star: true,
   },
   {
     id: 'salary',
@@ -65,6 +71,7 @@ export const applicantFormFields = [
     label: 'Expected Salary',
     type: 'text',
     placeholder: 'Enter your salary expectation',
+    star: true,
   },
   {
     id: 'level',
@@ -73,6 +80,7 @@ export const applicantFormFields = [
     type: 'select',
     placeholder: 'Select your experience level',
     options: ['Intern', 'Junior', 'Intermediate', 'Senior'],
+    star: true,
   },
   {
     id: 'experience',
@@ -81,6 +89,7 @@ export const applicantFormFields = [
     type: 'select',
     placeholder: 'Select years of experience',
     options: ['0-1', '1-3', '3-5', '5-10', '10+'],
+    star: true,
   },
 ];
 

@@ -167,7 +167,7 @@ const CreateAssessmentForm = () => {
                 control={form.control}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Assessment Title</FormLabel>
+                    <FormLabel>Assessment Title *</FormLabel>
                     <Select
                       onValueChange={(value) => {
                         field.onChange(value);
@@ -198,7 +198,7 @@ const CreateAssessmentForm = () => {
                 control={form.control}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Assessment Type</FormLabel>
+                    <FormLabel>Assessment Type *</FormLabel>
                     <Select
                       onValueChange={(value) => {
                         field.onChange(value);
@@ -229,7 +229,7 @@ const CreateAssessmentForm = () => {
                 control={form.control}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Select Assessment Level</FormLabel>
+                    <FormLabel>Select Assessment Level *</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
@@ -257,7 +257,7 @@ const CreateAssessmentForm = () => {
                 control={form.control}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Assessment Link</FormLabel>
+                    <FormLabel>Assessment Link *</FormLabel>
                     <FormControl>
                       <Input placeholder="Enter Google Form Link" {...field} />
                     </FormControl>
@@ -270,7 +270,7 @@ const CreateAssessmentForm = () => {
                 control={form.control}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Assessment Deadline</FormLabel>
+                    <FormLabel>Assessment Deadline *</FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
@@ -311,7 +311,7 @@ const CreateAssessmentForm = () => {
                 control={form.control}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Assessment Requirements</FormLabel>
+                    <FormLabel>Assessment Requirements *</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="Enter assessment requirements"

@@ -167,7 +167,7 @@ export default function ApplicationForm() {
                 {applicantFormFields.map((field) => (
                   <div key={field.id} className="space-y-2">
                     <Label htmlFor={field.id} className="font-medium">
-                      {field.label}
+                      {field.label} {field.star === true ? '*' : ''}
                     </Label>
 
                     {field.type === 'select' ? (
