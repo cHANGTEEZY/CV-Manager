@@ -180,7 +180,7 @@ export default function ApplicationForm() {
                               onValueChange={controllerField.onChange}
                               value={controllerField.value || ''}
                             >
-                              <SelectTrigger id={field.id}>
+                              <SelectTrigger id={field.id} className="w-full">
                                 <SelectValue placeholder={field.placeholder} />
                               </SelectTrigger>
                               <SelectContent>

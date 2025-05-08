@@ -252,7 +252,7 @@ const CreateEvent = ({ setDate }: CreateEventProps) => {
                         value={field.value}
                         onValueChange={field.onChange}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger className="w-full">
                           <SelectValue placeholder="Select interview type" />
                         </SelectTrigger>
                         <SelectContent>
@@ -276,7 +276,7 @@ const CreateEvent = ({ setDate }: CreateEventProps) => {
                 control={form.control}
                 name="event_name"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="w-full">
                     <FormLabel className="text-accent-foreground text-sm font-normal">
                       Event Title
                     </FormLabel>
@@ -364,7 +364,7 @@ const CreateEvent = ({ setDate }: CreateEventProps) => {
                         value={field.value}
                         onValueChange={field.onChange}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger className="w-full">
                           <SelectValue placeholder="Select time" />
                         </SelectTrigger>
                         <SelectContent>
@@ -408,7 +408,7 @@ const CreateEvent = ({ setDate }: CreateEventProps) => {
                           filteredApplicants.length === 0
                         }
                       >
-                        <SelectTrigger>
+                        <SelectTrigger className="w-full">
                           <SelectValue
                             placeholder={
                               isLoading
@@ -462,7 +462,7 @@ const CreateEvent = ({ setDate }: CreateEventProps) => {
                         value={field.value}
                         onValueChange={field.onChange}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger className="w-full">
                           <SelectValue placeholder="Select interviewer" />
                         </SelectTrigger>
                         <SelectContent>

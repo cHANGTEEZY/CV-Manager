@@ -35,6 +35,7 @@ import {
   defaultDescriptions,
   labels,
 } from '@/constants/ApplicationReviewPage';
+import { reload } from '@/utils/reload';
 
 export default function ReviewApplicationForm() {
   const { id } = useParams();
@@ -165,6 +166,7 @@ export default function ReviewApplicationForm() {
       if (error) throw error;
 
       toast.success('Applicant moved to onboarding');
+      reload();
     } catch (error) {
       console.error('Error updating status:', error);
       toast.error('Failed to update status');
@@ -185,6 +187,7 @@ export default function ReviewApplicationForm() {
       if (error) throw error;
 
       toast.error('Applicant has been rejected');
+      reload();
     } catch (error) {
       console.error('Error updating status:', error);
       toast.error('Failed to update status');
