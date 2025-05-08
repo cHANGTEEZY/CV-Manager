@@ -22,9 +22,13 @@ export const Header = () => {
 
   return (
     <header className="border-b border-[oklch(1_0_0/8%)] bg-transparent">
-      <nav className="mx-auto flex max-w-7xl items-center justify-between">
+      <nav className="mx-auto flex max-w-7xl items-center justify-between py-5">
         <span className="flex items-center gap-1 text-lg font-medium text-[oklch(0.9_0.01_270)]">
-          <img src={framerWhite} alt="framer company logo" className="h-10" />
+          <img
+            src={framerWhite}
+            alt="framer company logo"
+            className="h-6 md:h-10"
+          />
         </span>
         {isAuthenticated ? (
           <div>
@@ -32,7 +36,7 @@ export const Header = () => {
               <PopoverTrigger>
                 <User className="cursor-pointer" />
               </PopoverTrigger>
-              <PopoverContent className="m-0 grid w-[100px] place-content-center gap-2 border-none bg-slate-900">
+              <PopoverContent className="m-0 grid w-[100px] place-content-center gap-2 border-none bg-transparent">
                 <Button
                   variant={'outline'}
                   className="w-[100px] cursor-pointer"

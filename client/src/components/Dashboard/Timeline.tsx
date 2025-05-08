@@ -95,7 +95,7 @@ export function ApplicationTimeline({ timelineData }: { timelineData: any[] }) {
       <CardContent>
         {totalItems > 0 ? (
           <>
-            <ul className="grid grid-cols-3 gap-3 space-y-4">
+            <ul className="grid gap-3 space-y-4 lg:grid-cols-3">
               {currentItems.map((event: any, index: number) => (
                 <li key={index} className="rounded border p-4">
                   <div className="flex items-center space-x-3">

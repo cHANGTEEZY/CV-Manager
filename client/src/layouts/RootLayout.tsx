@@ -45,7 +45,7 @@ export default function RootLayout() {
           </motion.div>
         </motion.header>
         <motion.main
-          className="flex-1"
+          className="flex-1 sm:px-5"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}

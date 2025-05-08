@@ -34,8 +34,8 @@ export const Hero = () => {
           </motion.h1>
 
           <motion.p
-            className="mt-4 max-w-md text-lg font-medium text-pink-900 md:text-3xl"
             initial={{ opacity: 0, y: 20 }}
+            className="mt-4 max-w-md text-sm font-normal text-white md:text-3xl"
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: 'easeOut' }}
           >

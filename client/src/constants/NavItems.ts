@@ -23,10 +23,13 @@ export const navItems = [
     path: '/dashboard/events/create-event',
     subitems: [
       { title: 'Interview Scheduling', path: '/dashboard/events/create-event' },
-      { title: 'Interview Review', path: '/dashboard/events/review-event' },
+      {
+        title: 'Interview Review',
+        path: `/dashboard/events/review-event/${new Date().toISOString().split('T')[0]}`,
+      },
       {
         title: 'Manage Interviewer',
-        path: '/dashboard/assessment/interviewer',
+        path: '/dashboard/events/interviewer',
       },
     ],
   },

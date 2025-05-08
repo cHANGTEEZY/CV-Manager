@@ -43,7 +43,7 @@ import { useNavigate } from 'react-router-dom';
 
 const columnHelper = createColumnHelper<tableDefinition>();
 
-const globalFilterFn: FilterFn<any> = (row, columnId, value, addMeta) => {
+const globalFilterFn: FilterFn<any> = (row, _columnId, value, _addMeta) => {
   // If no search term, show all rows
   if (!value) return true;
 
@@ -329,7 +329,7 @@ const ApplicationTable = ({ tableData }: { tableData: tableDefinition[] }) => {
         </div>
       </CardHeader>
       <CardContent>
-        <div className="overflow-x-auto rounded-[var(--radius-md)] border border-[var(--border)]">
+        <div className="horizontal-scroll overflow-x-visible rounded-[var(--radius-md)] border border-[var(--border)]">
           <Table>
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (

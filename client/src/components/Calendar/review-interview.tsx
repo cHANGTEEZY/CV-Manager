@@ -42,6 +42,7 @@ import {
 import { InterviewTypeResults } from '@/constants/EventData';
 import PendingCard from '../Pending';
 import StarRating from '../Rating';
+import { useParams } from 'react-router-dom';
 
 interface EventType {
   id: string;
@@ -59,7 +60,10 @@ interface EventType {
 }
 
 export default function PendingInterviews() {
-  const [date, setDate] = useState<Date>(new Date());
+  const { eventDate } = useParams();
+  const parsedDate = eventDate ? eventDate?.split('T')[0] : new Date();
+
+  const [date, setDate] = useState<Date>(new Date(parsedDate));
   const {
     events: allEvents,
     isLoading,

@@ -44,7 +44,7 @@ export default function Dashboard() {
 
         <MetricsCards metrics={metrics} />
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
+        <div className="grid gap-6 md:w-[800px] md:grid-cols-1 lg:w-auto lg:grid-cols-7">
           <div className="md:col-span-1 lg:col-span-4">
             <ApplicationChart chartData={chartData} />
           </div>

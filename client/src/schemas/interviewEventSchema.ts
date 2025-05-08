@@ -61,3 +61,43 @@ export const formSchema = z.object({
     required_error: 'Please select an interviewer',
   }),
 });
+
+export const interviewerSchema = z.object({
+  interviewer_name: z.string().min(1, {
+    message: 'Interviewer name is required',
+  }),
+  email: z.string().email({ message: 'Invalid email address' }),
+  role: z.enum([
+    'Full Stack Engineer',
+    'Frontend Engineer',
+    'Backend Engineer',
+    'Devops Engineer',
+    'UI/UX Designer',
+    'AI/ML Engineer',
+    'Data Scientist',
+  ]),
+  phone_number: z
+    .string()
+    .min(10, { message: 'Phone number must be at least 10 digits' }),
+});
+
+export type InterviewerFormValues = z.infer<typeof interviewerSchema>;
+
+export const RoleFilter = [
+  'Full Stack Engineer',
+  'Frontend Engineer',
+  'Backend Engineer',
+  'Devops Engineer',
+  'UI/UX Designer',
+  'AI/ML Engineer',
+  'Data Scientist',
+] as const;
+
+export interface Interviewer {
+  id: string;
+  interviewer_name: string;
+  email: string;
+  phone_number: string;
+  role: string;
+  created_at?: string;
+}

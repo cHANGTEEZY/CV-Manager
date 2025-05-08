@@ -23,6 +23,7 @@ import AssessmentReview from '@/pages/Events/AssessmentReview';
 import FinalReview from '@/pages/Application/FinalReview';
 import ForgotPassword from '@/components/auth/ForgotPassword';
 import ResetPassword from '@/components/auth/ResetPassword';
+import CreateInterviewer from '@/pages/Events/CreateInterviewer';
 
 export const router = createBrowserRouter([
   {
@@ -66,7 +67,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: 'events/assessment-review',
+        path: 'events/assessment-review/',
         element: (
           <ProtectedRoute>
             <AssessmentReview />
@@ -74,7 +75,15 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: 'events/review-event',
+        path: 'events/interviewer',
+        element: (
+          <ProtectedRoute>
+            <CreateInterviewer />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'events/review-event/:eventDate',
         element: (
           <ProtectedRoute>
             <ReviewEvent />
@@ -93,7 +102,6 @@ export const router = createBrowserRouter([
         path: 'applications',
         element: (
           <ProtectedRoute>
-            {/* <Applications /> */}
             <ApplicationUpload />
           </ProtectedRoute>
         ),

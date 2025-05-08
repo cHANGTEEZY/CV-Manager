@@ -68,6 +68,8 @@ export function DateEvents({
 }: DateEventsProps) {
   const [statusFilter, setStatusFilter] = useState<string>('all');
 
+  console.log(events);
+
   const filteredEvents = events.filter((event) => {
     if (statusFilter === 'all') return true;
     if (statusFilter === 'pending')
@@ -145,7 +147,7 @@ export function DateEvents({
                     className="hover:border-primary cursor-pointer rounded-lg border p-4 transition-all duration-200 ease-in-out"
                   >
                     <Link
-                      to={`/dashboard/application-review/${event?.applicant_details?.id}`}
+                      to={`/dashboard/events/review-event/${event?.event_date_time}`}
                     >
                       <div className="flex items-center justify-between">
                         <div className="text-gradient-chart-1 text-lg font-medium">

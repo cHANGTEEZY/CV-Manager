@@ -161,5 +161,20 @@ input[type='number']::-webkit-inner-spin-button {
 }
 
 input[type='number']:focus {
-  outline: none; /* Optional: remove outline on focus */
+  outline: none;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    20deg,
+    var(--muted-foreground),
+    var(--background)
+  );
+  border-radius: 5px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar {
+  height: 10px;
 }
