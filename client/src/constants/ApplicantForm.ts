@@ -55,7 +55,7 @@ export const applicantFormFields = [
       'Frontend Engineer',
       'Backend Engineer',
       'AI/ML Engineer',
-      'Data Scientist',
+      'Devops Engineer',
       'UI/UX Designer',
     ],
   },

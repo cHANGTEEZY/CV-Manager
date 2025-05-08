@@ -85,7 +85,6 @@ const CreateAssessmentForm = () => {
     try {
       setIsLoading(true);
 
-      // Check for title and type compatibility again before submission
       const titlePrefix = data.title.split(' ')[0];
       const typePrefix = data.type.split(' ')[0];
 
@@ -122,7 +121,6 @@ const CreateAssessmentForm = () => {
 
       toast.success('Assessment created successfully');
 
-      // Reset form completely
       form.reset({
         title: undefined,
         type: undefined,
@@ -173,7 +171,6 @@ const CreateAssessmentForm = () => {
                     <Select
                       onValueChange={(value) => {
                         field.onChange(value);
-                        // Clear validation error when changing selection
                         if (validationError) setValidationError(null);
                       }}
                       defaultValue={field.value}

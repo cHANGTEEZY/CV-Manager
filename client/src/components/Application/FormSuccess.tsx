@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { Card, CardContent } from '../ui/card';
 import { Button } from '../ui/button';
 import { CheckCircle } from 'lucide-react';
+import { reload } from '@/utils/reload';
 
 const FormSuccessMessage = ({
   setIsSubmitted,
@@ -22,14 +23,12 @@ const FormSuccessMessage = ({
           <h2 className="mb-2 text-2xl font-bold">
             Application Submitted Successfully!
           </h2>
-          <p className="mb-4 text-gray-600 dark:text-gray-300">
-            You can review the form clicking this link{' '}
-            <span className="text-red-400">!!!Work to do!!!</span>
-          </p>
+
           <Button
             onClick={() => {
               setIsSubmitted(false);
               setResumeFile(null);
+              reload();
             }}
           >
             Submit Another Application

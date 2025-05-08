@@ -36,6 +36,8 @@ import {
   labels,
 } from '@/constants/ApplicationReviewPage';
 import { reload } from '@/utils/reload';
+import { EditUserDialog } from './EdirUserDialog';
+import { Pencil } from 'lucide-react';
 
 export default function ReviewApplicationForm() {
   const { id } = useParams();
@@ -79,6 +81,7 @@ export default function ReviewApplicationForm() {
         if (assessmentError) throw assessmentError;
 
         setUserData({
+          id: userData.id,
           name: userData.applicant_name,
           email: userData.applicant_email,
           phoneNo: userData.applicant_phone_number,
@@ -252,6 +255,19 @@ export default function ReviewApplicationForm() {
       <div className="grid gap-6">
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <div className="lg:col-span-2">
+            <div className="mb-2 flex items-center justify-between">
+              <h2 className="text-xl font-semibold">Applicant Profile</h2>
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex items-center gap-1"
+                onClick={() =>
+                  document.getElementById('edit-user-dialog')?.click()
+                }
+              >
+                <Pencil className="h-4 w-4" /> Edit
+              </Button>
+            </div>
             <ApplicantProfileCard
               name={userData?.name || 'N/A'}
               email={userData?.email || 'N/A'}
@@ -259,6 +275,7 @@ export default function ReviewApplicationForm() {
               position={userData?.appliedPosition || 'N/A'}
               timeline={userData?.timeline || 1}
             />
+            <EditUserDialog userData={userData} setUserData={setUserData} />
           </div>
 
           <div className="flex flex-col gap-4 lg:col-span-1">
@@ -346,7 +363,7 @@ export default function ReviewApplicationForm() {
             <HorizontalTimeline
               steps={timelineSteps}
               currentStep={userData?.timeline || 1}
-              status={applicantStatus} // Pass the applicant status to the component
+              status={applicantStatus}
             />
           </CardContent>
         </Card>
