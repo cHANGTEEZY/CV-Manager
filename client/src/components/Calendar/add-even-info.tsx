@@ -245,7 +245,7 @@ const CreateEvent = ({ setDate }: CreateEventProps) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-accent-foreground text-sm font-normal">
-                      Interview Type
+                      Interview Type *
                     </FormLabel>
                     <FormControl>
                       <Select
@@ -278,7 +278,7 @@ const CreateEvent = ({ setDate }: CreateEventProps) => {
                 render={({ field }) => (
                   <FormItem className="w-full">
                     <FormLabel className="text-accent-foreground text-sm font-normal">
-                      Event Title
+                      Event Title *
                     </FormLabel>
                     <FormControl>
                       <Input placeholder="Enter event title" {...field} />
@@ -294,7 +294,7 @@ const CreateEvent = ({ setDate }: CreateEventProps) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-accent-foreground text-sm font-normal">
-                      Event Description
+                      Event Description *
                     </FormLabel>
                     <FormControl>
                       <Input placeholder="Enter event description" {...field} />
@@ -310,7 +310,7 @@ const CreateEvent = ({ setDate }: CreateEventProps) => {
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <FormLabel className="text-accent-foreground text-sm font-normal">
-                      Event Date
+                      Event Date *
                     </FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
@@ -357,7 +357,7 @@ const CreateEvent = ({ setDate }: CreateEventProps) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-accent-foreground text-sm font-normal">
-                      Event Time
+                      Event Time *
                     </FormLabel>
                     <FormControl>
                       <Select
@@ -396,7 +396,7 @@ const CreateEvent = ({ setDate }: CreateEventProps) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-accent-foreground text-sm font-normal">
-                      Candidate
+                      Candidate *
                     </FormLabel>
                     <FormControl>
                       <Select
@@ -455,7 +455,7 @@ const CreateEvent = ({ setDate }: CreateEventProps) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-accent-foreground text-sm font-normal">
-                      Interviewer
+                      Interviewer *
                     </FormLabel>
                     <FormControl>
                       <Select
